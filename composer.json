@@ -1,163 +1,39 @@
 {
-  "name": "pantheon-upstreams/decoupled-wordpress-composer-managed",
-  "type": "project",
-  "license": "MIT",
-  "description": "Pantheon's recommended starting point for WordPress upstreams using the platform's Integrated Composer build process.",
-  "homepage": "https://pantheon.io/docs/guides/wordpress-composer",
-  "authors": [
-    {
-      "name": "Pantheon Systems",
-      "homepage": "https://pantheon.io"
-    },
-    {
-      "name": "John Spellman",
-      "email": "john.spellman@pantheon.io",
-      "homepage": "https://github.com/jspellman814"
-    },
-    {
-      "name": "Chris Reynolds",
-      "email": "chris.reynolds@pantheon.io",
-      "homepage": "https://github.com/jazzsequence"
-    },
-    {
-      "name": "Scott Walkinshaw",
-      "email": "scott.walkinshaw@gmail.com",
-      "homepage": "https://github.com/swalkinshaw"
-    },
-    {
-      "name": "Ben Word",
-      "email": "ben@benword.com",
-      "homepage": "https://github.com/retlehs"
-    }
-  ],
-  "keywords": [
-    "bedrock", "composer", "roots", "wordpress", "wp", "wp-config", "pantheon"
-  ],
-  "support": {
-    "issues": "https://github.com/pantheon-systems/wordpress-composer-managed/issues",
-    "docs": "https://pantheon.io/docs/guides/wordpress-composer",
-    "forum": "https://discuss.pantheon.io"
-  },
   "repositories": [
     {
       "type": "composer",
-      "url": "https://wpackagist.org",
-      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+      "url": "http://wpackagist.org"
     },
     {
-        "type": "path",
-        "url": "upstream-configuration"
+      "type": "package",
+      "package": {
+        "name": "wordpress",
+        "version": "3.8",
+        "type": "webroot",
+        "dist": {
+          "type": "zip",
+          "url": "https://github.com/WordPress/WordPress/archive/3.8.zip"
+        },
+        "require" : {
+          "fancyguy/webroot-installer": "1.1.0"
+        }
+      }
     }
   ],
   "require": {
-    "php": ">=7.4",
-    "composer/installers": "^2.2",
-    "vlucas/phpdotenv": "^5.5",
-    "oscarotero/env": "^2.1",
-    "roots/bedrock-autoloader": "*",
-    "roots/bedrock-disallow-indexing": "*",
-    "roots/wordpress": "*",
-    "wpackagist-plugin/wp-gatsby": "^2.0",
-    "pantheon-systems/pantheon-decoupled": "^1.0",
-    "wpackagist-plugin/wp-gatsby": "^2.0",
-    "pantheon-systems/pantheon-decoupled": "^1.0",
-    "wpackagist-plugin/wp-gatsby": "^2.0",
-    "pantheon-systems/pantheon-decoupled": "^1.0",
-    "wpackagist-plugin/wp-gatsby": "^2.0",
-    "pantheon-systems/pantheon-decoupled": "^1.0",
-    "roots/wp-config": "*",
-    "roots/wp-password-bcrypt": "*",
-    "wpackagist-theme/twentytwentytwo": "^1.2",
-    "pantheon-systems/pantheon-mu-plugin": "*",
-    "pantheon-upstreams/upstream-configuration": "dev-main",
-    "wpackagist-plugin/pantheon-advanced-page-cache": "*",
-    "wpackagist-plugin/wp-native-php-sessions": "*",
-    "cweagans/composer-patches": "^1.7"
+    "php": ">=5.3.0",
+    "wordpress": "3.8",
+    "fancyguy/webroot-installer": "1.1.0",
+    "composer/installers": "v1.0.6",
+    "wp-cli/wp-cli": "v0.13.0",
+    "vlucas/phpdotenv": "1.0.2"
   },
-  "require-dev": {
-    "pantheon-systems/pantheon-wp-coding-standards": "*",
-    "roave/security-advisories": "dev-latest",
-    "assertwell/shellcheck": "^1.0"
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
-    "process-timeout": 0,
-    "allow-plugins": {
-      "composer/installers": true,
-      "roots/wordpress-core-installer": true,
-      "cweagans/composer-patches": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
   "extra": {
     "installer-paths": {
-      "web/app/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
-      "web/app/plugins/{$name}/": ["type:wordpress-plugin"],
-      "web/app/themes/{$name}/": ["type:wordpress-theme"]
+      "app/plugins/{$name}/": ["type:wordpress-plugin"],
+      "app/mu-plugins/{$name}/": ["type:wordpress-muplugin"]
     },
-    "wordpress-install-dir": "web/wp",
-    "build-env": {
-      "install-cms": [
-        "wp core install --title={site-name} --url={site-url} --admin_user={account-name} --admin_email={account-mail} --admin_password={account-pass}",
-        "wp option update permalink_structure '/%postname%/'"
-      ]
-    },
-    "composer-scaffold": {
-      "locations": {
-        "web-root": "./"
-      }
-    },
-    "composer-exit-on-patch-failure": true,
-    "enable-patching": true
-  },
-  "autoload": {
-      "classmap": [
-          "upstream-configuration/scripts/ComposerScripts.php"
-      ]
-  },
-  "scripts": {
-    "post-root-package-install": [
-      "php -r \"copy('.env.example', '.env');\""
-    ],
-    "post-install-cmd": "@maybe-create-symlinks",
-    "pre-update-cmd": [
-      "WordPressComposerManaged\\ComposerScripts::preUpdate"
-    ],
-    "install-sage": [
-      "bash ./private/scripts/helpers.sh install_sage"
-    ],
-    "maybe-create-symlinks": [
-      "bash ./private/scripts/helpers.sh maybe_create_symlinks"
-    ],
-    "lint": [
-      "@lint:php",
-      "@lint:phpcs",
-      "@lint:bash"
-    ],
-    "lint:php": [
-      "php -l web/wp/wp-settings.php"
-    ],
-    "lint:phpcs": [
-      "vendor/bin/phpcs -s ."
-    ],
-    "lint:phpcbf": [
-      "vendor/bin/phpcbf ."
-    ],
-    "lint:bash": [
-      "shellcheck private/scripts/*.sh"
-    ],
-    "test": [],
-    "upstream-require": [
-        "WordPressComposerManaged\\ComposerScripts::upstreamRequire"
-    ]
-  },
-  "scripts-descriptions": {
-      "upstream-require": "Add a dependency to an upstream. See https://pantheon.io/docs/create-custom-upstream for information on creating custom upstreams."
-  },
-  "suggest": {
-    "pantheon-systems/upstream-management": "Composer plugin that provides commands for managing custom upstreams on Pantheon."
+    "webroot-dir": "wp",
+    "webroot-package": "wordpress"
   }
 }
