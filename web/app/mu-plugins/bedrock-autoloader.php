@@ -31,8 +31,8 @@ class Autoloader {
     if (is_admin()) {
       add_filter('show_advanced_plugins', array($this, 'showInAdmin'), 0, 2); // Admin only filter.
     }
-    
-    $this->load_plugins();
+
+    $this->loadPlugins();
   }
 
   /**
