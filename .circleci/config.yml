@@ -1,64 +1,49 @@
----
 version: 2.1
 
-executors:
-  deployer:
-    docker:
-      - image: cimg/base:current
-
-jobs:
-  deploy-public-upstream:
-    executor: deployer
-    steps:
-      - checkout
-      # Add the ssh key for the pantheon-upstream user. The public ssh key
-      # must be added to the CircleCI config, e.g.:
-      #   https://app.circleci.com/settings/project/github/pantheon-systems/wordpress-composer-managed/ssh
-      #
-      # Note that this user must have write access both to the source repo,
-      # pantheon-systems/wordpress-composer-managed (to push the release-pointer
-      # tag) and to the target repo, pantheon-upstreams/wordpress-composer-managed.
-      #
-      # Read the ssh keypair from vault:
-      #   pvault production read secret/securenotes/pantheon-upstream_github_ssh_key
-      # Or generate a new one via:
-      #   ssh-keygen -m PEM -t rsa -C "your_email@example.com"
-      # Also add the private key to the Github user, e.g.:
-      #   https://github.com/settings/keys
-      # Credentials to log in as the pantheon-upstream user are available in vault:
-      #   pvault production read secret/github/user__pantheon-upstream
-      # You may confirm the fingerprint via:
-      #   ssh-keygen -l -E md5 -f ed25519
-      - add_ssh_keys:
-          fingerprints:
-            - "50:72:cc:79:5d:fa:9d:b9:83:40:af:e9:4a:37:4f:4b"
-      - run:
-          name: Copy commits to destination repo
-          command: devops/scripts/deploy-public-upstream.sh
-      - run:
-          name: Run decoupledpatch.sh and copy commits to decoupled destination repo
-          command: devops/scripts/deploy-decoupled-upstream.sh
-  check-commits:
-    executor: deployer
-    steps:
-      - checkout
-      - run:
-          name: Check validity of commits in PR
-          command: devops/scripts/check-commits.sh
+orbs:
+  bedrock:
+    executors:
+      node-10:
+        docker:
+          - image: 'circleci/node:10-stretch'
+      php-73:
+        docker:
+          - image: 'circleci/php:7.3-stretch'
+      php-72:
+        docker:
+          - image: 'circleci/php:7.2-stretch'
+      php-71:
+        docker:
+          - image: 'circleci/php:7.1-stretch'
+    jobs:
+      build-php:
+        parameters:
+          executor:
+            type: executor
+        executor: << parameters.executor >>
+        steps:
+          - run: php -v
+          - checkout
+          - restore_cache:
+              keys:
+                - composer-v1-{{ checksum "composer.lock" }}
+                - composer-v1-
+          - run: composer install -n --prefer-dist
+          - run: composer test
+          - save_cache:
+              key: composer-v1-{{ checksum "composer.lock" }}
+              paths:
+                - vendor
 
 workflows:
-  version: 2
-  deploy-public-upstream:
+  build:
     jobs:
-      - check-commits:
-          filters:
-            branches:
-              only:
-                - release
-      - deploy-public-upstream:
-          requires:
-            - check-commits
-          filters:
-            branches:
-              only:
-                - release
+      - bedrock/build-php:
+          name: build-php-73
+          executor: bedrock/php-73
+      - bedrock/build-php:
+          name: build-php-72
+          executor: bedrock/php-72
+      - bedrock/build-php:
+          name: build-php-71
+          executor: bedrock/php-71
