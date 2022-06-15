@@ -1,8 +1,4 @@
 # Application
-web/app/plugins/*
-!web/app/plugins/.gitkeep
-web/app/mu-plugins/*/
-web/app/themes/twentytwentytwo/
 web/app/upgrade
 web/app/uploads/*
 !web/app/uploads/.gitkeep
@@ -25,3 +21,36 @@ web/.htaccess
 
 # WP-CLI
 wp-cli.local.yml
+
+# :::::::::::::::::::::: Pantheon Additions ::::::::::::::::::::::
+
+# Ignore the app directory
+web/app/*
+
+# Ignore mu-plugins (but don't ignore the directory itself).
+!web/app/mu-plugins/
+web/app/mu-plugins/*
+
+# Ignore plugins (but don't ignore the directory itself).
+!web/app/plugins/
+web/app/plugins/*
+
+# Ignore themes (but don't ignore the directory itself).
+!web/app/themes/
+web/app/themes/*
+
+# Ignore files copied by scripts.
+web/index.php
+web/wp-cli.yml
+
+# Avoid accidental modification of pantheon.upstream.yml in sites created from
+# this upstream
+pantheon.upstream.yml
+
+# Ignore private stuff (but don't ignore the directory itself).
+!web/private/
+web/private/*
+!web/private/scripts/
+web/private/scripts/quicksilver
+!web/private/config/
+/autoload.php
