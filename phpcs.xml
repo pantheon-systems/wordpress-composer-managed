@@ -13,6 +13,12 @@
   <exclude-pattern>web/app/themes/twentytwentytwo/</exclude-pattern>
   <exclude-pattern>vendor/</exclude-pattern>
 
+  <!-- Start Pantheon addition: Ignore plugins and quicksilver scripts -->
+  <exclude-pattern>web/app/mu-plugins/*</exclude-pattern>
+  <exclude-pattern>web/app/plugins/*</exclude-pattern>
+  <exclude-pattern>web/private/*</exclude-pattern>
+  <!-- End Pantheon addition -->
+
   <!-- Show colors in console -->
   <arg value="-colors"/>
 
