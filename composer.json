@@ -42,8 +42,8 @@
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/wordpress-bedrock-integrations": "^2.0",
-    "drupal/core-composer-scaffold": "^9.4",
-    "pantheon-systems/pantheon-mu-plugin": "^1.0"
+    "pantheon-systems/pantheon-mu-plugin": "^1.0",
+    "pantheon-systems/composer-scaffold": "9.4.x-dev"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.2",
@@ -55,7 +55,7 @@
     "allow-plugins": {
       "composer/installers": true,
       "roots/wordpress-core-installer": true,
-      "drupal/core-composer-scaffold": true
+      "pantheon-systems/composer-scaffold": true
     }
   },
   "minimum-stability": "dev",
@@ -67,10 +67,7 @@
       "web/app/themes/{$name}/": ["type:wordpress-theme"]
     },
     "wordpress-install-dir": "web/wp",
-    "drupal-scaffold": {
-      "allowed-packages": [
-        "pantheon-systems/wordpress-bedrock-integrations"
-      ],
+    "composer-scaffold": {
       "locations": {
         "web-root": "./"
       }
