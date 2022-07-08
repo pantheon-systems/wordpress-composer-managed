@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script is pretty tailored to assuming it's running in the CircleCI environment / a fresh git clone.
-# It mirrors most commits from `pantheon-systems/drupal-composer-managed:release` to `pantheon-upstreams/drupal-composer-managed`.
+# It mirrors most commits from `pantheon-systems/wordpress-composer-managed:release` to `pantheon-upstreams/wordpress-composer-managed`.
 
 # Check github authentication; ignore status code 1 returned from this command
 ssh -T git@github.com
