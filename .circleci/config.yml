@@ -1,0 +1,57 @@
+---
+version: 2.1
+
+executors:
+  deployer:
+    docker:
+      - image: cimg/base:2020.12
+
+jobs:
+  deploy-public-upstream:
+    executor: deployer
+    steps:
+      - checkout
+      # Add the ssh key for the pantheon-upstream user. The public ssh key
+      # must be added to the CircleCI config, e.g.:
+      #   https://app.circleci.com/settings/project/github/pantheon-systems/wordpress-composer-managed/ssh
+      #
+      # Note that this user must have write access both to the source repo,
+      # pantheon-systems/wordpress-composer-managed (to push the release-pointer
+      # tag) and to the target repo, pantheon-upstreams/wordpress-composer-managed.
+      #
+      # Read the ssh keypair from vault:
+      #   pvault production read secret/securenotes/pantheon-upstream_github_ssh_key
+      # Or generate a new one via:
+      #   ssh-keygen -m PEM -t rsa -C "your_email@example.com"
+      # Also add the private key to the Github user, e.g.:
+      #   https://github.com/settings/keys
+      # Credentials to log in as the pantheon-upstream user are available in vault:
+      #   pvault production read secret/securenotes/github_user__pantheon-upstream
+      # You may confirm the fingerprint via:
+      #   ssh-keygen -l -E md5 -f ed25519
+      - add_ssh_keys:
+          fingerprints:
+            - "d6:6c:3e:b6:92:36:04:fc:5a:23:1f:e2:9d:87:00:ef"
+      - run:
+          name: Copy commits to destination repo
+          command: devops/scripts/deploy-public-upstream.sh
+  check-commits:
+    executor: deployer
+    steps:
+      - checkout
+      - run:
+          name: Check validity of commits in PR
+          command: devops/scripts/check-commits.sh
+
+workflows:
+  version: 2
+  deploy-public-upstream:
+    jobs:
+      - deploy-public-upstream:
+          filters:
+            branches:
+              only:
+                - release
+  check-commits:
+    jobs:
+      - check-commits
