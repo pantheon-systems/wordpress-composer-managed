@@ -63,7 +63,6 @@ for commit in "${commits[@]}"; do
   # Product request - single commit per release
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
-  # git commit --amend --no-edit --author='Pantheon Automation <bot@getpantheon.com>'
 done
 
 echo "Committing changes"
