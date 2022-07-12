@@ -11,7 +11,7 @@ function identify_commit_type() {
 
   affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
   for path in $affected_paths; do
-      if [[ $path =~ ^.circleci/ || $path =~ ^.github/ || $path =~ ^devops/ || $path == "README-internal.md" ]] ; then
+      if [[ $path =~ ^.circleci/ || $path =~ ^devops/ || $path == "README-internal.md" ]] ; then
         has_nonrelease_changes=1
         continue
       fi
@@ -30,27 +30,4 @@ function identify_commit_type() {
   fi
 
   echo "nonrelease"
-}
-
-# Verifies that the given commit does not contain forbidden files.
-function only_allowed_files() {
-  local commit=$1
-  local forbidden_files=("composer.lock" "package-lock.json")
-  local has_forbidden_files=0
-
-  affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
-  for path in $affected_paths; do
-    # shellcheck disable=SC2076
-    if [[ " ${forbidden_files[*]} " =~ " ${path} " ]]; then
-      has_forbidden_files=1
-      break
-    fi
-  done
-
-  if [[ $has_forbidden_files -eq 0 ]]; then
-    echo "ok"
-    return 0
-  fi
-
-  echo "forbidden"
 }

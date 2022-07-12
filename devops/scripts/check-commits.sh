@@ -9,10 +9,8 @@ set -euo pipefail
 . devops/scripts/commit-type.sh
 
 # List commits between release-pointer and HEAD, in reverse
-merge_base=""
-merge_base=$(git merge-base default HEAD)
-prcommits=""
-prcommits=$(git log "${merge_base}"..HEAD --pretty=format:"%h")
+prcommits=$(git log $(git merge-base default HEAD)..HEAD --pretty=format:"%h")
+
 status=0
 
 # Identify commits that should be released
@@ -30,15 +28,9 @@ for commit in $prcommits; do
     >&2 echo "Commit ${commit} contains both release and nonrelease changes. Please split into mutliple commits."
     status=1
   fi
-
-  only_allowed_files=$(only_allowed_files "$commit")
-  if [[ $only_allowed_files == "forbidden" ]] ; then
-    >&2 echo "Commit ${commit} contains forbidden files. Please remove them."
-    status=1
-  fi
 done
 
-if [[ $status -eq 0 ]] ; then
+if [[ -n $status ]] ; then
   >&2 echo "OK to deploy. After merging PR, push the 'release' branch. See README-internal.md"
 fi
 

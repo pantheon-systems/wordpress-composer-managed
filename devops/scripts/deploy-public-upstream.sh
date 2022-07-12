@@ -10,10 +10,6 @@ set -euo pipefail
 
 . devops/scripts/commit-type.sh
 
-# Copy README file to tmp directory for use after checkout.
-echo "Copying composer-managed-README to /tmp for use later."
-cp devops/files/composer-managed-README.md /tmp/composer-managed-README.md
-
 git remote add public "$UPSTREAM_REPO_REMOTE_URL"
 git fetch public
 git checkout "${CIRCLE_BRANCH}"
@@ -32,22 +28,20 @@ commits=()
 for commit in $newcommits; do
   commit_type=$(identify_commit_type "$commit")
   if [[ $commit_type == "normal" ]] ; then
-    commits+=("$commit")
-    continue
+    commits+=($commit)
   fi
 
   if [[ $commit_type == "mixed" ]] ; then
-    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Skipping this commit."
-    echo "You may wish to ensure that nothing in this commit is meant for release."
+    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Cannot proceed."
+    exit 1
   fi
 done
 
 # If nothing found to release, bail without doing anything.
 if [[ ${#commits[@]} -eq 0 ]] ; then
   echo "No new commits found to release"
-  echo "Proceeding to decoulped script"
-  echo "https://media.giphy.com/media/cqG5aFdTkk5ig/giphy.gif"
-  exit 0
+  echo "https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png"
+  exit 1
 fi
 
 # Cherry-pick commits not modifying circle config onto the release branch
@@ -65,17 +59,11 @@ for commit in "${commits[@]}"; do
   fi
   echo "Adding $commit:"
   git --no-pager log --format=%B -n 1 "$commit"
-  git cherry-pick -rn -X theirs "$commit" 2>&1
+  git cherry-pick -rn "$commit" 2>&1
   # Product request - single commit per release
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
 done
-
-echo "Copying README to docroot."
-rm ./README.md
-cp /tmp/composer-managed-README.md ./README.md
-
-git add .
 
 echo "Committing changes"
 git commit -F /tmp/commit_message --author='Pantheon Automation <bot@getpantheon.com>'
@@ -87,7 +75,7 @@ echo
 # Push to the public repository
 git push public public:main
 
-git checkout "$CIRCLE_BRANCH"
+git checkout $CIRCLE_BRANCH
 
 # update the release-pointer
 git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
