@@ -168,26 +168,3 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ):
 	endif;
 
 endif;
-
-/*
-* Define wp-content directory outside of WordPress core directory
-*/
-define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/app' );
-define( 'WP_CONTENT_URL', WP_HOME . '/app' );
-
-/**
- * WordPress Database Table prefix.
- *
- * You can have multiple installations in one database if you give each
- * a unique prefix. Only numbers, letters, and underscores please!
- */
-$table_prefix = getenv( 'DB_PREFIX' ) !== false ? getenv( 'DB_PREFIX' ) : 'wp_';
-
-/* That's all, stop editing! Happy blogging. */
-
-/** Absolute path to the WordPress directory. */
-if ( ! defined( 'ABSPATH' ) ) {
-	define( 'ABSPATH', dirname(__FILE__) . 'wp-config.php/');
-}
-/** Sets up WordPress vars and included files. */
-require_once( ABSPATH . 'wp-settings.php' );
