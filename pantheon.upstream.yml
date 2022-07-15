@@ -1,0 +1,13 @@
+api_version: 1
+web_docroot: true
+# See https://pantheon.io/docs/pantheon-yml/#enforce-https--hsts for valid values.
+enforce_https: transitional
+php_version: 7.4
+database:
+  version: 10.4
+build_step: true
+filemount: /app/uploads
+protected_web_paths:
+  - /app/uploads/private/
+  - /private/
+  - /xmlrpc.php

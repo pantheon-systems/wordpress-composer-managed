@@ -43,10 +43,6 @@ web/app/themes/*
 web/index.php
 web/wp-cli.yml
 
-# Avoid accidental modification of pantheon.upstream.yml in sites created from
-# this upstream
-pantheon.upstream.yml
-
 # Ignore private stuff (but don't ignore the directory itself).
 !web/private/
 web/private/*
