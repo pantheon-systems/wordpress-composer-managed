@@ -41,7 +41,7 @@
     "roots/wp-config": "1.0.0",
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentytwo": "^1.2",
-    "pantheon-systems/wordpress-bedrock-integrations": "^2.0",
+    "pantheon-systems/wordpress-bedrock-integrations": "^2.1",
     "pantheon-systems/pantheon-mu-plugin": "^1.0",
     "pantheon-systems/composer-scaffold": "^1.0"
   },
