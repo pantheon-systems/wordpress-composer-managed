@@ -14,6 +14,7 @@ web/.htaccess
 # Dotenv
 .env
 .env.*
+!.env.example
 !.env.pantheon
 
 # Composer
