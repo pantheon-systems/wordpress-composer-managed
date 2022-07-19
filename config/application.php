@@ -25,21 +25,21 @@ $root_dir = dirname(__DIR__);
 $webroot_dir = $root_dir . '/web';
 
 /** A couple extra tweaks to help things run well on Pantheon. **/
-if ( isset( $_SERVER['HTTP_HOST'] ) ) {
-	// HTTP is still the default scheme for now.
-	$scheme = 'http';
-	// If we have detected that the end use is HTTPS, make sure we pass that
-	// through here, so <img> tags and the like don't generate mixed-mode
-	// content warnings.
-	if ( isset( $_SERVER['HTTP_USER_AGENT_HTTPS'] ) && $_SERVER['HTTP_USER_AGENT_HTTPS'] == 'ON' ) {
-		$scheme = 'https';
-	}
+if (isset($_SERVER['HTTP_HOST']) ) {
+    // HTTP is still the default scheme for now.
+    $scheme = 'http';
+    // If we have detected that the end use is HTTPS, make sure we pass that
+    // through here, so <img> tags and the like don't generate mixed-mode
+    // content warnings.
+    if (isset($_SERVER['HTTP_USER_AGENT_HTTPS']) && $_SERVER['HTTP_USER_AGENT_HTTPS'] == 'ON') {
+        $scheme = 'https';
+    }
 
     /**
      * URLs
      */
-	Config::define( 'WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST'] );
-	Config::define( 'WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp' );
+    Config::define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
+    Config::define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp');
 }
 
 /**
@@ -112,12 +112,12 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 
 // FS writes aren't permitted in test or live, so we should let WordPress know to
 // disable relevant UI.
-if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' ) ) ) {
-    if ( !env('DISALLOW_FILE_MODS') ) {
-        Config::define( 'DISALLOW_FILE_MODS', true );
+if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('test', 'live'))) {
+    if (!env('DISALLOW_FILE_MODS')) {
+        Config::define('DISALLOW_FILE_MODS', true);
     }
-    if ( !env('DISALLOW_FILE_EDIT') ) {
-        Config::define( 'DISALLOW_FILE_EDIT', true );
+    if (!env('DISALLOW_FILE_EDIT')) {
+        Config::define('DISALLOW_FILE_EDIT', true);
     }	
 }
 
@@ -148,21 +148,21 @@ if (getenv('WP_ENVIRONMENT_TYPE') === false) {
  * You may want to examine $_ENV['PANTHEON_ENVIRONMENT'] to set this to be
  * "true" in dev, but false in test and live.
  */
-if ( !env( 'WP_DEBUG' ) ) {
-	Config::define('WP_DEBUG', false);
+if (!env('WP_DEBUG')) {
+    Config::define('WP_DEBUG', false);
 }
 
 /**
  * Force SSL
  */
-if ( !env('FORCE_SSL_ADMIN') ) {
+if (!env('FORCE_SSL_ADMIN')) {
     Config::define( 'FORCE_SSL_ADMIN', true );
 }
 
 /** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
 $network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_network";
-if ( !env('DISABLE_WP_CRON') && $network === false) {
-	Config::define( 'DISABLE_WP_CRON', true );
+if (!env('DISABLE_WP_CRON') && $network === false) {
+    Config::define('DISABLE_WP_CRON', true);
 }
 
 Config::apply();
