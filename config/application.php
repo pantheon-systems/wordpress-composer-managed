@@ -25,7 +25,7 @@ $root_dir = dirname(__DIR__);
 $webroot_dir = $root_dir . '/web';
 
 /** A couple extra tweaks to help things run well on Pantheon. **/
-if (isset($_SERVER['HTTP_HOST']) ) {
+if (isset($_SERVER['HTTP_HOST'])) {
     // HTTP is still the default scheme for now.
     $scheme = 'http';
     // If we have detected that the end use is HTTPS, make sure we pass that
@@ -118,7 +118,7 @@ if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('test', 'live'))) {
     }
     if (!env('DISALLOW_FILE_EDIT')) {
         Config::define('DISALLOW_FILE_EDIT', true);
-    }	
+    }
 }
 
 /**
@@ -156,7 +156,7 @@ if (!env('WP_DEBUG')) {
  * Force SSL
  */
 if (!env('FORCE_SSL_ADMIN')) {
-    Config::define( 'FORCE_SSL_ADMIN', true );
+    Config::define('FORCE_SSL_ADMIN', true);
 }
 
 /** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
