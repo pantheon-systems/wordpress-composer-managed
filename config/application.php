@@ -1,7 +1,6 @@
 <?php
 /**
- * Your base production configuration goes in this file. Environment-specific
- * overrides go in their respective config/environments/{{WP_ENV}}.php file.
+ * Your base production configuration goes in this file.
  *
  * A good default policy is to deviate from the production config as little as
  * possible. Try to define as much of your configuration in this file as you
@@ -25,6 +24,24 @@ $root_dir = dirname(__DIR__);
  */
 $webroot_dir = $root_dir . '/web';
 
+/** A couple extra tweaks to help things run well on Pantheon. **/
+if ( isset( $_SERVER['HTTP_HOST'] ) ) {
+	// HTTP is still the default scheme for now.
+	$scheme = 'http';
+	// If we have detected that the end use is HTTPS, make sure we pass that
+	// through here, so <img> tags and the like don't generate mixed-mode
+	// content warnings.
+	if ( isset( $_SERVER['HTTP_USER_AGENT_HTTPS'] ) && $_SERVER['HTTP_USER_AGENT_HTTPS'] == 'ON' ) {
+		$scheme = 'https';
+	}
+
+    /**
+     * URLs
+     */
+	Config::define( 'WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST'] );
+	Config::define( 'WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp' );
+}
+
 /**
  * Use Dotenv to set required environment variables and load .env file in root
  * .env.local will override .env if it exists
@@ -36,23 +53,10 @@ $env_files = file_exists($root_dir . '/.env.local')
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable($root_dir, $env_files, false);
 if (file_exists($root_dir . '/.env')) {
     $dotenv->load();
-    $dotenv->required(['WP_HOME', 'WP_SITEURL']);
     if (!env('DATABASE_URL')) {
         $dotenv->required(['DB_NAME', 'DB_USER', 'DB_PASSWORD']);
     }
 }
-
-/**
- * Set up our global environment constant and load its config first
- * Default: production
- */
-define('WP_ENV', env('WP_ENV') ?: 'production');
-
-/**
- * URLs
- */
-Config::define('WP_HOME', env('WP_HOME'));
-Config::define('WP_SITEURL', env('WP_SITEURL'));
 
 /**
  * Custom Content Directory
@@ -68,7 +72,7 @@ Config::define('DB_NAME', env('DB_NAME'));
 Config::define('DB_USER', env('DB_USER'));
 Config::define('DB_PASSWORD', env('DB_PASSWORD'));
 Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-Config::define('DB_CHARSET', 'utf8mb4');
+Config::define('DB_CHARSET', 'utf8');
 Config::define('DB_COLLATE', '');
 $table_prefix = env('DB_PREFIX') ?: 'wp_';
 
@@ -96,12 +100,6 @@ Config::define('NONCE_SALT', env('NONCE_SALT'));
 /**
  * Custom Settings
  */
-Config::define('AUTOMATIC_UPDATER_DISABLED', true);
-Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
-// Disable the plugin and theme file editor in the admin
-Config::define('DISALLOW_FILE_EDIT', true);
-// Disable plugin and theme updates and installation from the admin
-Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
 
@@ -121,10 +119,59 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
     $_SERVER['HTTPS'] = 'on';
 }
 
-$env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
+// FS writes aren't permitted in test or live, so we should let WordPress know to
+// disable relevant UI.
+if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' ) ) ) {
+    if ( ! defined('DISALLOW_FILE_MODS') ) {
+        Config::define( 'DISALLOW_FILE_MODS', true );
+    }
+    if ( ! defined('DISALLOW_FILE_EDIT') ) {
+        Config::define( 'DISALLOW_FILE_EDIT', true );
+    }	
+}
 
-if (file_exists($env_config)) {
-    require_once $env_config;
+/**
+ * Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment
+ */
+if (getenv('WP_ENVIRONMENT_TYPE') === false) {
+    switch ($_ENV['PANTHEON_ENVIRONMENT']) {
+        case 'live':
+            putenv('WP_ENVIRONMENT_TYPE=production');
+            break;
+        case 'test':
+            putenv('WP_ENVIRONMENT_TYPE=staging');
+            break;
+        default:
+            putenv('WP_ENVIRONMENT_TYPE=development');
+            break;
+    }
+}
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * You may want to examine $_ENV['PANTHEON_ENVIRONMENT'] to set this to be
+ * "true" in dev, but false in test and live.
+ */
+if ( !env( 'WP_DEBUG' ) ) {
+	Config::define('WP_DEBUG', false);
+}
+
+/**
+ * Force SSL
+ */
+if ( !env('FORCE_SSL_ADMIN') ) {
+    Config::define( 'FORCE_SSL_ADMIN', true );
+}
+
+/** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
+$network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_network";
+if ( !env('DISABLE_WP_CRON') && $network === false) {
+	Config::define( 'DISABLE_WP_CRON', true );
 }
 
 Config::apply();
