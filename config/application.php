@@ -122,10 +122,10 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 // FS writes aren't permitted in test or live, so we should let WordPress know to
 // disable relevant UI.
 if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' ) ) ) {
-    if ( ! defined('DISALLOW_FILE_MODS') ) {
+    if ( !env('DISALLOW_FILE_MODS') ) {
         Config::define( 'DISALLOW_FILE_MODS', true );
     }
-    if ( ! defined('DISALLOW_FILE_EDIT') ) {
+    if ( !env('DISALLOW_FILE_EDIT') ) {
         Config::define( 'DISALLOW_FILE_EDIT', true );
     }	
 }
