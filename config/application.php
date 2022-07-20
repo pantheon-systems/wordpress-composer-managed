@@ -99,6 +99,7 @@ Config::define('NONCE_SALT', env('NONCE_SALT'));
 /**
  * Custom Settings
  */
+Config::define('AUTOMATIC_UPDATER_DISABLED', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
 
@@ -148,8 +149,8 @@ if (getenv('WP_ENVIRONMENT_TYPE') === false) {
  * You may want to examine $_ENV['PANTHEON_ENVIRONMENT'] to set this to be
  * "true" in dev, but false in test and live.
  */
-if (!env('WP_DEBUG')) {
-    Config::define('WP_DEBUG', false);
+if (env('WP_DEBUG') && env('WP_DEBUG') === true) {
+    Config::define('WP_DEBUG', true);
 }
 
 /**
@@ -159,8 +160,8 @@ if (!env('FORCE_SSL_ADMIN')) {
     Config::define('FORCE_SSL_ADMIN', true);
 }
 
-/** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
 $network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_network";
+/** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
 if (!env('DISABLE_WP_CRON') && $network === false) {
     Config::define('DISABLE_WP_CRON', true);
 }
