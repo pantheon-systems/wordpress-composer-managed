@@ -10,6 +10,9 @@
  * when attempting to apply upstream updates.
  */
 
+use Roots\WPConfig\Config;
+use function Env\env;
+
 /** A couple extra tweaks to help things run well on Pantheon. **/
 if (isset($_SERVER['HTTP_HOST'])) {
     // HTTP is still the default scheme for now.
@@ -21,8 +24,8 @@ if (isset($_SERVER['HTTP_HOST'])) {
         $scheme = 'https';
         $_SERVER['HTTPS'] = 'on';
     }
-    define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
-    define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp');
+    Config::define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
+    Config::define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp');
 }
 
 // Don't show deprecations; useful under PHP 5.5
@@ -31,8 +34,8 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 define('WP_TEMP_DIR', sys_get_temp_dir());
 
 // FS writes aren't permitted in test or live, so we should let WordPress know to disable relevant UI
-if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' )) && ! defined('DISALLOW_FILE_MODS')) {
-    define('DISALLOW_FILE_MODS', true);
+if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' )) && ! env('DISALLOW_FILE_MODS')) {
+    Config::define('DISALLOW_FILE_MODS', true);
 }
 
 /**
@@ -60,6 +63,6 @@ if (getenv('WP_ENVIRONMENT_TYPE') === false) {
 
 /** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
 $network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_network";
-if ( ! defined( 'DISABLE_WP_CRON' ) && $network === false ) {
-	define('DISABLE_WP_CRON', true);
+if ( ! env( 'DISABLE_WP_CRON' ) && $network === false ) {
+	Config::define('DISABLE_WP_CRON', true);
 }
