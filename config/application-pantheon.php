@@ -33,3 +33,9 @@ if (isset($_SERVER['HTTP_HOST'])) {
     Config::define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
     Config::define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp');
 }
+
+$network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_network";
+/** Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli */
+if (!env('DISABLE_WP_CRON') && $network === false) {
+    Config::define('DISABLE_WP_CRON', true);
+}
