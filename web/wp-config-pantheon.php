@@ -34,8 +34,8 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 define('WP_TEMP_DIR', sys_get_temp_dir());
 
 // FS writes aren't permitted in test or live, so we should let WordPress know to disable relevant UI
-if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' )) && ! defined('DISALLOW_FILE_MODS')) {
-    define('DISALLOW_FILE_MODS', true);
+if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array( 'test', 'live' )) && !env('DISALLOW_FILE_MODS')) {
+    Config::define('DISALLOW_FILE_MODS', true);
 }
 
 /**
@@ -66,3 +66,5 @@ $network = isset($_ENV["FRAMEWORK"]) && $_ENV["FRAMEWORK"] === "wordpress_networ
 if (!env( 'DISABLE_WP_CRON') && $network === false) {
 	Config::define('DISABLE_WP_CRON', true);
 }
+
+Config::apply();
