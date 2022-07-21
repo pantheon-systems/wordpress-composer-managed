@@ -59,9 +59,7 @@ Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_D
 Config::define('DB_NAME', env('DB_NAME'));
 Config::define('DB_USER', env('DB_USER'));
 Config::define('DB_PASSWORD', env('DB_PASSWORD'));
-if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
-} else {
+if (!env('DB_HOST')) {
     Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
 }
 Config::define('DB_CHARSET', 'utf8mb4');
