@@ -13,6 +13,9 @@
 use Roots\WPConfig\Config;
 
 Config::remove('DB_HOST');
+
+Config::apply();
+
 Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
 
 Config::apply();
