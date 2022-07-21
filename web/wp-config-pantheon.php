@@ -25,7 +25,7 @@ if (isset($_SERVER['HTTP_HOST'])) {
         $_SERVER['HTTPS'] = 'on';
     }
     Config::define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
-    Config::define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST']);
+    Config::define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST'] . '/wp');
 }
 
 // Don't show deprecations; useful under PHP 5.5
