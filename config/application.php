@@ -48,6 +48,12 @@ if (file_exists($root_dir . '/.env')) {
 define('WP_ENV', env('WP_ENV') ?: 'production');
 
 /**
+ * URLs
+ */
+Config::define('WP_HOME', env('WP_HOME'));
+Config::define('WP_SITEURL', env('WP_SITEURL'));
+
+/**
  * Custom Content Directory
  */
 Config::define('CONTENT_DIR', '/app');
