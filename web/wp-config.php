@@ -10,17 +10,17 @@
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-require_once dirname(__DIR__) . '/config/application.php';
-
-if (file_exists(dirname(__DIR__) . '/config/application-pantheon.php') && isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-    require_once dirname(__DIR__) . '/config/application-pantheon.php';
-}
-
 /**
  * Pantheon platform settings. Everything you need should already be set.
  */
 if (file_exists(dirname(__FILE__) . '/wp-config-pantheon.php') && isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 	require_once(dirname(__FILE__) . '/wp-config-pantheon.php');
 }
+
+if (file_exists(dirname(__DIR__) . '/config/application-pantheon.php') && isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+    require_once dirname(__DIR__) . '/config/application-pantheon.php';
+}
+
+require_once dirname(__DIR__) . '/config/application.php';
 
 require_once ABSPATH . 'wp-settings.php';

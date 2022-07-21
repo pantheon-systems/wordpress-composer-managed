@@ -67,9 +67,6 @@ Config::define('DB_NAME', env('DB_NAME'));
 Config::define('DB_USER', env('DB_USER'));
 Config::define('DB_PASSWORD', env('DB_PASSWORD'));
 Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-if (!isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-}
 Config::define('DB_CHARSET', 'utf8mb4');
 Config::define('DB_COLLATE', '');
 $table_prefix = env('DB_PREFIX') ?: 'wp_';
@@ -106,6 +103,13 @@ Config::define('DISALLOW_FILE_EDIT', true);
 Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
+
+/**
+ * Pantheon modifications
+ */
+if (!env('DB_HOST')) {
+    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
+}
 
 /**
  * Debugging Settings
