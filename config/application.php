@@ -48,12 +48,6 @@ if (file_exists($root_dir . '/.env')) {
 define('WP_ENV', env('WP_ENV') ?: 'production');
 
 /**
- * URLs
- */
-Config::define('WP_HOME', env('WP_HOME'));
-Config::define('WP_SITEURL', env('WP_SITEURL'));
-
-/**
  * Custom Content Directory
  */
 Config::define('CONTENT_DIR', '/app');
@@ -107,7 +101,14 @@ Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
 /**
  * Pantheon modifications
  */
-if (!env('DB_HOST')) {
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
+} else {
+    /**
+     * URLs
+     */
+    Config::define('WP_HOME', env('WP_HOME'));
+    Config::define('WP_SITEURL', env('WP_SITEURL'));
     Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
 }
 
