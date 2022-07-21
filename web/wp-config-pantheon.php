@@ -56,6 +56,13 @@ if (getenv('WP_ENVIRONMENT_TYPE') === false) {
 }
 
 /**
+ * Force SSL
+ */
+if ( ! env('FORCE_SSL_ADMIN') ) {
+    Config::define( 'FORCE_SSL_ADMIN', true );
+}
+
+/**
  * Defaults you may override
  *
  * To override, define your constant in your wp-config.php before wp-config-pantheon.php is required.
