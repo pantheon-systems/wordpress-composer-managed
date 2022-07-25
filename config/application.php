@@ -1,7 +1,9 @@
 <?php
 /**
- * Your base production configuration goes in this file. Environment-specific
- * overrides go in their respective config/environments/{{WP_ENV}}.php file.
+ * IMPORTANT NOTE:
+ * Do not modify this file. This file is maintained by Pantheon.
+ *
+ * Your base production configuration goes in this file.
  *
  * A good default policy is to deviate from the production config as little as
  * possible. Try to define as much of your configuration in this file as you
@@ -30,13 +32,12 @@ $webroot_dir = $root_dir . '/web';
  * .env.local will override .env if it exists
  */
 $env_files = file_exists($root_dir . '/.env.local')
-    ? ['.env', '.env.local']
-    : ['.env'];
+    ? ['.env', '.env.pantheon', '.env.local']
+    : ['.env.pantheon'];
 
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable($root_dir, $env_files, false);
 if (file_exists($root_dir . '/.env')) {
     $dotenv->load();
-    $dotenv->required(['WP_HOME', 'WP_SITEURL']);
     if (!env('DATABASE_URL')) {
         $dotenv->required(['DB_NAME', 'DB_USER', 'DB_PASSWORD']);
     }
@@ -47,12 +48,6 @@ if (file_exists($root_dir . '/.env')) {
  * Default: production
  */
 define('WP_ENV', env('WP_ENV') ?: 'production');
-
-/**
- * URLs
- */
-Config::define('WP_HOME', env('WP_HOME'));
-Config::define('WP_SITEURL', env('WP_SITEURL'));
 
 /**
  * Custom Content Directory
@@ -97,13 +92,27 @@ Config::define('NONCE_SALT', env('NONCE_SALT'));
  * Custom Settings
  */
 Config::define('AUTOMATIC_UPDATER_DISABLED', true);
-Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
 // Disable the plugin and theme file editor in the admin
 Config::define('DISALLOW_FILE_EDIT', true);
 // Disable plugin and theme updates and installation from the admin
 Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
+
+/**
+ * Pantheon modifications
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
+} else {
+    /**
+     * URLs
+     */
+    Config::define('WP_HOME', env('WP_HOME'));
+    Config::define('WP_SITEURL', env('WP_SITEURL'));
+    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
+    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
+}
 
 /**
  * Debugging Settings
