@@ -56,11 +56,18 @@ wp-cli.local.yml
 web/app/mu-plugins/*/
 web/app/mu-plugins/loader.php
 
+# Plugins
+# Ignore the plugins directory by default. WordPress plugins should be managed
+# by Composer, where we have more control over the version constraints of the
+# plugins. If you have custom plugins, you will need to explicitly exclude them
+# from this rule like this:
+# !web/app/plugins/my-plugin
+web/app/plugins/*
+!web/app/plugins/.gitkeep
+
 # Themes
 
-# Ignore plugins (but don't ignore the directory itself).
-!web/app/plugins/
-web/app/plugins/*
+# Private files
 
 # Ignore themes (but don't ignore the directory itself).
 !web/app/themes/
