@@ -66,12 +66,15 @@ web/app/plugins/*
 !web/app/plugins/.gitkeep
 
 # Themes
+# We don't ignore all themes by default as these are most commonly where a
+# bulk of a site's custom code may be. However, we do ignore all of the
+# twenty-* themes by default. Any other Composer-managed themes should be
+# added to this list.
+web/app/themes/twenty*
 
 # Private files
 
-# Ignore themes (but don't ignore the directory itself).
-!web/app/themes/
-web/app/themes/*
+# Autoloader
 
 # Ignore files copied by scripts.
 web/index.php
