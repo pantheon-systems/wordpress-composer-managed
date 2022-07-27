@@ -83,6 +83,10 @@ web/private/*
 !web/private/config/
 
 # Autoloader
+# This file loads the Composer autoloader and is moved to the root directory by
+# pantheon-systems/composer-scaffold. This should not be moved or removed or it
+# could prevent the site from working correctly.
+/autoload.php
 
 # Ignore files copied by scripts.
 web/index.php
