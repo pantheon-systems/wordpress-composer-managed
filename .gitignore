@@ -1,26 +1,46 @@
-# Application
+# This file contains .gitignore rules that are often used with Composer-based
+# WordPress projects. Because .gitignore is specific to your site and its
+# deployment processes, you may need to uncomment, add, or remove rules.
+
+# The /web/app/ directory is used in favor of /wp-content in a traditional
+# WordPress project. This is where files are uploaded to, where plugins and
+# themes are installed and where other writeable directories are created.
+# Plugin, theme and mu-plugin paths are defined later and handled differently,
+# but in most cases, we don't want to version control anything in here.
+# It's unlikely that you would need to change any of these rules.
 web/app/upgrade
 web/app/uploads/*
 !web/app/uploads/.gitkeep
 web/app/cache/*
 
-# WordPress
+# WordPress is installed in web/wp so that it can be fully managed by Composer.
+# This ensures that the WordPress directory is clean and doesn't contain any
+# files other than those that come with the WordPress package.
 web/wp
 web/.htaccess
 
-# Logs
+# Logfiles should always be ignored.
 *.log
 
-# Dotenv
+# Environment (.env) files should be ignored as they are generally personal.
+# However, the .env.example and .env.pantheon files are left so that they can be
+# viewed and modified. You should not store any credentials in your
+# .env.pantheon file. Instead, those can go into environment-specific .env
+# files. Constants saved in .env files will override those constants that are
+# defined in wp-config-pantheon.php.
 .env
 .env.*
 !.env.example
 !.env.pantheon
 
-# Composer
+# Generally you should only ignore the root vendor directory. These files are
+# managed by Composer and should not be version controlled. It may be necessary
+# to explicitly allow /vendor directories within plugins or themes that are not
+# available through Wpackagist (which mirrors WordPress.org), like projects
+# that pull from Packagist or custom GitHub repositories.
 /vendor
 
-# WP-CLI
+# Any local WP-CLI rules should not be version controlled.
 wp-cli.local.yml
 
 # :::::::::::::::::::::: Pantheon Additions ::::::::::::::::::::::
