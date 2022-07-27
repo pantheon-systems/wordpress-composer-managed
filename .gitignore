@@ -73,17 +73,17 @@ web/app/plugins/*
 web/app/themes/twenty*
 
 # Private files
+# We want to ignore files inside web/private/ by default, but we don't want to
+# ignore the entire directory. The web/private/config directory is excluded from
+# this rule because this may contain information that should be shared across
+# environments and is not considered sensitive data. However, that exclusion
+# should be removed if that is not the case.
+!web/private/
+web/private/*
+!web/private/config/
 
 # Autoloader
 
 # Ignore files copied by scripts.
 web/index.php
 web/wp-cli.yml
-
-# Ignore private stuff (but don't ignore the directory itself).
-!web/private/
-web/private/*
-!web/private/scripts/
-web/private/scripts/quicksilver
-!web/private/config/
-/autoload.php
