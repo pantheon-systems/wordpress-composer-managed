@@ -46,10 +46,17 @@ wp-cli.local.yml
 # :::::::::::::::::::::: Pantheon Additions ::::::::::::::::::::::
 
 # Must-use plugins
+# Ignore packages uploaded to mu-plugins by default. These area typically
+# managed by composer as wordpress-muplugins. If you have custom mu-plugins,
+# you will need to explicitly exclude them from this rule like this:
+# !web/app/mu-plugins/my-muplugin/
+# By default, individual mu-plugin files are not ignored, so any bare file in
+# mu-plugins is version controlled. Exceptions to this rule are made to specific
+# files managed by Composer.
+web/app/mu-plugins/*/
+web/app/mu-plugins/loader.php
 
-# Ignore mu-plugins (but don't ignore the directory itself).
-!web/app/mu-plugins/
-web/app/mu-plugins/*
+# Themes
 
 # Ignore plugins (but don't ignore the directory itself).
 !web/app/plugins/
