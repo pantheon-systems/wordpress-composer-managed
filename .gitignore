@@ -45,8 +45,7 @@ wp-cli.local.yml
 
 # :::::::::::::::::::::: Pantheon Additions ::::::::::::::::::::::
 
-# Ignore the app directory
-web/app/*
+# Must-use plugins
 
 # Ignore mu-plugins (but don't ignore the directory itself).
 !web/app/mu-plugins/
