@@ -54,7 +54,6 @@ wp-cli.local.yml
 # mu-plugins is version controlled. Exceptions to this rule are made to specific
 # files managed by Composer.
 web/app/mu-plugins/*/
-web/app/mu-plugins/loader.php
 
 # Plugins
 # Ignore the plugins directory by default. WordPress plugins should be managed
@@ -87,7 +86,3 @@ web/private/*
 # pantheon-systems/composer-scaffold. This should not be moved or removed or it
 # could prevent the site from working correctly.
 /autoload.php
-
-# Ignore files copied by scripts.
-web/index.php
-web/wp-cli.yml
