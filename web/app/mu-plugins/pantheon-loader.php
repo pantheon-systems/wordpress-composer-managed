@@ -20,9 +20,8 @@ if ( ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) ) {
 	return;
 }
 
-// Add your mu-plugins here.
 $mu_plugins = [
-	'bedrock-disallow-indexing/bedrock-disallow-indexing.php',
+	// 'bedrock-disallow-indexing/bedrock-disallow-indexing.php',
 	'pantheon-mu-plugin/pantheon.php',
 ];
 
