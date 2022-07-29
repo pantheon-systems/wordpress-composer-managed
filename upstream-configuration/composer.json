@@ -1,0 +1,16 @@
+{
+    "name": "pantheon-upstreams/upstream-configuration",
+    "type": "project",
+    "version": "1.0.0",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org"
+        }
+    ],
+    "require": {},
+    "extra": {
+    }
+}
