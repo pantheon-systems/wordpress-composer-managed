@@ -42,7 +42,6 @@
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/pantheon-mu-plugin": "^1.0",
-    "pantheon-systems/quicksilver-pushback": "^2.1",
     "wpackagist-plugin/lh-hsts": "^1.25",
     "wpackagist-plugin/pantheon-advanced-page-cache": "^1.0",
     "wpackagist-plugin/wp-native-php-sessions": "^1.2"
