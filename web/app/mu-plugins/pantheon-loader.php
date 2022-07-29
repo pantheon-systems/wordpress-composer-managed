@@ -6,6 +6,14 @@
  * Author URI: https://pantheon.io
  * Version: 1.0
  * License: MIT
+ *
+ * IMPORTANT NOTE:
+ * Do not modify this file. This file is maintained by Pantheon.
+ *
+ * If you wish to add mu-plugins, please create your own PHP loader
+ * file inside the mu-plugins directory. This file may change in 
+ * future releases and modifications would cause conflicts when attempting
+ * to apply upstream updates.
  */
 
 if ( ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) ) {
