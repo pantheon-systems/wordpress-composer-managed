@@ -41,9 +41,10 @@
     "roots/wp-config": "1.0.0",
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentytwo": "^1.2",
-    "pantheon-systems/wordpress-bedrock-integrations": "^2.1",
     "pantheon-systems/pantheon-mu-plugin": "^1.0",
-    "pantheon-systems/composer-scaffold": "^1.0"
+    "wpackagist-plugin/lh-hsts": "^1.25",
+    "wpackagist-plugin/pantheon-advanced-page-cache": "^1.0",
+    "wpackagist-plugin/wp-native-php-sessions": "^1.2"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.2",
@@ -54,8 +55,7 @@
     "preferred-install": "dist",
     "allow-plugins": {
       "composer/installers": true,
-      "roots/wordpress-core-installer": true,
-      "pantheon-systems/composer-scaffold": true
+      "roots/wordpress-core-installer": true
     }
   },
   "minimum-stability": "dev",
