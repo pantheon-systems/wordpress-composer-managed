@@ -28,6 +28,10 @@
       "type": "composer",
       "url": "https://wpackagist.org",
       "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+    },
+    {
+        "type": "path",
+        "url": "upstream-configuration"
     }
   ],
   "require": {
@@ -42,6 +46,7 @@
     "roots/wp-password-bcrypt": "1.1.0",
     "wpackagist-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/pantheon-mu-plugin": "^1.0",
+    "pantheon-upstreams/upstream-configuration": "dev-main",
     "wpackagist-plugin/lh-hsts": "^1.25",
     "wpackagist-plugin/pantheon-advanced-page-cache": "^1.0",
     "wpackagist-plugin/wp-native-php-sessions": "^1.2"
@@ -73,12 +78,26 @@
       }
     }
   },
+  "autoload": {
+      "classmap": [
+          "upstream-configuration/scripts/ComposerScripts.php"
+      ]
+  },
   "scripts": {
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
     "test": [
       "phpcs"
+    ],
+    "pre-update-cmd": [
+        "WordPressComposerManaged\\ComposerScripts::preUpdate"
+    ],
+    "upstream-require": [
+        "WordPressComposerManaged\\ComposerScripts::upstreamRequire"
     ]
+  },
+  "scripts-descriptions": {
+      "upstream-require": "Add a dependency to an upstream. See https://pantheon.io/docs/create-custom-upstream for information on creating custom upstreams."
   }
 }
