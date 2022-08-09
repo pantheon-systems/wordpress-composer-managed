@@ -1,14 +1,14 @@
 # Composer-enabled WordPress template
 
-[![Unsupported](https://img.shields.io/badge/Pantheon-Unsupported-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#unsupported)
+[![Early Access](https://img.shields.io/badge/Pantheon-Early%20Access-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#early-access)
 
-This is Pantheon's recommended starting point for forking new [WordPress](https://wordpress.org) upstreams that work with the Platform's Integrated Composer build process. It is _intended to be_ the Platform's standard WordPress with Composer upstream.
+This is Pantheon's recommended starting point for forking new [WordPress](https://wordpress.org) upstreams that work with the Platform's Integrated Composer build process.
 
 Unlike with other Pantheon upstreams, the WordPress core install, which you are unlikely to adjust while building sites, is not in the main branch of the repository. Instead, it is referenced as dependencies within [Roots/Bedrock](https://roots.io/bedrock/) that are installed by [Composer](https://getcomposer.org).
 
-## Unsupported software
+## Early Access software
 
-_This tool is an early stage, proof-of-concept and is not recommended for use on production sites._ A previous iteration of this proof-of-concept can be [found here](https://github.com/pantheon-systems/wordpress-bedrock-recommended).
+A product in Early Access denotes a new project or feature set that is in development and available for a limited audience. Some features are stable, but the product is only partially complete and development is still in progress. For more information on support for Early Access projects, refer to our [documentation](https://pantheon.io/docs/guides/support/early-access/).
 
 <p align="center">
   <a href="https://roots.io/bedrock/">
