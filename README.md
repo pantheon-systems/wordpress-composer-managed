@@ -10,53 +10,16 @@ Unlike with other Pantheon upstreams, the WordPress core install, which you are 
 
 A product in Early Access denotes a new project or feature set that is in development and available for a limited audience. Some features are stable, but the product is only partially complete and development is still in progress. For more information on support for Early Access projects, refer to our [documentation](https://pantheon.io/docs/guides/support/early-access/).
 
-<p align="center">
+## Powered by Bedrock
+
+<p align="left">
   <a href="https://roots.io/bedrock/">
-    <img alt="Bedrock" src="https://cdn.roots.io/app/uploads/logo-bedrock.svg" height="100">
+    <img alt="Bedrock" src="https://cdn.roots.io/app/uploads/logo-bedrock.svg" height="50">
   </a>
 </p>
 
-<p align="center">
-  <a href="LICENSE.md">
-    <img alt="MIT License" src="https://img.shields.io/github/license/roots/bedrock?color=%23525ddc&style=flat-square" />
-  </a>
 
-  <a href="https://packagist.org/packages/roots/bedrock">
-    <img alt="Packagist" src="https://img.shields.io/packagist/v/roots/bedrock.svg?style=flat-square" />
-  </a>
-
-  <a href="https://github.com/roots/bedrock/actions/workflows/ci.yml">
-    <img alt="Build Status" src="https://img.shields.io/github/workflow/status/roots/bedrock/CI?style=flat-square" />
-  </a>
-
-  <a href="https://twitter.com/rootswp">
-    <img alt="Follow Roots" src="https://img.shields.io/twitter/follow/rootswp.svg?style=flat-square&color=1da1f2" />
-  </a>
-</p>
-
-<p align="center">
-  <strong>A modern WordPress stack</strong>
-</p>
-
-<p align="center">
-  <a href="https://roots.io/"><strong><code>Website</code></strong></a> &nbsp;&nbsp; <a href="https://docs.roots.io/bedrock/master/installation/"><strong><code>Documentation</code></strong></a> &nbsp;&nbsp; <a href="https://github.com/roots/bedrock/releases"><strong><code>Releases</code></strong></a> &nbsp;&nbsp; <a href="https://discourse.roots.io/"><strong><code>Support</code></strong></a>
-</p>
-
-## Sponsors
-
-**Bedrock** is an open source project and completely free to use.
-
-However, the amount of effort needed to maintain and develop new features and products within the Roots ecosystem is not sustainable without proper financial backing. If you have the capability, please consider [sponsoring Roots](https://github.com/sponsors/roots).
-
-<p align="center"><a href="https://github.com/sponsors/roots"><img height="32" src="https://img.shields.io/badge/sponsor%20roots-525ddc?logo=github&logoColor=ffffff&message=" alt="Sponsor Roots"></a></p>
-
-<div align="center">
-<a href="https://k-m.com/"><img src="https://cdn.roots.io/app/uploads/km-digital.svg" alt="KM Digital" width="148" height="111"></a> <a href="https://carrot.com/"><img src="https://cdn.roots.io/app/uploads/carrot.svg" alt="Carrot" width="148" height="111"></a> <a href="https://www.c21redwood.com/"><img src="https://cdn.roots.io/app/uploads/c21redwood.svg" alt="C21 Redwood Realty" width="148" height="111"></a> <a href="https://wordpress.com/"><img src="https://cdn.roots.io/app/uploads/wordpress.svg" alt="WordPress.com" width="148" height="111"></a> <a href="https://pantheon.io/"><img src="https://cdn.roots.io/app/uploads/pantheon.svg" alt="Pantheon" width="148" height="111"></a>
-</div>
-
-## Overview
-
-Bedrock is a modern WordPress stack that helps you get started with the best development tools and project structure.
+[Bedrock](https://roots.io/bedrock/) is a modern WordPress stack that helps you get started with the best development tools and project structure.
 
 Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](http://12factor.net/) methodology including the [WordPress specific version](https://roots.io/twelve-factor-wordpress/).
 
@@ -69,25 +32,31 @@ Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](htt
 - Autoloader for mu-plugins (use regular plugins as mu-plugins)
 - Enhanced security (separated web root and secure passwords with [wp-password-bcrypt](https://github.com/roots/wp-password-bcrypt))
 
-## Requirements
+## How to use this project
+There are two main ways to interact with this project template. **Using the Pantheon-maintained WordPress Composer Managed upstream** or **forking this repository to create a custom upstream.**
 
-- PHP >= 7.4
-- Composer - [Install](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx)
+### Using the Pantheon WordPress Composer Managed upstream (recommended)
 
-## Installation
+1. Use Terminus to create a site from the Pantheon upstream:
+```
+terminus site:create --org ORG --region REGION -- <site_name> <label> "WordPress (Composer Managed)"
+```
+1. In the Dev environment, click **Visit Development Site** and follow the prompts to complete the CMS installation.
+2. [Clone the site locally](https://pantheon.io/docs/local-development#get-the-code) and run `composer install`.
 
-1. Create a new project:
-   ```sh
-   $ composer create-project roots/bedrock
-   ```
-   By default, this installs the `dist` version of all dependent packages.  To install the `source` versions instead, update `composer.json` as follows:
-   ```json
-    "preferred-install": {
-      "roots/wordpress-no-content": "dist",
-      "*": "source"
-    },
-   ```
-2. Update environment variables in the `.env` file. Wrap values that may contain non-alphanumeric characters with quotes, or they may be incorrectly parsed.
+### Fork this repository to create a custom upstream (advanced)
+
+**Note:** It's highly recommended that you use the Pantheon-maintained upstream in favor of creating and managing a custom upstream so you can be sure to receive the latest updates. Managing your own custom upstream means that you assume ownership of the upstream and all changes made to it and assumes that you will manage all updates to the upstream.
+
+1. Fork this repository into your own GitHub profile.
+2. [Add a new Custom Upstream](https://pantheon.io/docs/guides/custom-upstream/create-custom-upstream#connect-repository-to-pantheon) on the Pantheon Dashboard.
+3. Create a new WordPress site from the Upstream.
+
+## Using Roots Bedrock
+
+### Environment Variables
+
+Bedrock makes use of an `.env` file to store environment variables. Pantheon takes care of many of these variabled in `.env.pantheon`. You may set your own environment variables in a new `.env` or environment variables that are local-only in `.env.local` using the `.env.example` as a guide. Wrap values that may contain non-alphanumeric characters with quotes, or they may be incorrectly parsed.
 
 - Database variables
   - `DB_NAME` - Database name
@@ -100,18 +69,64 @@ Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](htt
 - `WP_SITEURL` - Full URL to WordPress including subdirectory (https://example.com/wp)
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
   - Generate with [wp-cli-dotenv-command](https://github.com/aaemnnosttv/wp-cli-dotenv-command)
-  - Generate with [our WordPress salts generator](https://roots.io/salts.html)
+  - Regenerate with [Bedrock's WordPress salts generator](https://roots.io/salts.html)
 
-3. Add theme(s) in `web/app/themes/` as you would for a normal WordPress site
-4. Set the document root on your webserver to Bedrock's `web` folder: `/path/to/site/web/`
-5. Access WordPress admin at `https://example.com/wp/wp-admin/`
+### WordPress Config
+
+The `wp-config.php` file is located in the `web` directory. As with other WordPress sites on Pantheon, much of this is taken care of for you in `wp-config-pantheon.php`. Application-level configuration takes place in `config/application.php`. This can be referenced as a guide to understand how the constants are set up and how the `.env` files work, but modifying this file may result in merge conflicts and is not recommended. Any configuration changes should be made to your `wp-config.php` file directly.
+
+You can learn more about WordPress configuration with Bedrock in the [Bedrock Configuration docs](https://docs.roots.io/bedrock/master/configuration/).
+
+### Understanding the WordPress codebase
+
+Bedrock installs WordPress as a required package so updates can be managed by Composer. As such, the contents of the `wp-content` directory have been moved outside the WordPress codebase so changes can be made safely to files within those directories without conflicts.
+
+* Theme are installed into `web/app/themes/`.
+* Plugins are installed into `web/app/plugins`.
+* Must-use plugins are installed into `web/app/mu-plugins`.
+* The WordPress admin dashboard is available at `https://example.com/wp/wp-admin/`
+
+### Using Composer to manage plugins and themes
+
+[Packagist](https://packagist.org) is a repository of Composer packages that are available by default to projects managed by Composer. Packagist libraries receive updates from their source GitHub repositories automatically.
+
+[WPackagist](https://wpackagist.org) is a Packagist-like mirror of the WordPress.org [plugin](https://wordpress.org/plugins) and [theme](https://wordpress.org/themes) repositories and is included with Bedrock out of the box. 
+
+You may install packages from Packagist or WPackagist without any additional configuration using `composer upstream-require`.
+
+#### Requiring a package from Packagist
+
+Some WordPress developers push their packages to Packagist in addition to the WordPress plugin and theme repositories. In this way, it may be beneficial to pull those packages directly from Packagist to get the latest code directly from the source.
+
+```
+composer upstream-require yoast/wordpress-seo
+```
+
+Packages that are flagged as `wordpress-plugin`, `wordpress-theme` or `wordpress-muplugin` in their `composer.json` files will be installed automatically in the appropriate `web/app/` directory by Composer.
+
+#### Requiring a package from WPackagist
+
+For all other plugins and themes that are not managed on Packagist, you can use `composer upstream-require` as well, using `wpackagist-plugin` or `wpackagist-theme` as the vendor and the plugin or theme slug as the package name.
+
+```
+composer upstream-require wpackagist-theme/twentytwentytwo
+```
+
+```
+composer upstream-require wpackagist-plugin/advanced-custom-fields
+```
+
+## Contributing
+
+Contributions are welcome in the form of GitHub pull requests. However, the `pantheon-upstreams/wordpress-composer-managed` repository is a mirror that does not directly accept pull requests.
+
+Instead, to propose a change, please fork [pantheon-systems/wordpress-composer-managed](https://github.com/pantheon-systems/wordpress-composer-managed) and submit a PR to that repository.
 
 ## Community
 
-Keep track of development and community news.
+There are large, thriving communities in both the Roots ecosystem and the Pantheon community that you can reach out to if you have any questions. 
 
-- Join us on Discord by [sponsoring us on GitHub](https://github.com/sponsors/roots)
-- Participate on the [Roots Discourse](https://discourse.roots.io/)
-- Follow [@rootswp on Twitter](https://twitter.com/rootswp)
-- Read and subscribe to the [Roots Blog](https://roots.io/blog/)
-- Subscribe to the [Roots Newsletter](https://roots.io/subscribe/)
+- Join the [Pantheon Community Slack](https://join.slack.com/t/pantheon-community/shared_invite/zt-1e1reft3q-UXHfFovNWlUkBxodEkExBQ) and check out the #wordpress and #composer-workflow channels
+- Join the Roots community on Discord by [sponsoring them on GitHub](https://github.com/sponsors/roots)
+- Participate on the [Roots Discourse](https://discourse.roots.io/) or the [Pantheon Community Forums](https://discuss.pantheon.io/).
+- Follow [@rootswp](https://twitter.com/rootswp) and [@getpantheon](https://twitter.com/getpantheon) on Twitter
