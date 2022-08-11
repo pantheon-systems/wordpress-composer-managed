@@ -69,7 +69,7 @@ Bedrock makes use of an `.env` file to store environment variables. Pantheon tak
 - `WP_SITEURL` - Full URL to WordPress including subdirectory (https://example.com/wp)
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
   - Generate with [wp-cli-dotenv-command](https://github.com/aaemnnosttv/wp-cli-dotenv-command)
-  - Generate with [Bedrock's WordPress salts generator](https://roots.io/salts.html)
+  - Regenerate with [Bedrock's WordPress salts generator](https://roots.io/salts.html)
 
 ### WordPress Config
 
