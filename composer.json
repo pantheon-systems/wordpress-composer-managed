@@ -30,8 +30,8 @@
     "bedrock", "composer", "roots", "wordpress", "wp", "wp-config", "pantheon"
   ],
   "support": {
-    "issues": "https://github.com/roots/bedrock/issues",
-    "forum": "https://discourse.roots.io/category/bedrock"
+    "issues": "https://github.com/pantheon-systems/wordpress-composer-managed/issues",
+    "forum": "https://discuss.pantheon.io"
   },
   "repositories": [
     {
