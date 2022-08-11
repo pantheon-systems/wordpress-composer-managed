@@ -39,7 +39,7 @@ There are two main ways to interact with this project template. **Using the Pant
 
 1. Use Terminus to create a site from the Pantheon upstream:
 ```
-terminus site:create --org ORG --region REGION -- site_name> <label> "WordPress Composer Managed"
+terminus site:create --org ORG --region REGION -- <site_name> <label> "WordPress (Composer Managed)"
 ```
 1. In the Dev environment, click **Visit Development Site** and follow the prompts to complete the CMS installation.
 2. [Clone the site locally](https://pantheon.io/docs/local-development#get-the-code) and run `composer install`.
@@ -73,7 +73,7 @@ Bedrock makes use of an `.env` file to store environment variables. Pantheon tak
 
 ### WordPress Config
 
-The `wp-config.php` file is located in the `web` directory. As with other WordPress sites on Pantheon, much of this is taken care of for you in `wp-config-pantheon.php` Application-level configuration takes place in `config/application.php`. This can be referenced as a guide to understand how the constants are set up and how the `.env` files work, but modifying this file may result in merge conflicts and is not recommended. Any configuration changes should be made to your `wp-config.php` file directly.
+The `wp-config.php` file is located in the `web` directory. As with other WordPress sites on Pantheon, much of this is taken care of for you in `wp-config-pantheon.php`. Application-level configuration takes place in `config/application.php`. This can be referenced as a guide to understand how the constants are set up and how the `.env` files work, but modifying this file may result in merge conflicts and is not recommended. Any configuration changes should be made to your `wp-config.php` file directly.
 
 You can learn more about WordPress configuration with Bedrock in the [Bedrock Configuration docs](https://docs.roots.io/bedrock/master/configuration/).
 
@@ -118,7 +118,7 @@ composer upstream-require wpackagist-plugin/advanced-custom-fields
 
 ## Contributing
 
-Contributions are welcom in the form of GitHub pull requests. However, the `pantheon-upstreams/wordpress-composer-managed` repository is a mirror that does not directly accept pull requests.
+Contributions are welcome in the form of GitHub pull requests. However, the `pantheon-upstreams/wordpress-composer-managed` repository is a mirror that does not directly accept pull requests.
 
 Instead, to propose a change, please fork [pantheon-systems/wordpress-composer-managed](https://github.com/pantheon-systems/wordpress-composer-managed) and submit a PR to that repository.
 
