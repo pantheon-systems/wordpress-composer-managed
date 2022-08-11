@@ -1,9 +1,9 @@
 {
-  "name": "roots/bedrock",
+  "name": "pantheon-systems/wordpress-composer-managed",
   "type": "project",
   "license": "MIT",
-  "description": "WordPress boilerplate with Composer, easier configuration, and an improved folder structure",
-  "homepage": "https://roots.io/bedrock/",
+  "description": "Pantheon's recommended starting point for WordPress upstreams using the platform's Integrated Composer build process.",
+  "homepage": "https://pantheon.io/docs/guides/wordpress-composer",
   "authors": [
     {
       "name": "Scott Walkinshaw",
