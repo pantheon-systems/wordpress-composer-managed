@@ -6,6 +6,10 @@
   "homepage": "https://pantheon.io/docs/guides/wordpress-composer",
   "authors": [
     {
+      "name": "Pantheon Systems",
+      "homepage": "https://pantheon.io"
+    },
+    {
       "name": "John Spellman",
       "email": "john.spellman@pantheon.io",
       "homepage": "https://github.com/jspellman814"
