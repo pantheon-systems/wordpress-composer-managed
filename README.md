@@ -35,7 +35,7 @@ Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](htt
 ## How to use this project
 There are two main ways to interact with this project template. **Using the Pantheon-maintained WordPress Composer Managed upstream** or **forking this repository to create a custom upstream.**
 
-### Using the Pantheon WordPress Composer Managed upstream
+### Using the Pantheon WordPress Composer Managed upstream (recommended)
 
 1. Use Terminus to create a site from the Pantheon upstream:
 ```
@@ -44,6 +44,7 @@ terminus site:create --org ORG --region REGION -- site_name> <label> "WordPress 
 1. In the Dev environment, click **Visit Development Site** and follow the prompts to complete the CMS installation.
 2. [Clone the site locally](https://pantheon.io/docs/local-development#get-the-code) and run `composer install`.
 
+### Fork this repository to create a custom upstream (advanced)
 
 **Note:** It's highly recommended that you use the Pantheon-maintained upstream in favor of creating and managing a custom upstream so you can be sure to receive the latest updates. Managing your own custom upstream means that you assume ownership of the upstream and all changes made to it and assumes that you will manage all updates to the upstream.
 
