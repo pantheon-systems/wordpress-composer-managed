@@ -44,12 +44,12 @@ terminus site:create --org ORG --region REGION -- site_name> <label> "WordPress 
 1. In the Dev environment, click **Visit Development Site** and follow the prompts to complete the CMS installation.
 2. [Clone the site locally](https://pantheon.io/docs/local-development#get-the-code) and run `composer install`.
 
-### Fork this repository to create a custom upstream
+
+**Note:** It's highly recommended that you use the Pantheon-maintained upstream in favor of creating and managing a custom upstream so you can be sure to receive the latest updates. Managing your own custom upstream means that you assume ownership of the upstream and all changes made to it and assumes that you will manage all updates to the upstream.
+
 1. Fork this repository into your own GitHub profile.
 2. [Add a new Custom Upstream](https://pantheon.io/docs/guides/custom-upstream/create-custom-upstream#connect-repository-to-pantheon) on the Pantheon Dashboard.
 3. Create a new WordPress site from the Upstream.
-
-**Note:** It's highly recommended that you use the Pantheon-maintained upstream in favor of creating and managing a custom upstream so you can be sure to receive the latest updates. Managing your own custom upstream means that you assume ownership of the upstream and all changes made to it and assumes that you will manage all updates to the upstream.
 
 ## Using Roots Bedrock
 
