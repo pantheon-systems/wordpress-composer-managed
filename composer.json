@@ -6,6 +6,16 @@
   "homepage": "https://pantheon.io/docs/guides/wordpress-composer",
   "authors": [
     {
+      "name": "John Spellman",
+      "email": "john.spellman@pantheon.io",
+      "homepage": "https://github.com/jspellman814"
+    },
+    {
+      "name": "Chris Reynolds",
+      "email": "chris.reynolds@pantheon.io",
+      "homepage": "https://github.com/jazzsequence"
+    },
+    {
       "name": "Scott Walkinshaw",
       "email": "scott.walkinshaw@gmail.com",
       "homepage": "https://github.com/swalkinshaw"
