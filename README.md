@@ -39,7 +39,7 @@ There are two main ways to interact with this project template. **Using the Pant
 
 1. Use Terminus to create a site from the Pantheon upstream:
 ```
-terminus site:create --org ORG --region REGION -- site_name> <label> "WordPress Composer Managed"
+terminus site:create --org ORG --region REGION -- <site_name> <label> "WordPress Composer Managed"
 ```
 1. In the Dev environment, click **Visit Development Site** and follow the prompts to complete the CMS installation.
 2. [Clone the site locally](https://pantheon.io/docs/local-development#get-the-code) and run `composer install`.
