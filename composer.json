@@ -35,6 +35,7 @@
   ],
   "support": {
     "issues": "https://github.com/pantheon-systems/wordpress-composer-managed/issues",
+    "docs": "https://pantheon.io/docs/guides/wordpress-composer",
     "forum": "https://discuss.pantheon.io"
   },
   "repositories": [
