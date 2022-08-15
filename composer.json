@@ -1,10 +1,24 @@
 {
-  "name": "roots/bedrock",
+  "name": "pantheon-systems/wordpress-composer-managed",
   "type": "project",
   "license": "MIT",
-  "description": "WordPress boilerplate with Composer, easier configuration, and an improved folder structure",
-  "homepage": "https://roots.io/bedrock/",
+  "description": "Pantheon's recommended starting point for WordPress upstreams using the platform's Integrated Composer build process.",
+  "homepage": "https://pantheon.io/docs/guides/wordpress-composer",
   "authors": [
+    {
+      "name": "Pantheon Systems",
+      "homepage": "https://pantheon.io"
+    },
+    {
+      "name": "John Spellman",
+      "email": "john.spellman@pantheon.io",
+      "homepage": "https://github.com/jspellman814"
+    },
+    {
+      "name": "Chris Reynolds",
+      "email": "chris.reynolds@pantheon.io",
+      "homepage": "https://github.com/jazzsequence"
+    },
     {
       "name": "Scott Walkinshaw",
       "email": "scott.walkinshaw@gmail.com",
@@ -17,11 +31,12 @@
     }
   ],
   "keywords": [
-    "bedrock", "composer", "roots", "wordpress", "wp", "wp-config"
+    "bedrock", "composer", "roots", "wordpress", "wp", "wp-config", "pantheon"
   ],
   "support": {
-    "issues": "https://github.com/roots/bedrock/issues",
-    "forum": "https://discourse.roots.io/category/bedrock"
+    "issues": "https://github.com/pantheon-systems/wordpress-composer-managed/issues",
+    "docs": "https://pantheon.io/docs/guides/wordpress-composer",
+    "forum": "https://discuss.pantheon.io"
   },
   "repositories": [
     {
