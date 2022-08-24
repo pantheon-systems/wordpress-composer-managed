@@ -10,13 +10,8 @@ set -euo pipefail
 
 . devops/scripts/commit-type.sh
 
-# Copy patch and README file to tmp directory for use after checkout.
-echo "Copying decoupledpatch and decoupled-README to /tmp for use later."
-cp devops/scripts/decoupledpatch.sh /tmp/decoupledpatch.sh
-cp devops/files/decoupled-README.md /tmp/decoupled-README.md
-
-git remote add decoupled "$UPSTREAM_DECOUPLED_REPO_REMOTE_URL"
-git fetch decoupled
+git remote add public "$UPSTREAM_DECOUPLED_REPO_REMOTE_URL"
+git fetch public
 git checkout "${CIRCLE_BRANCH}"
 
 echo
@@ -25,50 +20,20 @@ echo "Preparing to release to upstream org"
 echo "-----------------------------------------------------------------------"
 echo
 
-# List commits between decoupled-release-pointer and HEAD, in reverse
-newcommits=$(git log decoupled-release-pointer..HEAD --reverse --pretty=format:"%h")
+# List commits between release-pointer and HEAD, in reverse
+newcommits=$(git log release-pointer..HEAD --reverse --pretty=format:"%h")
 commits=()
-
-# There are a small number of commits which must be manually excluded, usually
-# due to changes in the commit type rules which would retroactively include commits
-# which were not initially included, causing merge conflicts. Commits which should
-# be excluded can be added to this array and will not be cherry picked.
-exclude_list=(0099a8b)
 
 # Identify commits that should be released
 for commit in $newcommits; do
-  # Exclude commits which have been manually rejected
-  skip=false
-  for item in "${exclude_list[@]}"; do
-    if [[ $item == "$commit" ]]; then
-      echo "Commit ${commit} has been manually excluded."
-      skip=true
-    fi
-  done
-
-  if [[ $skip == true ]] ; then
-      continue
-  fi
-
   commit_type=$(identify_commit_type "$commit")
   if [[ $commit_type == "normal" ]] ; then
-    commits+=("$commit")
+    commits+=($commit)
   fi
 
   if [[ $commit_type == "mixed" ]] ; then
-    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Skipping this commit."
-    echo "You may wish to ensure that nothing in this commit is meant for release."
-    delete=("${commit}")
-    for remove in "${delete[@]}"; do
-      if (( ${#commits[@]} )); then
-        # shellcheck disable=SC2034
-        for i in "${commits[@]}"; do
-          if [[ ${commits[0]} = "$remove" ]]; then
-            unset 'commits[i]'
-          fi
-        done
-      fi
-    done
+    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Cannot proceed."
+    exit 1
   fi
 done
 
@@ -79,8 +44,13 @@ if [[ ${#commits[@]} -eq 0 ]] ; then
   exit 1
 fi
 
+# Copy patch and README file to tmp directory for use after checkout.
+echo "Copying decoupledpatch and decoupled-README to /tmp for use later."
+cp devops/scripts/decoupledpatch.sh /tmp/decoupledpatch.sh
+cp devops/files/decoupled-README.md /tmp/decoupled-README.md
+
 # Cherry-pick commits not modifying circle config onto the release branch
-git checkout -b decoupled --track decoupled/main
+git checkout -b public --track public/main
 git pull
 
 if [[ "$CIRCLECI" != "" ]]; then
@@ -94,7 +64,7 @@ for commit in "${commits[@]}"; do
   fi
   echo "Adding $commit:"
   git --no-pager log --format=%B -n 1 "$commit"
-  git cherry-pick -rn -X theirs "$commit" 2>&1
+  git cherry-pick -rn "$commit" 2>&1
   # Product request - single commit per release
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
@@ -102,7 +72,6 @@ for commit in "${commits[@]}"; do
 done
 
 echo "Executing decoupledpatch.sh"
-# shellcheck source=devops/scripts/decoupledpatch.sh
 . /tmp/decoupledpatch.sh
 
 echo "Copying README to docroot."
@@ -117,13 +86,7 @@ echo
 echo "Releasing to upstream org"
 echo
 
-# Push to the decoupled repository
-git push decoupled decoupled:main
+# Push to the public repository
+git push public public:main
 
-git checkout "$CIRCLE_BRANCH"
-
-# update the decoupled-release-pointer
-git tag -f -m 'Last commit set on upstream repo' decoupled-release-pointer HEAD
-
-# Push decoupled-release-pointer
-git push -f origin decoupled-release-pointer
+git checkout $CIRCLE_BRANCH
