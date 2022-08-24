@@ -10,8 +10,8 @@ set -euo pipefail
 
 . devops/scripts/commit-type.sh
 
-git remote add public "$UPSTREAM_DECOUPLED_REPO_REMOTE_URL"
-git fetch public
+git remote add decoupled "$UPSTREAM_DECOUPLED_REPO_REMOTE_URL"
+git fetch decoupled
 git checkout "${CIRCLE_BRANCH}"
 
 echo
@@ -50,7 +50,7 @@ cp devops/scripts/decoupledpatch.sh /tmp/decoupledpatch.sh
 cp devops/files/decoupled-README.md /tmp/decoupled-README.md
 
 # Cherry-pick commits not modifying circle config onto the release branch
-git checkout -b public --track public/main
+git checkout -b decoupled --track decoupled/main
 git pull
 
 if [[ "$CIRCLECI" != "" ]]; then
@@ -86,7 +86,7 @@ echo
 echo "Releasing to upstream org"
 echo
 
-# Push to the public repository
-git push public public:main
+# Push to the decoupled repository
+git push decoupled decoupled:main
 
 git checkout $CIRCLE_BRANCH
