@@ -35,9 +35,7 @@ function identify_commit_type() {
 # Verifies that the given commit does not contain forbidden files.
 function only_allowed_files() {
   local commit=$1
-  local forbidden_files = (
-    "composer.lock"
-  )
+  local forbidden_files=("composer.lock")
   local has_forbidden_files=0
 
   affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
@@ -48,7 +46,7 @@ function only_allowed_files() {
     fi
   done
 
-  if [[ $has_forbidden_files -e 0 ]]; then
+  if [[ $has_forbidden_files -eq 0 ]]; then
     echo "ok"
     return 0
   fi
