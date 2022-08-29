@@ -36,7 +36,7 @@ for commit in $prcommits; do
   fi
 done
 
-if [[ -n $status ]] ; then
+if [[ $status -eq 0 ]] ; then
   >&2 echo "OK to deploy. After merging PR, push the 'release' branch. See README-internal.md"
 fi
 
