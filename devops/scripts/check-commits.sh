@@ -28,9 +28,15 @@ for commit in $prcommits; do
     >&2 echo "Commit ${commit} contains both release and nonrelease changes. Please split into mutliple commits."
     status=1
   fi
+
+  only_allowed_files=$(only_allowed_files "$commit")
+  if [[ $only_allowed_files == "forbidden" ]] ; then
+    >&2 echo "Commit ${commit} contains forbidden files. Please remove them."
+    status=1
+  fi
 done
 
-if [[ -n $status ]] ; then
+if [[ $status -eq 0 ]] ; then
   >&2 echo "OK to deploy. After merging PR, push the 'release' branch. See README-internal.md"
 fi
 
