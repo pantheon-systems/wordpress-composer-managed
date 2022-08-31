@@ -11,9 +11,7 @@ $SED -i'' 's#"name": "pantheon-systems/wordpress-composer-managed"#"name": "pant
 # targets for the following step.
 $SED -i'' -n 'p;s/"roots\/wordpress":/PTARGET1&/p' composer.json
 $SED -i'' -n 'p;s/PTARGET1/PTARGET2&/p' composer.json
-$SED -i'' -n 'p;s/PTARGET2/PTARGET3&/p' composer.json
 
 # Having duplicated the previous lines, we do a standard replace operation.
-$SED -i'' 's#PTARGET3.*#"pantheon-systems/pantheon-decoupled-auth-example": "^1.0",#g' composer.json
 $SED -i'' 's#PTARGET2.*#"pantheon-systems/pantheon-decoupled": "^1.0",#g' composer.json
 $SED -i'' 's#PTARGET1.*#"wpackagist-plugin/wp-gatsby": "^2.0",#g' composer.json
