@@ -10,6 +10,8 @@ Unlike with other Pantheon upstreams, the WordPress core install, which you are 
 
 A product in Early Access denotes a new project or feature set that is in development and available for a limited audience. Some features are stable, but the product is only partially complete and development is still in progress. For more information on support for Early Access projects, refer to our [documentation](https://pantheon.io/docs/guides/support/early-access/).
 
+Want to participate in the Early Access program? [Fill out this request form.](https://docs.google.com/forms/d/e/1FAIpQLSe5WvxnzA7_U7B4clhhIYsPxI7DXkmQC-Y8J6pXmrbHYPzviw/viewform?usp=sf_link)
+
 ## Powered by Bedrock
 
 <p align="left">
