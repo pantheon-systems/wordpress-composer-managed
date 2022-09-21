@@ -32,6 +32,7 @@ web/.htaccess
 .env.*
 !.env.example
 !.env.pantheon
+!.env.local-sample
 
 # Generally you should only ignore the root vendor directory. These files are
 # managed by Composer and should not be version controlled. It may be necessary
