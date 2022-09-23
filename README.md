@@ -50,9 +50,13 @@ terminus site:create --org ORG --region REGION -- <site_name> <label> "WordPress
 
 **Note:** It's highly recommended that you use the Pantheon-maintained upstream in favor of creating and managing a custom upstream so you can be sure to receive the latest updates. Managing your own custom upstream means that you assume ownership of the upstream and all changes made to it and assumes that you will manage all updates to the upstream.
 
-1. Fork this repository into your own GitHub profile.
-2. [Add a new Custom Upstream](https://pantheon.io/docs/guides/custom-upstream/create-custom-upstream#connect-repository-to-pantheon) on the Pantheon Dashboard.
-3. Create a new WordPress site from the Upstream.
+1. Fork the [`pantheon-upstreams` version of this repository](https://github.com/pantheon-upstreams/wordpress-composer-managed) into your own (or your organization's) GitHub profile.
+2. Create a branch off of `main` called `master` and set this to the default branch for your custom upstream.
+3. [Add a new Custom Upstream](https://pantheon.io/docs/guides/custom-upstream/create-custom-upstream#connect-repository-to-pantheon) on the Pantheon Dashboard.
+4. Create a new WordPress site from the Upstream.
+
+#### On the use of `master` for custom upstreams
+We acknowledge and apologize for the continued use of the `master` branch name. We understand that the use of the word `master` is offensive and hurtful to people in our community, and changing branch names to `main` has been on our roadmap for [a long time](https://discuss.pantheon.io/t/changing-primary-branch-name/1305). We strive to be an [inclusive platform](https://pantheon.io/docs/inclusive-language) and we know that until we are able to completely rename all of our `master` branch names to something less offensive, we still have work to do. Unfortunately in this context, at a platform level, the use of `master` is hard-coded as the expected default branch name and therefore, when creating custom upstreams off of this repository (which uses `main` by default), a `master` branch is necessary for the platform to recognize the upstream without errors or the assistance of Customer Support. We hope this is a temporary solution and that the platform-level changes can happen soon, and we appreciate your continued patience as we transition our default branch names. Alternately, you can use a [CI-based build workflow](https://pantheon.io/docs/guides/wordpress-composer/create-wp-site-composer-ci-auto-test) to automate pushing your code to `master` on the Pantheon side, but keep the `main` branch naming scheme (or any other branch name) in your custom upstream's repository.
 
 ## Using Roots Bedrock
 
