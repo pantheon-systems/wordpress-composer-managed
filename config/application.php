@@ -50,13 +50,6 @@ if (file_exists($root_dir . '/.env')) {
 define('WP_ENV', env('WP_ENV') ?: 'production');
 
 /**
- * Custom Content Directory
- */
-Config::define('CONTENT_DIR', '/app');
-Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
-Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
-
-/**
  * DB settings
  */
 Config::define('DB_NAME', env('DB_NAME'));
@@ -77,18 +70,6 @@ if (env('DATABASE_URL')) {
 }
 
 /**
- * Authentication Unique Keys and Salts
- */
-Config::define('AUTH_KEY', env('AUTH_KEY'));
-Config::define('SECURE_AUTH_KEY', env('SECURE_AUTH_KEY'));
-Config::define('LOGGED_IN_KEY', env('LOGGED_IN_KEY'));
-Config::define('NONCE_KEY', env('NONCE_KEY'));
-Config::define('AUTH_SALT', env('AUTH_SALT'));
-Config::define('SECURE_AUTH_SALT', env('SECURE_AUTH_SALT'));
-Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
-Config::define('NONCE_SALT', env('NONCE_SALT'));
-
-/**
  * Pantheon modifications
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
@@ -102,6 +83,25 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONM
     Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
     Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
 }
+
+/**
+ * Custom Content Directory
+ */
+Config::define('CONTENT_DIR', '/app');
+Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
+Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
+
+/**
+ * Authentication Unique Keys and Salts
+ */
+Config::define('AUTH_KEY', env('AUTH_KEY'));
+Config::define('SECURE_AUTH_KEY', env('SECURE_AUTH_KEY'));
+Config::define('LOGGED_IN_KEY', env('LOGGED_IN_KEY'));
+Config::define('NONCE_KEY', env('NONCE_KEY'));
+Config::define('AUTH_SALT', env('AUTH_SALT'));
+Config::define('SECURE_AUTH_SALT', env('SECURE_AUTH_SALT'));
+Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
+Config::define('NONCE_SALT', env('NONCE_SALT'));
 
 /**
  * Custom Settings
