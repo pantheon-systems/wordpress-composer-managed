@@ -44,32 +44,10 @@ if (file_exists($root_dir . '/.env')) {
 }
 
 /**
- * Pantheon modifications
- */
-if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
-    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
-} else {
-    /**
-     * URLs
-     */
-    Config::define('WP_HOME', env('WP_HOME'));
-    Config::define('WP_SITEURL', env('WP_SITEURL'));
-    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
-}
-
-/**
  * Set up our global environment constant and load its config first
  * Default: production
  */
 define('WP_ENV', env('WP_ENV') ?: 'production');
-
-/**
- * Custom Content Directory
- */
-Config::define('CONTENT_DIR', '/app');
-Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
-Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
 
 /**
  * DB settings
@@ -90,6 +68,28 @@ if (env('DATABASE_URL')) {
     Config::define('DB_PASSWORD', isset($dsn->pass) ? $dsn->pass : null);
     Config::define('DB_HOST', isset($dsn->port) ? "{$dsn->host}:{$dsn->port}" : $dsn->host);
 }
+
+/**
+ * Pantheon modifications
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
+    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
+} else {
+    /**
+     * URLs
+     */
+    Config::define('WP_HOME', env('WP_HOME'));
+    Config::define('WP_SITEURL', env('WP_SITEURL'));
+    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
+    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
+}
+
+/**
+ * Custom Content Directory
+ */
+Config::define('CONTENT_DIR', '/app');
+Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
+Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
 
 /**
  * Authentication Unique Keys and Salts
