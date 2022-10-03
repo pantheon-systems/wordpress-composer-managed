@@ -44,21 +44,6 @@ if (file_exists($root_dir . '/.env')) {
 }
 
 /**
- * Pantheon modifications
- */
-if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
-    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
-} else {
-    /**
-     * URLs
-     */
-    Config::define('WP_HOME', env('WP_HOME'));
-    Config::define('WP_SITEURL', env('WP_SITEURL'));
-    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
-}
-
-/**
  * Set up our global environment constant and load its config first
  * Default: production
  */
@@ -102,6 +87,21 @@ Config::define('AUTH_SALT', env('AUTH_SALT'));
 Config::define('SECURE_AUTH_SALT', env('SECURE_AUTH_SALT'));
 Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
 Config::define('NONCE_SALT', env('NONCE_SALT'));
+
+/**
+ * Pantheon modifications
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
+    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
+} else {
+    /**
+     * URLs
+     */
+    Config::define('WP_HOME', env('WP_HOME'));
+    Config::define('WP_SITEURL', env('WP_SITEURL'));
+    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
+    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
+}
 
 /**
  * Custom Settings
