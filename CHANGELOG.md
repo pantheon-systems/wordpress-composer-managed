@@ -1,4 +1,7 @@
 
+### 2022-10-17
+* Load global .env file even if .env.local is absent ([#32](https://github.com/pantheon-systems/wordpress-composer-managed/pull/32))
+
 ### 2022-10-14
 * Set permalink structure in build-env.install-cms Composer extra property ([#30](https://github.com/pantheon-systems/wordpress-composer-managed/pull/30))
 
