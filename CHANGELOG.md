@@ -1,3 +1,13 @@
+
+### 2022-10-17
+* Load global .env file even if .env.local is absent ([#32](https://github.com/pantheon-systems/wordpress-composer-managed/pull/32))
+
+### 2022-10-14
+* Set permalink structure in build-env.install-cms Composer extra property ([#30](https://github.com/pantheon-systems/wordpress-composer-managed/pull/30))
+
+### 2022-10-03
+* Move Pantheon modifications in application.php ([#29](https://github.com/pantheon-systems/wordpress-composer-managed/pull/29))
+
 ### 2022-09-23
 * `.gitignore` updates - Reported in the Pantheon Community Slack channel was the fact that the `.gitignore` included in this repository did not match the `.gitignore` (with commonly-ignored files) in the default [WordPress upstream](https://github.com/pantheon-systems/wordpress) (CMS-956)
 * Use `.env.local` for local development ([#26](https://github.com/pantheon-systems/wordpress-composer-managed/pull/26)) - Fixes an issue where Lando was not using `.env` files locally.
