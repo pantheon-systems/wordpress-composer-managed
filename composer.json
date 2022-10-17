@@ -52,7 +52,7 @@
   "require": {
     "php": ">=7.4",
     "composer/installers": "^2.1",
-    "vlucas/phpdotenv": "^5.4",
+    "vlucas/phpdotenv": "^5.5",
     "oscarotero/env": "^2.1",
     "roots/bedrock-autoloader": "^1.0",
     "roots/bedrock-disallow-indexing": "^2.0",
