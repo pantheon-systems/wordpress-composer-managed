@@ -20,8 +20,8 @@ echo "Preparing to release to upstream org"
 echo "-----------------------------------------------------------------------"
 echo
 
-# List commits between release-pointer and HEAD, in reverse
-newcommits=$(git log release-pointer..HEAD --reverse --pretty=format:"%h")
+# List commits between decoupled-release-pointer and HEAD, in reverse
+newcommits=$(git log decoupled-release-pointer..HEAD --reverse --pretty=format:"%h")
 commits=()
 
 # Identify commits that should be released
@@ -90,3 +90,9 @@ echo
 git push decoupled decoupled:main
 
 git checkout $CIRCLE_BRANCH
+
+# update the decoupled-release-pointer
+git tag -f -m 'Last commit set on upstream repo' decoupled-release-pointer HEAD
+
+# Push decoupled-release-pointer
+git push -f origin decoupled-release-pointer
