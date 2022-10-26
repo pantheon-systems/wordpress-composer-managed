@@ -10,6 +10,11 @@ set -euo pipefail
 
 . devops/scripts/commit-type.sh
 
+# Copy patch and README file to tmp directory for use after checkout.
+echo "Copying decoupledpatch and decoupled-README to /tmp for use later."
+cp devops/scripts/decoupledpatch.sh /tmp/decoupledpatch.sh
+cp devops/files/decoupled-README.md /tmp/decoupled-README.md
+
 git remote add decoupled "$UPSTREAM_DECOUPLED_REPO_REMOTE_URL"
 git fetch decoupled
 git checkout "${CIRCLE_BRANCH}"
@@ -43,11 +48,6 @@ if [[ ${#commits[@]} -eq 0 ]] ; then
   echo "https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png"
   exit 1
 fi
-
-# Copy patch and README file to tmp directory for use after checkout.
-echo "Copying decoupledpatch and decoupled-README to /tmp for use later."
-cp devops/scripts/decoupledpatch.sh /tmp/decoupledpatch.sh
-cp devops/files/decoupled-README.md /tmp/decoupled-README.md
 
 # Cherry-pick commits not modifying circle config onto the release branch
 git checkout -b decoupled --track decoupled/main
