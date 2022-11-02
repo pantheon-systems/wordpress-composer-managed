@@ -59,7 +59,7 @@
     "roots/wordpress": "*",
     "roots/wp-config": "*",
     "roots/wp-password-bcrypt": "*",
-    "wpackagist-theme/twentytwentytwo": "^1.2",
+    "wpackagist-theme/twentytwentytwo": "^1.3",
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
     "wpackagist-plugin/lh-hsts": "^1.25",
