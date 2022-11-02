@@ -63,7 +63,7 @@
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
     "wpackagist-plugin/lh-hsts": "^1.25",
-    "wpackagist-plugin/pantheon-advanced-page-cache": "^1.0",
+    "wpackagist-plugin/pantheon-advanced-page-cache": "^1.1",
     "wpackagist-plugin/wp-native-php-sessions": "^1.2"
   },
   "require-dev": {
