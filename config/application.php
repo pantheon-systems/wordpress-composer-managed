@@ -115,6 +115,27 @@ Config::define('DISALLOW_FILE_MODS', true);
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
 
 /**
+ * Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment or default to WP_ENV.
+ */
+if (getenv('WP_ENVIRONMENT_TYPE') === false) {
+    if ($_ENV['PANTHEON_ENVIRONMENT']) {
+        switch ($_ENV['PANTHEON_ENVIRONMENT']) {
+            case 'live':
+                putenv('WP_ENVIRONMENT_TYPE=production');
+                break;
+            case 'test':
+                putenv('WP_ENVIRONMENT_TYPE=staging');
+                break;
+            default:
+                putenv('WP_ENVIRONMENT_TYPE=development');
+                break;
+        }
+    } elseif ($_ENV['WP_ENV']) {
+        putenv('WP_ENVIRONMENT_TYPE=' . $_ENV['WP_ENV']);
+    }
+}
+
+/**
  * Debugging Settings
  */
 Config::define('WP_DEBUG_DISPLAY', false);
