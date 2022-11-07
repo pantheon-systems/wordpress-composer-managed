@@ -36,7 +36,12 @@ $env_files = file_exists($root_dir . '/.env.local')
     : ['.env', '.env.pantheon'];
 
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable($root_dir, $env_files, false);
-if (file_exists($root_dir . '/.env')) {
+if (
+    // Check if a .env file exists.
+    file_exists($root_dir . '/.env') ||
+    // Also check if we're using Lando and a .env.local file exists.
+    ( file_exists($root_dir . '/.env.local') && 'lando' === $_ENV['PANTHEON_ENVIRONMENT'] )
+) {
     $dotenv->load();
     if (!env('DATABASE_URL')) {
         $dotenv->required(['DB_NAME', 'DB_USER', 'DB_PASSWORD']);
