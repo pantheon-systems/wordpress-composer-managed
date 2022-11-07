@@ -1,7 +1,7 @@
 # Pantheon release process documentation
 
 There are some atypical development and release procedures in use with this repository:
- 1. The currently released version of this repository lives in parallel in the `main` branche of
+ 1. The currently released version of this repository lives in parallel in the `main` branch of
     [pantheon-upstreams/wordpress-composer-managed](https://github.com/pantheon-upstreams/wordpress-composer-managed).  
     `pantheon-upstreams/wordpress-composer-managed` closely mirrors the development repository at [pantheon-systems/wordpress-composer-managed](https://github.com/pantheon-systems/wordpress-composer-managed)
     and is automatically updated by a CircleCI process.
