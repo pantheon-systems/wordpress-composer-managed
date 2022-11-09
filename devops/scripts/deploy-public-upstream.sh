@@ -32,8 +32,16 @@ for commit in $newcommits; do
   fi
 
   if [[ $commit_type == "mixed" ]] ; then
-    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Cannot proceed."
-    exit 1
+    2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Skipping this commit."
+    echo "You may wish to ensure that nothing in this commit is meant for release."
+    delete=(${commit})
+    for remove in "${delete[@]}"; do
+      for i in "${commits[@]}"; do
+        if [ [ ${commits[i]} = $remove ]]; then
+          unset 'commits[i]'
+        fi
+      done
+    done
   fi
 done
 
