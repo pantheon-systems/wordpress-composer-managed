@@ -48,8 +48,7 @@ done
 # If nothing found to release, bail without doing anything.
 if [[ ${#commits[@]} -eq 0 ]] ; then
   echo "No new commits found to release"
-  echo "https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png"
-  exit 1
+  exit 0
 fi
 
 # Cherry-pick commits not modifying circle config onto the release branch
