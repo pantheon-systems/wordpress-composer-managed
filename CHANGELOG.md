@@ -5,7 +5,7 @@
 * Fix a typo in `README-internal.md` ([#48](https://github.com/pantheon-systems/wordpress-composer-managed/pull/48))
 * Exclude `.github/` from the deploy script for the upstream repository. ([#50](https://github.com/pantheon-systems/wordpress-composer-managed/pull/50))
 * Also forbid `.github/workflows/ci.yml` from the deploy script. ([#51](https://github.com/pantheon-systems/wordpress-composer-managed/pull/51))
-* Skip commits in deploy process for nonrelease changes ([#52](https://github.com/pantheon-systems/wordpress-composer-managed/pull/52))
+* Skip commits in deploy process for nonrelease changes ([#52](https://github.com/pantheon-systems/wordpress-composer-managed/pull/52) [#53](https://github.com/pantheon-systems/wordpress-composer-managed/pull/53))
 
 ### 2022-10-17
 * Load global .env file even if .env.local is absent ([#32](https://github.com/pantheon-systems/wordpress-composer-managed/pull/32))
