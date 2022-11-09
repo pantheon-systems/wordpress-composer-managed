@@ -4,6 +4,7 @@
 * Additional Lando configuration ([#47](https://github.com/pantheon-systems/wordpress-composer-managed/pull/47))
 * Fix a typo in `README-internal.md` ([#48](https://github.com/pantheon-systems/wordpress-composer-managed/pull/48))
 * Exclude `.github/` from the deploy script for the upstream repository. ([#50](https://github.com/pantheon-systems/wordpress-composer-managed/pull/50))
+* Also forbid `.github/workflows/ci.yml` from the deploy script. ([#51](https://github.com/pantheon-systems/wordpress-composer-managed/pull/51))
 
 ### 2022-10-17
 * Load global .env file even if .env.local is absent ([#32](https://github.com/pantheon-systems/wordpress-composer-managed/pull/32))
