@@ -48,6 +48,8 @@ done
 # If nothing found to release, bail without doing anything.
 if [[ ${#commits[@]} -eq 0 ]] ; then
   echo "No new commits found to release"
+  echo "Proceeding to decoulped script"
+  echo "https://media.giphy.com/media/cqG5aFdTkk5ig/giphy.gif"
   exit 0
 fi
 
