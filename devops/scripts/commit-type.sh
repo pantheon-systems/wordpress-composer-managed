@@ -11,7 +11,7 @@ function identify_commit_type() {
 
   affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
   for path in $affected_paths; do
-      if [[ $path =~ ^.circleci/ || $path =~ ^devops/ || $path == "README-internal.md" ]] ; then
+      if [[ $path =~ ^.circleci/ || $path =~ ^.github/ || $path =~ ^devops/ || $path == "README-internal.md" ]] ; then
         has_nonrelease_changes=1
         continue
       fi
