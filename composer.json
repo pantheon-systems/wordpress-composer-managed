@@ -108,11 +108,15 @@
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
-    "test": [
-      "phpcs"
+    "post-install-cmd": [
+      "cd web; ln-s wp/* . || true",
+      "rm web/wp-settings.php"
     ],
     "pre-update-cmd": [
-        "WordPressComposerManaged\\ComposerScripts::preUpdate"
+      "WordPressComposerManaged\\ComposerScripts::preUpdate"
+    ],
+    "test": [
+      "phpcs"
     ],
     "upstream-require": [
         "WordPressComposerManaged\\ComposerScripts::upstreamRequire"
