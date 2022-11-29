@@ -19,7 +19,7 @@ web/app/cache/*
 web/wp
 web/.htaccess
 
-# Our Composer post-install command creates a symbollic link to web/wp inside
+# Our Composer post-install command creates a symbolic link to web/wp inside
 # web. We don't want to version control these linked files, so we ignore them
 # explicitly.
 web/license.txt
