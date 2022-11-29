@@ -19,6 +19,15 @@ web/app/cache/*
 web/wp
 web/.htaccess
 
+# Our Composer post-install command creates a symbollic link to web/wp inside
+# web. We don't want to version control these linked files, so we ignore them
+# explicitly.
+web/license.txt
+web/readme.html
+web/index.php
+web/wp-*
+web/xmlrpc.php
+
 # Logfiles should always be ignored.
 *.log
 
