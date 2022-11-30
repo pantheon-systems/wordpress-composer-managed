@@ -1,3 +1,7 @@
+### 2022-11-30
+* Set minimum-stability to "stable" in `composer.json` ([#55](https://github.com/pantheon-systems/wordpress-composer-managed/pull/55))
+* Add Composer `post-install-cmd` to create symlinks to the `web/wp` directory (for better multisite support) ([#56](https://github.com/pantheon-systems/wordpress-composer-managed/pull/56))
+
 ### 2022-11-09
 * Always pull the latest Pantheon plugins from wpackagist ([#45](https://github.com/pantheon-systems/wordpress-composer-managed/pull/45))
 * Change from `php_version` to `php-version` in testing matrix ([#46](https://github.com/pantheon-systems/wordpress-composer-managed/pull/46))
