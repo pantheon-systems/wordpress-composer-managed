@@ -3,6 +3,9 @@
 * Add Composer `post-install-cmd` to create symlinks to the `web/wp` directory (for better multisite support) ([#56](https://github.com/pantheon-systems/wordpress-composer-managed/pull/56))
 
 ### 2022-11-09
+* Pull the latest versions of all packages ([#36](https://github.com/pantheon-systems/wordpress-composer-managed/pull/36))
+* Improved debug log path suggested in `.env.example` ([#38](https://github.com/pantheon-systems/wordpress-composer-managed/pull/38))
+* Get latest WP updates (and other WP-related dependencies) automatically ([#40](https://github.com/pantheon-systems/wordpress-composer-managed/pull/40))
 * Always pull the latest Pantheon plugins from wpackagist ([#45](https://github.com/pantheon-systems/wordpress-composer-managed/pull/45))
 * Change from `php_version` to `php-version` in testing matrix ([#46](https://github.com/pantheon-systems/wordpress-composer-managed/pull/46))
 * Additional Lando configuration ([#47](https://github.com/pantheon-systems/wordpress-composer-managed/pull/47))
@@ -26,8 +29,7 @@
 * README updates ([#27](https://github.com/pantheon-systems/wordpress-composer-managed/pull/27) and [#28](https://github.com/pantheon-systems/wordpress-composer-managed/pull/28)) - Adds link to https://github.com/pantheon-upstreams/wordpress-composer-managed for forking, as well as additional guidance about the default branch name for custom upstreams.
 
 ### 1.20.0: 2022-05-24
-* Update to WordPress 6.0, add Twenty Twenty-Two theme as dependency ([#639](https:/
-/github.com/roots/bedrock/pull/639))
+* Update to WordPress 6.0, add Twenty Twenty-Two theme as dependency ([#639](https://github.com/roots/bedrock/pull/639))
 
 ### 1.19.3: 2022-04-06
 * Bump roots/wordpress to 5.9.3 ([#633](https://github.com/roots/bedrock/pull/633))
