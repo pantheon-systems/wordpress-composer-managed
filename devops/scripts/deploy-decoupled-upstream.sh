@@ -29,10 +29,22 @@ echo
 newcommits=$(git log decoupled-release-pointer..HEAD --reverse --pretty=format:"%h")
 commits=()
 
+# There are a small number of commits which must be manually excluded, usually
+# due to changes in the commit type rules which would retroactively include commits
+# which were not initially included, causing merge conflicts. Commits which should
+# be excluded can be added to this array and will not be cherry picked.
+exclude_list=(0099a8b)
+
 # Identify commits that should be released
 for commit in $newcommits; do
   commit_type=$(identify_commit_type "$commit")
   if [[ $commit_type == "normal" ]] ; then
+
+    # Exclude commits which have been manually rejected
+    for item in "${exclude_list[@]}"; do
+      [[ $item == $commit ]] && echo "Commit has been manually excluded."; continue
+    done
+
     commits+=($commit)
   fi
 
