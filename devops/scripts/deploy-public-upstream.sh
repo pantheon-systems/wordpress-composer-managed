@@ -84,7 +84,7 @@ echo
 # Push to the public repository
 #git push public public:main
 
-#git checkout $CIRCLE_BRANCH
+git checkout $CIRCLE_BRANCH
 
 # update the release-pointer
 #git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
