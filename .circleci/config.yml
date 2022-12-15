@@ -54,7 +54,7 @@ workflows:
           filters:
             branches:
               only:
-                - CMS-1112-commit-exclusion
+                - release
   check-commits:
     jobs:
       - check-commits
