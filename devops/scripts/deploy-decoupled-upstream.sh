@@ -37,14 +37,13 @@ exclude_list=("0099a8b")
 
 # Identify commits that should be released
 for commit in $newcommits; do
+  # Exclude commits which have been manually rejected
+  for item in "${exclude_list[@]}"; do
+    [[ $item == $commit ]] && echo "Commit has been manually excluded."; continue
+  done
+
   commit_type=$(identify_commit_type "$commit")
   if [[ $commit_type == "normal" ]] ; then
-
-    # Exclude commits which have been manually rejected
-    for item in "${exclude_list[@]}"; do
-      [[ $item == $commit ]] && echo "Commit has been manually excluded."; continue
-    done
-
     commits+=($commit)
   fi
 
