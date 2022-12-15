@@ -82,12 +82,12 @@ echo "Releasing to upstream org"
 echo
 
 # Push to the public repository
-git push public public:main
+#git push public public:main
 
-git checkout $CIRCLE_BRANCH
+#git checkout $CIRCLE_BRANCH
 
 # update the release-pointer
-git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
+#git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
 
 # Push release-pointer
-git push -f origin release-pointer
+#git push -f origin release-pointer
