@@ -100,19 +100,24 @@ cp /tmp/decoupled-README.md ./README.md
 git add .
 
 echo "Committing changes"
-git commit -F /tmp/commit_message --author='Pantheon Automation <bot@getpantheon.com>'
+# TODO: UNCOMMENT
+#git commit -F /tmp/commit_message --author='Pantheon Automation <bot@getpantheon.com>'
 
 echo
 echo "Releasing to upstream org"
 echo
 
 # Push to the decoupled repository
-git push decoupled decoupled:main
+# TODO: UNCOMMENT
+#git push decoupled decoupled:main
 
-git checkout $CIRCLE_BRANCH
+# TODO: UNCOMMENT
+#git checkout $CIRCLE_BRANCH
 
 # update the decoupled-release-pointer
-git tag -f -m 'Last commit set on upstream repo' decoupled-release-pointer HEAD
+# TODO: UNCOMMENT
+#git tag -f -m 'Last commit set on upstream repo' decoupled-release-pointer HEAD
 
 # Push decoupled-release-pointer
-git push -f origin decoupled-release-pointer
+# TODO: UNCOMMENT
+#git push -f origin decoupled-release-pointer
