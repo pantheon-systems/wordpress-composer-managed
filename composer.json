@@ -115,6 +115,9 @@
     "pre-update-cmd": [
       "WordPressComposerManaged\\ComposerScripts::preUpdate"
     ],
+    "install-sage": [
+      "bash ./private/scripts/sage-theme-install.sh"
+    ],
     "test": [
       "phpcs"
     ],
