@@ -173,7 +173,7 @@ Assuming it shows up, the next step is to activate the theme. This is also done 
 
 Once it's activated, the script will attempt to open your site in your default browser. If you are performing these steps manually, you can open the site in your browser and verify that the theme is displaying as expected. It's possible here that you may need to flush your browser cache or use a different browser if you did not see the new sage theme show up. If you continue to see a different default theme, ensure the theme is activated by going to your `wp-admin/themes.php` page. Otherwise, you should see something like this:
 
-![Newly-installed Sage theme screenshot](#images/sage-theme-screenshot.png)
+![Newly-installed Sage theme screenshot](./images/sage-theme-screenshot.png)
 
 If you see a fresh Sage starter theme, the setup worked and you're ready to start building! Refer to the [Sage documentation](https://docs.roots.io/sage/10.x/configuration/) for more information on how to use Sage now that it's been installed.
 
