@@ -176,3 +176,6 @@ Once it's activated, the script will attempt to open your site in your default b
 ![Newly-installed Sage theme screenshot](#images/sage-theme-screenshot.png)
 
 If you see a fresh Sage starter theme, the setup worked and you're ready to start building! Refer to the [Sage documentation](https://docs.roots.io/sage/10.x/configuration/) for more information on how to use Sage now that it's been installed.
+
+## Final Thoughts
+This script was written with the assumption that you are only using a single Sage theme. If you install multiple Sage themes, you will need to manually update the `composer.json` file to include the `post-install-cmd` for each theme as the script will update the existing entry if one exists already.
