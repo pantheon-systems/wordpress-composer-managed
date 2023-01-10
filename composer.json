@@ -73,6 +73,7 @@
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
+    "process-timeout": 0,
     "allow-plugins": {
       "composer/installers": true,
       "roots/wordpress-core-installer": true
@@ -114,6 +115,9 @@
     ],
     "pre-update-cmd": [
       "WordPressComposerManaged\\ComposerScripts::preUpdate"
+    ],
+    "install-sage": [
+      "bash ./private/scripts/sage-theme-install.sh"
     ],
     "test": [
       "phpcs"
