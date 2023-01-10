@@ -1,6 +1,7 @@
-### 2023-01-10
+### 2023-01-11
 * Remove Dependabot ([#58](https://github.com/pantheon-systems/wordpress-composer-managed/pull/58))
 * Resolves issue where updates to commit choosing logic were causing a merge conflict. ([#60](https://github.com/pantheon-systems/wordpress-composer-managed/pull/60))
+* Adds a Roots Sage install script. See [docs/Installing-Sage.md](docs/Installing-Sage.md) ([#61](https://github.com/pantheon-systems/wordpress-composer-managed/pull/61))
 
 ### 2022-11-30
 * Set minimum-stability to "stable" in `composer.json` ([#55](https://github.com/pantheon-systems/wordpress-composer-managed/pull/55))
