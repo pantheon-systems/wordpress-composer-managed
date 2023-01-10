@@ -122,6 +122,14 @@ composer upstream-require wpackagist-theme/twentytwentytwo
 composer upstream-require wpackagist-plugin/advanced-custom-fields
 ```
 
+### Using Roots Sage starter theme
+
+We've included a Sage Install script that can be run via Composer. This will install the Sage starter theme from Roots, ensure all dependencies are installed, and adds a `post-install-cmd` hook to the `composer.json`. For more information see [Installing Sage](docs/Installing-Sage.md). The command to run the script is below.
+
+```
+composer install-sage
+```
+
 ## Contributing
 
 Contributions are welcome in the form of GitHub pull requests. However, the `pantheon-upstreams/wordpress-composer-managed` repository is a mirror that does not directly accept pull requests.
