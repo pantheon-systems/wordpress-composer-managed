@@ -31,7 +31,7 @@ jobs:
       #   ssh-keygen -l -E md5 -f ed25519
       - add_ssh_keys:
           fingerprints:
-            - "f0:fb:bb:86:5c:da:1a:7e:77:02:f8:21:ba:bf:81:79"
+            - "50:72:cc:79:5d:fa:9d:b9:83:40:af:e9:4a:37:4f:4b"
       - run:
           name: Copy commits to destination repo
           command: devops/scripts/deploy-public-upstream.sh
