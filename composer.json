@@ -101,6 +101,7 @@
         "web-root": "./"
       }
     },
+    "composer-exit-on-patch-failure": true,
     "enable-patching": true
   },
   "autoload": {
