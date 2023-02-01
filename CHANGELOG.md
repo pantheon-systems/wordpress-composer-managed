@@ -1,3 +1,6 @@
+### 2023-02-02
+* Adds Composer Patches plugin ([#66](https://github.com/pantheon-systems/wordpress-composer-managed/pull/66))
+
 ### 2023-01-11
 * Remove Dependabot ([#58](https://github.com/pantheon-systems/wordpress-composer-managed/pull/58))
 * Resolves issue where updates to commit choosing logic were causing a merge conflict. ([#60](https://github.com/pantheon-systems/wordpress-composer-managed/pull/60))
