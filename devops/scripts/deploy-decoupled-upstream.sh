@@ -60,11 +60,13 @@ for commit in $newcommits; do
     echo "You may wish to ensure that nothing in this commit is meant for release."
     delete=(${commit})
     for remove in "${delete[@]}"; do
-      for i in "${commits[@]}"; do
-        if [ [ ${commits[i]} = $remove ]]; then
-          unset 'commits[i]'
-        fi
-      done
+      if (( ${#commits[@]} )); then
+        for i in "${commits[@]}"; do
+          if [[ ${commits[0]} = $remove ]]; then
+            unset 'commits[i]'
+          fi
+        done
+      fi
     done
   fi
 done
