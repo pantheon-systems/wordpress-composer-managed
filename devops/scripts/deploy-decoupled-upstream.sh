@@ -40,7 +40,10 @@ for commit in $newcommits; do
   # Exclude commits which have been manually rejected
   skip=false
   for item in "${exclude_list[@]}"; do
-    [[ $item == $commit ]] && echo "Commit ${commit} has been manually excluded."; skip=true
+    if [[ $item == $commit ]]; then
+      echo "Commit ${commit} has been manually excluded."
+      skip=true
+    fi
   done
 
   if [[ $skip==true ]] ; then
