@@ -46,7 +46,7 @@ for commit in $newcommits; do
     fi
   done
 
-  if [[ $skip = true ]] ; then
+  if [[ $skip == true ]] ; then
       continue
   fi
 
