@@ -1,8 +1,5 @@
 <?php
 /**
- * IMPORTANT NOTE:
- * Do not modify this file. This file is maintained by Pantheon.
- *
  * Your base production configuration goes in this file.
  *
  * A good default policy is to deviate from the production config as little as
