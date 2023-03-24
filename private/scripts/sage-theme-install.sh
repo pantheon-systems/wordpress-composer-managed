@@ -160,7 +160,7 @@ function update_php() {
   # Testing for any version of PHP 8.x and/or PHP 7.4.
   phpAlreadyVersion8=$(cat pantheon.yml | grep -c "php_version: 8.")
   phpDeclaredInFile=$(cat pantheon.yml | grep -c "php_version: 7.4")
-  
+
   # Only alter if not already PHP 8.x.
   if [ "$phpAlreadyVersion8" -eq 0 ]; then
     # Test for PHP version declartion already in pantheon.yml.
@@ -245,6 +245,31 @@ EOF
   cd ../..
 }
 
+# Check if jq is installed. If it's not, try a couple ways of installing it.
+function check_jq() {
+  # Check if jq is installed.
+  if [ ! command -v jq &> /dev/null ]; then
+    echo -e "${yellow}jq is not installed.${normal}"
+    # Check if brew is installed.
+    if [ command -v brew &> /dev/null ]; then
+      echo -e "${yellow}Installing jq with Homebrew.${normal}"
+      brew install jq
+    # Check if apt-get is installed.
+    elif [ command -v apt-get &> /dev/null ]; then
+      echo -e "${yellow}Installing jq with apt-get.${normal}"
+      sudo apt-get install -y jq
+    else
+      echo "${yellow}Attempted to install jq but could not find Brew (for MacOS) or apt-get (for WSL2/Linux). Exiting here. You'll need to add the following lines to your `composer.json`:${normal}"
+      echo '  "scripts": {'
+      echo '      "post-install-cmd": ['
+      echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
+      echo '      ],'
+      echo "${yellow}You might try running `lando composer install` if you are running locally.${normal}"
+      exit 1
+    fi
+  fi
+}
+
 # Add a post-install hook to the composer.json.
 function update_composer() {
   composer update
@@ -259,17 +284,7 @@ function update_composer() {
   echo -e "${yellow}Attempting to add a post-install hook to composer.json.${normal}"
 
   # Check of jq is installed
-  if [ ! command -v jq &> /dev/null ]; then
-    if [ ! command -v brew & /dev/null ]; then
-      echo "${yellow}Brew was not found. Exiting here. You'll need to add the following lines to your `composer.json`:${normal}"
-      echo '  "scripts": {'
-      echo '      "post-install-cmd": ['
-      echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
-      echo '      ],'
-      exit
-    fi
-    brew install jq
-  fi
+  check_jq
 
   # Add a post-install hook to the composer.json.
   echo -e "${yellow}Adding a post-install hook to composer.json.${normal}"
