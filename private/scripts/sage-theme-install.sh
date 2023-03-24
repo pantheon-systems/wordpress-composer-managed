@@ -264,7 +264,7 @@ function check_jq() {
       echo '      "post-install-cmd": ['
       echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
       echo '      ],'
-      echo "${yellow}You might try running `lando composer install` if you are running locally.${normal}"
+      echo "${yellow}You might try running `lando composer install-sage` if you are running locally.${normal}"
       exit 1
     fi
   fi
