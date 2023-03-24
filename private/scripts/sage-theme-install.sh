@@ -135,7 +135,23 @@ get_field() {
 # Update to PHP 8.0
 function update_php() {
   echo -e "\n\n${yellow}Updating PHP version to 8.0.${normal}"
-  sed -i '' "s/php_version: 7.4/php_version: 8.0/" pantheon.upstream.yml
+
+  # Testing for any version of PHP 8.x and/or PHP 7.4.
+  phpAlreadyVersion8=$(cat pantheon.yml | grep -c "php_version: 8.")
+  phpDeclaredInFile=$(cat pantheon.yml | grep -c "php_version: 7.4")
+  
+  # Only alter if not already PHP 8.x.
+  if [ "$phpAlreadyVersion8" -eq 0 ]; then
+    # Test for PHP version declartion already in pantheon.yml.
+    if [ ! "$phpDeclaredInFile" -eq 0 ]; then
+      # Update version to 8.x.
+      sed -i '' "s/7.4/8.0/" pantheon.yml
+    else
+      # Add full PHP version declaration to pantheon.yml.
+      echo "php_version: 8.0" >> pantheon.yml
+    fi
+  fi
+
   git commit -am "[Sage Install] Update PHP version to 8.0"
   git push origin master
 }
