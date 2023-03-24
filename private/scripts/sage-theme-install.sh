@@ -108,11 +108,22 @@ function get_info() {
 
 # Confirm user-submitted theme-name and ensure letters are lower-space
 function confirmThemeName() {
-  if [[ $sagename = *[[:space:]]* ]]
-  then
-      echo "Invalid theme name. Converting 'spaces' into dashes '-'."
-      sagename=$(echo "$sagename" | tr '[:space:]' '-')
-  fi
+  # Replace spaces with dashes and convert to lowercase
+  echo "Validating theme name..."
+  sagename=$(echo "$sagename" | tr '[:space:]' '-' | tr '[:upper:]' '[:lower:]')
+
+  # Replace underscores with dashes
+  sagename=${sagename//_/\-}
+
+  # Remove double dashes
+  while [[ $sagename == *--* ]]; do
+    sagename=${sagename/--/-}
+  done
+
+  # Remove trailing dash (if present)
+  sagename=${sagename%-}
+
+  echo "Theme name is: $sagename"
 }
 
 # Use terminus whoami to check if the user is logged in and exit the script if they are not.
