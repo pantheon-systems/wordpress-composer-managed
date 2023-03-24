@@ -111,7 +111,7 @@ function confirmThemeName() {
   if [[ $sagename = *[[:space:]]* ]]
   then
       echo "Invalid theme name. Converting 'spaces' into dashes '-'."
-      sagename=$(echo "$sagename" | tr '[ ]' '[-]')
+      sagename=$(echo "$sagename" | tr '[:space:]' '-')
   fi
 }
 
