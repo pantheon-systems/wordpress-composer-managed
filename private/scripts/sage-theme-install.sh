@@ -76,6 +76,7 @@ function get_info() {
   if [ -z "$sagename" ]; then
     echo -e "${yellow}Enter your theme name.${normal}\nThis is used to create the theme directory. As such, it should ideally be all lowercase with no spaces (hyphens or underscores recommended)\n"
     read -p "Theme name: " -r sagename
+    confirmThemeName "$sagename"
   else
     echo -e "${green}Theme name: ${sagename}${normal}"
   fi
@@ -87,7 +88,7 @@ function get_info() {
   SFTP hostname: ${sftphost}"
   read -p "Is this correct? (y/n) " -n 1 -r
   # If the user enters n, redo the prompts.
-  if [[ $REPLY =~ ^[Nn]$ ]]; then
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo -e "\nRestarting...\n"
 
     # Toggle the restarted state.
@@ -103,6 +104,26 @@ function get_info() {
 
   # Set the theme directory. Do this at the end, after we know what everything should be.
   sagedir=$themedir/$sagename
+}
+
+# Confirm user-submitted theme-name and ensure letters are lower-space
+function confirmThemeName() {
+  # Replace spaces with dashes and convert to lowercase
+  echo "Validating theme name..."
+  sagename=$(echo "$sagename" | tr '[:space:]' '-' | tr '[:upper:]' '[:lower:]')
+
+  # Replace underscores with dashes
+  sagename=${sagename//_/\-}
+
+  # Remove double dashes
+  while [[ $sagename == *--* ]]; do
+    sagename=${sagename/--/-}
+  done
+
+  # Remove trailing dash (if present)
+  sagename=${sagename%-}
+
+  echo "Theme name is: $sagename"
 }
 
 # Use terminus whoami to check if the user is logged in and exit the script if they are not.
