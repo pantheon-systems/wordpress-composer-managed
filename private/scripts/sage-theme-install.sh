@@ -350,15 +350,19 @@ function clean_up() {
   git pull --ff --commit
 }
 
-# Defines some global variables for colors.
+# Defines some global variables for colors. We don't use all of these, but we might in the future.
 normal=$(tput sgr0)
 bold=$(tput bold)
+# shellcheck disable=SC2034
 italic=$(tput sitm)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
+# shellcheck disable=SC2034
 blue=$(tput setaf 4)
+# shellcheck disable=SC2034
 magenta=$(tput setaf 5)
+# shellcheck disable=SC2034
 cyan=$(tput setaf 6)
 
 # Check if the user is logged into Terminus before trying to run other Terminus commands.
