@@ -264,7 +264,7 @@ function check_jq() {
       echo '      "post-install-cmd": ['
       echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
       echo '      ],'
-      echo "${yellow}You might try running `lando composer install-sage` if you are running locally.${normal}"
+      echo "${yellow}You might try running `lando composer install-sage` if you are running locally. Alternately, you can try installing jq another way and then running the script again: https://stedolan.github.io/jq/download/${normal}"
       exit 1
     fi
   fi
