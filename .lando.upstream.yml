@@ -1,0 +1,25 @@
+recipe: pantheon
+config:
+  framework: wordpress
+  xdebug: false
+
+events:
+  post-start:
+    - appserver: composer install
+
+services:
+  appserver:
+    build_as_root:
+      - curl -sL https://deb.nodesource.com/setup_18.x | bash -
+      - apt-get install -y nodejs
+      - npm install --global jq stylelint stylelint-no-browser-hacks stylelint-config-standard stylelint-order
+      - mkdir -p /root/tmp
+      - chmod 666 /root/tmp
+    overrides:
+      volumes:
+        - ${HOME}/.lando/composer_cache:/var/www/.composer
+
+tooling:
+  npm:
+    service: appserver
+    cmd: cd /app/web/wp-content/themes/THEME_NAME && npm
