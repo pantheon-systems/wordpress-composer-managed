@@ -10,14 +10,14 @@ function get_info() {
   dashboard_link="https://dashboard.pantheon.io/sites/${id}#dev/code"
 
   # Unset the variables if we're doing this a second time.
-  if [ "$is_restarted" == 1 ]; then
+  if [ "$is_restarted" -eq 1 ]; then
     unset sitename
     unset sagename
     unset sftpuser
     unset sftphost
   fi
 
-  if [ "$is_restarted" == 0 ]; then
+  if [ "$is_restarted" -eq 0 ]; then
     echo -e "${yellow}Finding site information...${normal}\n"
   fi
 
@@ -26,22 +26,22 @@ function get_info() {
   # set them to empty strings.
   # There's some discussion about the brackets distinction in this
   # StackOverflow: https://stackoverflow.com/a/13864829/1351526
-  if [ "$is_restarted" == 0 ] && [ -z "$sitename" ]; then
+  if [ "$is_restarted" -eq 0 ] && [ -z "$sitename" ]; then
     echo "Found site name! Using ${name}."
     sitename=$name
   fi
 
-  if [ "$is_restarted" == 0 ] && [ -z "$sftpuser" ]; then
+  if [ "$is_restarted" -eq 0 ] && [ -z "$sftpuser" ]; then
     echo "Found SFTP username! Using dev.${id}."
     sftpuser=dev.$id
   fi
 
-  if [ "$is_restarted" == 0 ] && [ -z "$sftphost" ]; then
+  if [ "$is_restarted" -eq 0 ] && [ -z "$sftphost" ]; then
     echo "Found SFTP host name! Using appserver.dev.${id}.drush.in."
     sftphost=appserver.dev.$id.drush.in
   fi
 
-  if [ "$is_restarted" == 0 ]; then
+  if [ "$is_restarted" -eq 0 ]; then
     echo -e "\n--------------------------------------------------------------------------"
   fi
   # We want these to evaluate to false if they're empty strings so they can be
@@ -67,7 +67,7 @@ function get_info() {
     echo -e "${green}SFTP hostname: ${normal}${sftphost}"
   fi
 
-  if [ "$is_restarted" == 0 ]; then
+  if [ "$is_restarted" -eq 0 ]; then
     echo -e "--------------------------------------------------------------------------\n"
   fi
 
@@ -115,7 +115,7 @@ function confirmThemeName() {
   sagename=${sagename//_/\-}
 
   # Remove double dashes
-  while [[ $sagename == *--* ]]; do
+  while [[ $sagename -eq *--* ]]; do
     sagename=${sagename/--/-}
   done
 
@@ -149,7 +149,7 @@ get_field() {
   input="$(echo "$input" | sed -e '1d' -e '$d')"
   # $1: field name
   # $2: input string
-  echo "$2" | awk -v field="$1" '$1 == field { print $2 }'
+  echo "$2" | awk -v field="$1" '$1 -eq field { print $2 }'
 }
 
 # Update to PHP 8.0
@@ -310,7 +310,7 @@ function update_composer() {
   fi
 
   # Check for long-running workflows.
-  if [[ "$(terminus workflow:wait --max=1 "${sitename}".dev)" == *"running"* ]]; then
+  if [[ "$(terminus workflow:wait --max=1 "${sitename}".dev)" -eq *"running"* ]]; then
     echo -e "${yellow}Workflow still running, waiting another 30 seconds.${normal}"
     terminus workflow:wait --max=30 "$sitename".dev
   fi
