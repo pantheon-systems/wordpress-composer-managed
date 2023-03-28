@@ -149,7 +149,7 @@ get_field() {
   input="$(echo "$input" | sed -e '1d' -e '$d')"
   # $1: field name
   # $2: input string
-  echo "$2" | awk -v field="$1" '$1 -eq field { print $2 }'
+  echo "$2" | awk -v field="$1" '$1 == field { print $2 }'
 }
 
 # Update to PHP 8.0
