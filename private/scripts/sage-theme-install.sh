@@ -245,28 +245,32 @@ EOF
 }
 
 # Check if jq is installed. If it's not, try a couple ways of installing it.
+# Check if jq is installed. If it's not, try a couple ways of installing it.
 function check_jq() {
-  # Check if jq is installed.
-  if ! command -v jq &> /dev/null; then
-    echo -e "${yellow}jq is not installed.${normal}"
-    # Check if brew is installed.
-    if command -v brew &> /dev/null; then
-      echo -e "${yellow}Installing jq with Homebrew.${normal}"
-      brew install jq
-    # Check if apt-get is installed.
-    elif command -v apt-get &> /dev/null; then
-      echo -e "${yellow}Installing jq with apt-get.${normal}"
-      sudo apt-get install -y jq
-    else
-      echo "${yellow}Attempted to install jq but could not find Brew (for MacOS) or apt-get (for WSL2/Linux). Exiting here. You'll need to add the following lines to your composer.json:${normal}"
-      echo '  "scripts": {'
-      echo '      "post-install-cmd": ['
-      echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
-      echo '      ],'
-      echo "${yellow}You might try running 'lando composer install-sage' if you are running locally. Alternately, you can try installing jq another way and then running the script again: https://stedolan.github.io/jq/download/${normal}"
-      exit 1
-    fi
+  # Check if jq is already installed.
+  if command -v jq &> /dev/null; then
+      return # jq is already installed
   fi
+  echo -e "${yellow}jq is not installed.${normal}"
+  # Check if brew is installed and install jq with it
+  if command -v brew &> /dev/null; then
+    echo -e "${yellow}Installing jq with Homebrew.${normal}"
+    brew install jq
+    return
+  fi
+  # Check if apt-get is installed and install jq with it
+  if command -v apt-get &> /dev/null; then
+    echo -e "${yellow}Installing jq with apt-get.${normal}"
+    sudo apt-get install -y jq
+    return
+  fi
+  echo "${yellow}Attempted to install jq but could not find Brew (for MacOS) or apt-get (for WSL2/Linux). Exiting here. You'll need to add the following lines to your composer.json:${normal}"
+  echo '  "scripts": {'
+  echo '      "post-install-cmd": ['
+  echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
+  echo '      ],'
+  echo "${yellow}You might try running 'lando composer install-sage' if you are running locally. Alternately, you can try installing jq another way and then running the script again: https://stedolan.github.io/jq/download/${normal}"
+  exit 1
 }
 
 # Add a post-install hook to the composer.json.
