@@ -54,7 +54,8 @@
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.6.2",
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "assertwell/shellcheck": "^1.0"
   },
   "config": {
     "optimize-autoloader": true,
@@ -102,9 +103,21 @@
     "install-sage": [
       "bash ./private/scripts/sage-theme-install.sh"
     ],
-    "test": [
+    "lint": [
+      "@lint:php",
+      "@lint:phpcs",
+      "@lint:bash"
+    ],
+    "lint:php": [
+      "php -l web/wp/wp-settings.php"
+    ],
+    "lint:phpcs": [
       "phpcs"
     ],
+    "lint:bash": [
+      "shellcheck private/scripts/*.sh"
+    ],
+    "test": [],
     "upstream-require": [
         "WordPressComposerManaged\\ComposerScripts::upstreamRequire"
     ]
