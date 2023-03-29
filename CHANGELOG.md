@@ -4,6 +4,7 @@
 * Updates the Sage install script to force symbolic links rather than attepting to create them on each `composer install`. ([#79](https://github.com/pantheon-systems/wordpress-composer-managed/pull/79))
 * Updates the Sage install script to attempt to fix invalid theme names. ([#80](https://github.com/pantheon-systems/wordpress-composer-managed/pull/80))
 * Updates the Sage install script to fail hard if `jq` is not found, but provide links to download the executable. ([#82](https://github.com/pantheon-systems/wordpress-composer-managed/pull/82))
+* Fixes an issue that led to failing builds due to an unstaged `index.php` file created by the forced symlinks. ([#86](https://github.com/pantheon-systems/wordpress-composer-managed/pull/86))
 
 ### 2023-02-02
 * Adds Composer Patches plugin ([#66](https://github.com/pantheon-systems/wordpress-composer-managed/pull/66))
