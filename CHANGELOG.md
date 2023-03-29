@@ -1,3 +1,10 @@
+### 2023-03-29
+* Changes the language in comments about appropriate usage of `config/application.php`. `application.php` should be used for any site config customizations rather than `wp-config.php` which should _not_ be edited. ([#76](https://github.com/pantheon-systems/wordpress-composer-managed/pull/76))
+* Updates the Sage install script to properly update the PHP version. ([#81](https://github.com/pantheon-systems/wordpress-composer-managed/pull/81))
+* Updates the Sage install script to force symbolic links rather than attepting to create them on each `composer install`. ([#79](https://github.com/pantheon-systems/wordpress-composer-managed/pull/79))
+* Updates the Sage install script to attempt to fix invalid theme names. ([#80](https://github.com/pantheon-systems/wordpress-composer-managed/pull/80))
+* Updates the Sage install script to fail hard if `jq` is not found, but provide links to download the executable. ([#82](https://github.com/pantheon-systems/wordpress-composer-managed/pull/82))
+
 ### 2023-02-02
 * Adds Composer Patches plugin ([#66](https://github.com/pantheon-systems/wordpress-composer-managed/pull/66))
 
