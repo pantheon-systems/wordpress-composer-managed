@@ -115,7 +115,7 @@
       "php -r \"copy('.env.example', '.env');\""
     ],
     "post-install-cmd": [
-      "cd web; ln -sfn $(ls wp/* | grep -v 'index.php') . || true",
+      "cd web; ln -s wp/* . || true",
       "rm web/wp-settings.php"
     ],
     "pre-update-cmd": [
