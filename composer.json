@@ -62,7 +62,6 @@
     "wpackagist-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
-    "wpackagist-plugin/lh-hsts": "^1.25",
     "wpackagist-plugin/pantheon-advanced-page-cache": "*",
     "wpackagist-plugin/wp-native-php-sessions": "*",
     "cweagans/composer-patches": "^1.7"
