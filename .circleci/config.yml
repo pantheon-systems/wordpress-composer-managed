@@ -26,7 +26,7 @@ jobs:
       # Also add the private key to the Github user, e.g.:
       #   https://github.com/settings/keys
       # Credentials to log in as the pantheon-upstream user are available in vault:
-      #   pvault production read secret/securenotes/github_user__pantheon-upstream
+      #   pvault production read secret/github/user__pantheon-upstream
       # You may confirm the fingerprint via:
       #   ssh-keygen -l -E md5 -f ed25519
       - add_ssh_keys:
