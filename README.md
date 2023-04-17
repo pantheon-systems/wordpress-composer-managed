@@ -136,6 +136,8 @@ Contributions are welcome in the form of GitHub pull requests. However, the `pan
 
 Instead, to propose a change, please fork [pantheon-systems/wordpress-composer-managed](https://github.com/pantheon-systems/wordpress-composer-managed) and submit a PR to that repository.
 
+Feature or bugfix development branches/pull requests should originate from and be submitted against the `default` branch. Please note that the `main` branch is the main _test_ branch and exists as a clone of the default branch for use in testing automation. 
+
 ## Community
 
 There are large, thriving communities in both the Roots ecosystem and the Pantheon community that you can reach out to if you have any questions. 
