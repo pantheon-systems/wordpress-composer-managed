@@ -10,6 +10,10 @@ set -euo pipefail
 
 . devops/scripts/commit-type.sh
 
+# Copy README file to tmp directory for use after checkout.
+echo "Copying composer-managed-README to /tmp for use later."
+cp devops/files/composer-managed-README.md /tmp/composer-managed-README.md
+
 git remote add public "$UPSTREAM_REPO_REMOTE_URL"
 git fetch public
 git checkout "${CIRCLE_BRANCH}"
@@ -73,6 +77,10 @@ for commit in "${commits[@]}"; do
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
 done
+
+echo "Copying README to docroot."
+rm ./README.md
+cp /tmp/composer-managed-README.md ./README.md
 
 echo "Committing changes"
 git commit -F /tmp/commit_message --author='Pantheon Automation <bot@getpantheon.com>'
