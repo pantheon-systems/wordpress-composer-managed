@@ -82,6 +82,8 @@ echo "Copying README to docroot."
 rm ./README.md
 cp /tmp/composer-managed-README.md ./README.md
 
+git add .
+
 echo "Committing changes"
 git commit -F /tmp/commit_message --author='Pantheon Automation <bot@getpantheon.com>'
 
