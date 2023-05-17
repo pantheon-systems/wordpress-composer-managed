@@ -124,6 +124,9 @@
     "install-sage": [
       "source ./private/scripts/helpers.sh && install_sage"
     ],
+    "maybe-create-symlinks": [
+      "source ./private/scripts/helpers.sh && maybe_create_symlinks"
+    ],
     "lint": [
       "@lint:php",
       "@lint:phpcs",
