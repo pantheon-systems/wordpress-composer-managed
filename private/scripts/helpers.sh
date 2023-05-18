@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
-
 # Defines some global variables for colors.
 normal=$(tput sgr0)
 bold=$(tput bold)
@@ -32,7 +30,7 @@ function get_info() {
   fi
 
   if [ "$is_restarted" -eq 0 ]; then
-    echo "${yellow}Finding site information...${normal}\n"
+    echo "${yellow}Finding site information...${normal}"
   fi
 
   # Set up some defaults. These should evaluate to false if you go through
@@ -60,38 +58,44 @@ function get_info() {
   fi
 
   if [ "$is_restarted" -eq 0 ]; then
-    echo "\n--------------------------------------------------------------------------"
+    echo "--------------------------------------------------------------------------"
   fi
   # We want these to evaluate to false if they're empty strings so they can be
   # set manually.
   if [ -z "$sitename" ]; then
-    echo "${yellow}Enter the site name.${normal}\nThis will be used to interact with your site. The default is ${green}${name}${normal}."
+    echo "${yellow}Enter the site name.${normal}"
+    echo "This will be used to interact with your site. The default is ${green}${name}${normal}."
     read -p "Site name: " -r sitename
   else
     echo "${green}Site name: ${normal}${sitename}"
   fi
 
   if [ -z "$sftpuser" ]; then
-    echo "${yellow}Enter your SFTP username.${normal}\nThis will only be stored in this terminal session. This can be found in your site dashboard. The default is ${green}dev.${id}${normal}. \nDashboard link: ${dashboard_link}"
+    echo "${yellow}Enter your SFTP username.${normal}"
+    echo "This will only be stored in this terminal session. This can be found in your site dashboard. The default is ${green}dev.${id}${normal}."
+    echo "Dashboard link: ${dashboard_link}"
     read -p "SFTP username: " -r sftpuser
   else
     echo "${green}SFTP username: ${normal}${sftpuser}"
   fi
 
   if [ -z "$sftphost" ]; then
-    echo "${yellow}Enter your SFTP hostname.${normal}\nThis will only be stored in this terminal session. This can be found in your site dashboard. The default is ${green}appserver.dev.${id}.drush.in${normal}. \nDashboard link: ${dashboard_link}"
+    echo "${yellow}Enter your SFTP hostname.${normal}"
+    echo "This will only be stored in this terminal session. This can be found in your site dashboard. The default is ${green}appserver.dev.${id}.drush.in${normal}."
+    echo "Dashboard link: ${dashboard_link}"
     read -p "SFTP hostname: " -r sftphost
   else
     echo "${green}SFTP hostname: ${normal}${sftphost}"
   fi
 
   if [ "$is_restarted" -eq 0 ]; then
-    echo "--------------------------------------------------------------------------\n"
+    echo "--------------------------------------------------------------------------"
   fi
 
   # This is the first input that doesn't have a default. We'll do the line break above this.
   if [ -z "$sagename" ]; then
-    echo "${yellow}Enter your theme name.${normal}\nThis is used to create the theme directory. As such, it should ideally be all lowercase with no spaces (hyphens or underscores recommended)\n"
+    echo "${yellow}Enter your theme name.${normal}"
+    echo "This is used to create the theme directory. As such, it should ideally be all lowercase with no spaces (hyphens or underscores recommended)"
     read -p "Theme name: " -r sagename
     confirmThemeName "$sagename"
   else
@@ -115,7 +119,7 @@ function get_info() {
   fi
 
   if [ -z "$sitename" ] || [ -z "$sagename" ] || [ -z "$sftpuser" ] || [ -z "$sftphost" ]; then
-    echo "\n${red}Missing information!${normal} Make sure you've everything for all the prompts.\n"
+    echo "${red}Missing information!${normal} Make sure you've everything for all the prompts."
     get_info
   fi
 
@@ -133,7 +137,7 @@ function confirmThemeName() {
   sagename=${sagename//_/\-}
 
   # Remove double dashes
-  while [[ $sagename -eq *--* ]]; do
+  while [[ $sagename == *--* ]]; do
     sagename=${sagename/--/-}
   done
 
@@ -152,7 +156,8 @@ function check_login() {
   # If the response does not include a @, you're not logged in.
   # Ask the user to log in and exit.
   if [[ $REPLY != *"@"* ]]; then
-    echo "${red}You are not logged in to Terminus.${normal}\nPlease authenticate with terminus first using ${bold}terminus auth:login${normal}"
+    echo "${red}You are not logged in to Terminus.${normal}"
+    echo "Please authenticate with terminus first using ${bold}terminus auth:login${normal}"
     exit 1;
   fi
 }
@@ -175,7 +180,7 @@ get_field() {
 
 # Update to PHP 8.0
 function update_php() {
-  echo "\n\n${yellow}Updating PHP version to 8.0.${normal}"
+  echo "${yellow}Updating PHP version to 8.0.${normal}"
 
   # Testing for any version of PHP 8.x and/or PHP 7.4.
   phpAlreadyVersion8=$(grep -c "php_version: 8." < pantheon.yml)
@@ -200,10 +205,11 @@ function update_php() {
 # Install sage and related dependencies.
 function install_sage() {
   # Check if the directory $sagedir is empty. If it's not, bail.
-  echo "Checking if ${sagedir} is exists and if it's empty.\n"
+  echo "Checking if ${sagedir} is exists and if it's empty."
 
   if [ "$(ls -A "$sagedir")" ]; then
-    echo "${red}Directory not empty!${normal}\n Trying to install into ${sagedir}. Exiting."
+    echo "${red}Directory not empty!${normal}"
+    echo "Trying to install into ${sagedir}. Exiting."
     exit 1;
   fi
 
@@ -228,7 +234,7 @@ function install_sage() {
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
   git push origin master
-  echo "${green}Sage installed!${normal}\n"
+  echo "${green}Sage installed!${normal}"
 }
 
 # Create the symlink to the cache directory.
@@ -323,14 +329,17 @@ function update_composer() {
 
   git pull --ff --commit
   if ! git push origin master; then
-    echo "\n${red}Push failed. Stopping here.${normal}\nNext steps are to push the changes to the repo and then set the connection mode back to Git."
+    echo "${red}Push failed. Stopping here.${normal}"
+    echo "Next steps are to push the changes to the repo and then set the connection mode back to Git."
     exit 1;
   fi
 
   # Wait for the build to finish.
   echo "${yellow}Waiting for the deploy to finish.${normal}"
   if ! terminus workflow:wait --max=30 "$sitename".dev; then
-    echo "\n${red}terminus workflow:wait command not found. Stopping here.${normal}\nYou will need to install the terminus-build-tools-plugin.\nterminus self:plugin:install terminus-build-tools-plugin"
+    echo "${red}terminus workflow:wait command not found. Stopping here.${normal}"
+    echo "You will need to install the terminus-build-tools-plugin."
+    echo "terminus self:plugin:install terminus-build-tools-plugin"
     exit 1;
   fi
 
@@ -351,7 +360,10 @@ function clean_up() {
   # Activate the new theme
   echo "${yellow}Activating the ${sagename} theme.${normal}"
   if ! terminus wp -- "$sitename".dev theme activate "$sagename"; then
-    echo "${red}Theme activation failed. Exiting here.${normal}\nCheck the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:\nterminus wp -- $sitename.dev theme activate $sagename\nOnce you do this, you will need to open the site to generate the requisite files and then commit them in SFTP mode.\n5. You're ready to go! Set the connection mode back to Git."
+    echo "${red}Theme activation failed. Exiting here.${normal}"
+    echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
+    echo "terminus wp -- $sitename.dev theme activate $sagename"
+    echo "Once you do this, you will need to open the site to generate the requisite files and then commit them in SFTP mode."
     exit 1;
   fi
 
@@ -391,6 +403,8 @@ function install_sage() {
 
 # Maybe create symlinks for wp files.
 function maybe_create_symlinks() {
+  # Echo the current working directory
+  echo "${black}Current working directory: $(pwd) ${normal}"
   cd web
   local bar="####################"
 
