@@ -110,7 +110,7 @@ function get_info() {
   read -p "Is this correct? (y/n) " -n 1 -r
   # If the user enters n, redo the prompts.
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "\nRestarting...\n"
+    echo "Restarting..."
 
     # Toggle the restarted state.
     is_restarted=1
@@ -180,6 +180,7 @@ get_field() {
 
 # Update to PHP 8.0
 function update_php() {
+  echo ""
   echo "${yellow}Updating PHP version to 8.0.${normal}"
 
   # Testing for any version of PHP 8.x and/or PHP 7.4.
