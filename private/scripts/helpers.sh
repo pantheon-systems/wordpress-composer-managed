@@ -416,11 +416,14 @@ function maybe_create_symlinks() {
   echo "${yellow}Checking if we need to create symlinks...${normal}"
   # Loop through all the files in wp/* and create a symbolic link to it in the current working directory unless it's index.php or wp-settings.php but only if a link does not already exist in the current directory.
   for file in wp/*; do
-    echo -ne "\r${bar:0:$i}"
     if [[ "$file" != "wp/index.php" && "$file" != "wp/wp-settings.php" && ! -L "${file##*/}" ]]; then
       ln -s "$file" "${file##*/}"
+      printf "\e[D!\e[C"
+    else
+      printf "\e[D.\e[C"
     fi
   done
-
+  printf "\e[D✅\e[C"
+  echo ""
   echo "${green}Done creating symlinks!${normal} 🔗"
 }
