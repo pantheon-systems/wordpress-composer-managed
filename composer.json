@@ -114,7 +114,7 @@
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
-    "post-install-cmd": "@maybe-create-symlinks || exit 0",
+    "post-install-cmd": "@maybe-create-symlinks",
     "pre-update-cmd": [
       "WordPressComposerManaged\\ComposerScripts::preUpdate"
     ],
