@@ -183,6 +183,13 @@ function update_php() {
   echo ""
   echo "${yellow}Updating PHP version to 8.0.${normal}"
 
+  # Check for pantheon.yml file.
+  if [ ! -f "pantheon.yml" ]; then
+    echo "${red}No pantheon.yml file found. Exiting here.${normal}"
+    echo "Make sure you are inside a valid Pantheon repository."
+    exit 1;
+  fi
+
   # Testing for any version of PHP 8.x and/or PHP 7.4.
   phpAlreadyVersion8=$(grep -c "php_version: 8." < pantheon.yml)
   phpDeclaredInFile=$(grep -c "php_version: 7.4" < pantheon.yml)
