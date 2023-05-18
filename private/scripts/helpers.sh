@@ -212,7 +212,7 @@ function update_php() {
 }
 
 # Install sage and related dependencies.
-function install_sage() {
+function install_sage_theme() {
   # Check if the directory $sagedir is empty. If it's not, bail.
   echo "Checking if ${sagedir} is exists and if it's empty."
 
@@ -404,7 +404,7 @@ function install_sage() {
 
   get_info
   update_php
-  install_sage
+  install_sage_theme
   add_symlink
   update_composer
   clean_up
