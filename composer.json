@@ -119,10 +119,10 @@
       "WordPressComposerManaged\\ComposerScripts::preUpdate"
     ],
     "install-sage": [
-      "source ./private/scripts/helpers.sh && install_sage"
+      ". ./private/scripts/helpers.sh && install_sage"
     ],
     "maybe-create-symlinks": [
-      "source ./private/scripts/helpers.sh && maybe_create_symlinks"
+      ". ./private/scripts/helpers.sh && maybe_create_symlinks"
     ],
     "lint": [
       "@lint:php",
