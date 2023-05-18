@@ -204,10 +204,11 @@ function update_php() {
       # Add full PHP version declaration to pantheon.yml.
       echo "php_version: 8.0" >> pantheon.yml
     fi
+    git commit -am "[Sage Install] Update PHP version to 8.0"
+    git push origin master
+  else
+    echo "${green}PHP version is already 8.x.${normal}"
   fi
-
-  git commit -am "[Sage Install] Update PHP version to 8.0"
-  git push origin master
 }
 
 # Install sage and related dependencies.
