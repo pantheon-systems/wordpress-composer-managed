@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Defines some global variables for colors.
 normal=$(tput sgr0)
