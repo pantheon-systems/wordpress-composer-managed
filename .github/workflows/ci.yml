@@ -34,6 +34,7 @@ jobs:
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run lints
+      shell: bash
       run: composer lint
 
     - name: Run tests
