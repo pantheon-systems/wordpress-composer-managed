@@ -345,7 +345,7 @@ function update_composer() {
 
   # Wait for the build to finish.
   echo "${yellow}Waiting for the deploy to finish.${normal}"
-  if ! terminus workflow:wait --max=30 "$sitename".dev; then
+  if ! terminus workflow:wait --max=90 "$sitename".dev; then
     echo "${red}terminus workflow:wait command not found. Stopping here.${normal}"
     echo "You will need to install the terminus-build-tools-plugin."
     echo "terminus self:plugin:install terminus-build-tools-plugin"
