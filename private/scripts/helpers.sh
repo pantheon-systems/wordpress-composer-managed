@@ -12,6 +12,35 @@ yellow=$(tput setaf 3)
 #magenta=$(tput setaf 5)
 #cyan=$(tput setaf 6)
 
+# Main function that runs the script.
+function main() {
+  help_msg="Usage: bash ./private/scripts/helpers.sh <command>
+  Available commands:
+    install_sage: Install Sage.
+    maybe_create_symlinks: Create a symlinks to WordPress files, if they don't already exist."
+
+  if [ -z "$1" ]; then
+    echo "${red}No command specified.${normal}"
+    echo "${help_msg}"
+    exit 1;
+  fi
+
+  if [ "$1" == "help" ]; then
+    echo "${help_msg}"
+    exit 0;
+  fi
+
+  # Check for a valid command.
+  if [ "$1" != "install_sage" ] && [ "$1" != "maybe_create_symlinks" ]; then
+    echo "${red}Invalid command specified.${normal}"
+    echo "${help_msg}"
+    exit 1;
+  fi
+
+  # Execute the command passed.
+  "$@"
+}
+
 # Get the site name, theme name, and SFTP credentials from the user.
 function get_info() {
   # If is_restarted is unset, set it to 0.
@@ -427,3 +456,5 @@ function maybe_create_symlinks() {
   echo ""
   echo "${green}Done creating symlinks!${normal} 🔗"
 }
+
+main "$@"
