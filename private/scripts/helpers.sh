@@ -412,11 +412,7 @@ function install_sage() {
 
 # Maybe create symlinks for wp files.
 function maybe_create_symlinks() {
-  # Echo the current working directory
-  echo "${black}Current working directory: $(pwd) ${normal}"
-  cd web
-  local bar="####################"
-
+  cd web || exit 1
   echo "${yellow}Checking if we need to create symlinks...${normal}"
   # Loop through all the files in wp/* and create a symbolic link to it in the current working directory unless it's index.php or wp-settings.php but only if a link does not already exist in the current directory.
   for file in wp/*; do
