@@ -38,7 +38,7 @@ function main() {
   fi
 
   # Execute the command passed.
-  "$@"
+  "$1"
 }
 
 # Get the site name, theme name, and SFTP credentials from the user.
