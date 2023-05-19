@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o pipefail
+IFS=$'\n\t'
 
 # Defines some global variables for colors.
 normal=$(tput sgr0)
