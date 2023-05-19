@@ -93,15 +93,15 @@
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
-    "post-install-cmd": [
-      "cd web; ln -sfn $(ls wp/* | grep -v 'index.php') . || true",
-      "rm web/wp-settings.php"
-    ],
+    "post-install-cmd": "@maybe-create-symlinks",
     "pre-update-cmd": [
       "WordPressComposerManaged\\ComposerScripts::preUpdate"
     ],
     "install-sage": [
-      "bash ./private/scripts/sage-theme-install.sh"
+      "bash ./private/scripts/helpers.sh install_sage"
+    ],
+    "maybe-create-symlinks": [
+      "bash ./private/scripts/helpers.sh maybe_create_symlinks"
     ],
     "lint": [
       "@lint:php",

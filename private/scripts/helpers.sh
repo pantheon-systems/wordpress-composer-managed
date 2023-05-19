@@ -53,7 +53,7 @@ function get_info() {
   dashboard_link="https://dashboard.pantheon.io/sites/${id}#dev/code"
 
   # Unset the variables if we're doing this a second time.
-  if [ $is_restarted == 1 ]; then
+  if [ "$is_restarted" -eq 1 ]; then
     unset sitename
     unset sagename
     unset sftpuser
@@ -197,7 +197,7 @@ function check_login() {
 get_field() {
   local input="$1"
   # Remove leading and trailing whitespace from each line
-  input="$(echo "$input" | sed -e 's/^[ \t]*//')"
+  input="${input#"${input%%[![:space:]]*}"}"
 
   if [[ -n "$input" ]]; then
     # Remove the first and last lines that are entirely dashes
@@ -222,9 +222,9 @@ function update_php() {
   fi
 
   # Testing for any version of PHP 8.x and/or PHP 7.4.
-  phpAlreadyVersion8=$(cat pantheon.yml | grep -c "php_version: 8.")
-  phpDeclaredInFile=$(cat pantheon.yml | grep -c "php_version: 7.4")
-  
+  phpAlreadyVersion8=$(grep -c "php_version: 8." < pantheon.yml)
+  phpDeclaredInFile=$(grep -c "php_version: 7.4" < pantheon.yml)
+
   # Only alter if not already PHP 8.x.
   if [ "$phpAlreadyVersion8" -eq 0 ]; then
     # Test for PHP version declartion already in pantheon.yml.
@@ -255,23 +255,23 @@ function install_sage_theme() {
 
   echo "${yellow}Installing Sage.${normal}"
   # Create the new Sage theme
-  composer create-project roots/sage $sagedir
+  composer create-project roots/sage "$sagedir"
 
   # Require Roots/acorn
-  composer require roots/acorn --working-dir=$sagedir
+  composer require roots/acorn --working-dir="$sagedir"
 
   # Install all the Sage dependencies
-  composer install --no-dev --prefer-dist --working-dir=$sagedir
+  composer install --no-dev --prefer-dist --working-dir="$sagedir"
 
   # NPM the things
-  npm install --prefix $sagedir
-  npm run build --prefix $sagedir
+  npm install --prefix "$sagedir"
+  npm run build --prefix "$sagedir"
 
   # Remove /public from .gitignore
-  sed -i '' "s/\/public//" $sagedir/.gitignore
+  sed -i '' "s/\/public//" "$sagedir"/.gitignore
 
   # Commit the theme
-  git add $sagedir
+  git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
   git push origin master
   echo "${green}Sage installed!${normal}"
@@ -280,7 +280,7 @@ function install_sage_theme() {
 # Create the symlink to the cache directory.
 function add_symlink() {
   # Switch to SFTP mode
-  terminus connection:set $sitename.dev sftp
+  terminus connection:set "$sitename".dev sftp
 
   if [ ! -d "web/app/uploads" ]; then
     echo "${yellow}Creating the uploads directory.${normal}"
@@ -293,13 +293,13 @@ function add_symlink() {
   fi
 
   # Create a files/cache directory on the host.
-  sftp -P 2222 $sftpuser@$sftphost <<EOF
+  sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
     cd /files
     mkdir cache
 EOF
 
     # Switch back to Git mode.
-    terminus connection:set $sitename.dev git
+    terminus connection:set "$sitename".dev git
 
   # Create the symlink to /files/cache.
   cd web/app || return
@@ -354,17 +354,7 @@ function update_composer() {
   echo "${yellow}Attempting to add a post-install hook to composer.json.${normal}"
 
   # Check of jq is installed
-  if [ ! command -v jq &> /dev/null ]; then
-    if [ ! command -v brew & /dev/null ]; then
-      echo "${yellow}Brew was not found. Exiting here. You'll need to add the following lines to your `composer.json`:${normal}"
-      echo '  "scripts": {'
-      echo '      "post-install-cmd": ['
-      echo "          \"@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=web/app/themes/$sagename\""
-      echo '      ],'
-      exit
-    fi
-    brew install jq
-  fi
+  check_jq
 
   # Add a post-install hook to the composer.json.
   echo "${yellow}Adding a post-install hook to composer.json.${normal}"
@@ -403,9 +393,9 @@ function update_composer() {
 # Finish up the Sage install process.
 function clean_up() {
   # If the site is multisite, we'll need to enable the theme so we can activate it.
-  terminus wp -- $sitename.dev theme enable $sagename
+  terminus wp -- "$sitename".dev theme enable "$sagename"
   # List the themes.
-  terminus wp -- $sitename.dev theme list
+  terminus wp -- "$sitename".dev theme list
 
   # Activate the new theme
   echo "${yellow}Activating the ${sagename} theme.${normal}"
@@ -418,7 +408,7 @@ function clean_up() {
   fi
 
   # Switch back to SFTP so files can be written.
-  terminus connection:set $sitename.dev sftp
+  terminus connection:set "$sitename".dev sftp
 
   # Open the site. This should generate requisite files on page load.
   echo "${yellow}Opening the dev-${sitename}.pantheonsite.io to generate requisite files.${normal}"
@@ -429,7 +419,7 @@ function clean_up() {
   terminus env:commit "$sitename".dev --message="[Sage Install] Add any leftover files found in SFTP mode."
 
   # Switch back to Git.
-  terminus connection:set $sitename.dev git
+  terminus connection:set "$sitename".dev git
   git pull --ff --commit
 }
 
