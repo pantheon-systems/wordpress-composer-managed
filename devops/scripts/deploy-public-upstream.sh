@@ -41,7 +41,7 @@ for commit in $newcommits; do
     delete=(${commit})
     for remove in "${delete[@]}"; do
       for i in "${commits[@]}"; do
-        if [ [ ${commits[$i]} = $remove ]]; then
+        if [[ ${commits[$i]} == "$remove" ]]; then
           unset 'commits[i]'
         fi
       done
