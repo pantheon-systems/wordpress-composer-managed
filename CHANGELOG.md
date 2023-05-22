@@ -1,3 +1,10 @@
+### 2023-05-22
+* Removes the `lh-hsts` plugin requirement from the `composer.json` file. ([#91](https://github.com/pantheon-systems/wordpress-composer-managed/pull/91))
+* Adds the [Pantheon WP Coding Standards](https://github.com/pantheon-systems/pantheon-wp-coding-standards) to use instead of the default PHPCS/WPCS standards ([#94](https://github.com/pantheon-systems/wordpress-composer-managed/pull/94))
+* Backports updates from Roots/Bedrock ([#90](https://github.com/pantheon-systems/wordpress-composer-managed/pull/90))
+* Updates the `post-install-cmd` hook to run a script that checks for the existence of symlinks before attempting to create them. ([#98](https://github.com/pantheon-systems/wordpress-composer-managed/pull/98))
+* Minor improvements to the Sage install process (included in [#98](https://github.com/pantheon-systems/wordpress-composer-managed/pull/98))
+
 ### 2023-03-29
 * Changes the language in comments about appropriate usage of `config/application.php`. `application.php` should be used for any site config customizations rather than `wp-config.php` which should _not_ be edited. ([#76](https://github.com/pantheon-systems/wordpress-composer-managed/pull/76))
 * Updates the Sage install script to properly update the PHP version. ([#81](https://github.com/pantheon-systems/wordpress-composer-managed/pull/81))
