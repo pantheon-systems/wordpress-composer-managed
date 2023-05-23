@@ -1,3 +1,7 @@
+# Preventing `composer.lock` from being committed
+
+Committing `composer.lock` to the upstream repository will break downstream sites using integrated Composer. To prevent this from happening, after cloning this repository, you can add `composer.lock` to the `.git/info/exclude` in your local copy. Note that this needs to be done for any local copies you wish to apply this rule to.
+
 # Pantheon release process documentation
 
 There are some atypical development and release procedures in use with this repository:
