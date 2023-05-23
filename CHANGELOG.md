@@ -1,4 +1,4 @@
-### 2023-05-22
+### 2023-05-23
 * Removes the `lh-hsts` plugin requirement from the `composer.json` file. ([#91](https://github.com/pantheon-systems/wordpress-composer-managed/pull/91))
 * Adds the [Pantheon WP Coding Standards](https://github.com/pantheon-systems/pantheon-wp-coding-standards) to use instead of the default PHPCS/WPCS standards ([#94](https://github.com/pantheon-systems/wordpress-composer-managed/pull/94))
 * Backports updates from Roots/Bedrock ([#90](https://github.com/pantheon-systems/wordpress-composer-managed/pull/90))
