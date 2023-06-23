@@ -97,6 +97,10 @@ class ComposerScripts
         if (isset($composerJson['scripts-descriptions']['upstream-require'])) {
             unset($composerJson['scripts-descriptions']['upstream-require']);
         }
+        // Now, if scripts-descriptions is empty, remove it. This prevents an issue where it's re-encoded as an array instead of an (empty) object.
+        if (empty($composerJson['scripts-descriptions'])) {
+            unset($composerJson['scripts-descriptions']);
+        }
 
         if (serialize($composerJson) == serialize($originalComposerJson)) {
             return;
