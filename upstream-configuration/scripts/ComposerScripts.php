@@ -56,7 +56,8 @@ class ComposerScripts
      * @param Composer\Script\Event $event
      *   The Event object passed in from Composer
      */
-    public static function postUpdate(Event $event) {
+    public static function postUpdate(Event $event)
+    {
         // for future use
     }
 
@@ -68,7 +69,8 @@ class ComposerScripts
      * change the composer.json file in the upstream, because doing so would
      * result in many merge conflicts.
      */
-    public static function applyComposerJsonUpdates(Event $event) {
+    public static function applyComposerJsonUpdates(Event $event)
+    {
         $io = $event->getIO();
 
         $composerJsonContents = file_get_contents("composer.json");
@@ -96,7 +98,7 @@ class ComposerScripts
             unset($composerJson['scripts-descriptions']['upstream-require']);
         }
 
-        if(serialize($composerJson) == serialize($originalComposerJson)) {
+        if (serialize($composerJson) == serialize($originalComposerJson)) {
             return;
         }
 
@@ -115,7 +117,8 @@ class ComposerScripts
      * @return string
      *   The pretty-printed encoded string version of the supplied data.
      */
-    public static function jsonEncodePretty(array $data) {
+    public static function jsonEncodePretty(array $data)
+    {
         $prettyContents = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $prettyContents = preg_replace('#": \[\s*("[^"]*")\s*\]#m', '": [\1]', $prettyContents);
         return $prettyContents;
@@ -124,7 +127,8 @@ class ComposerScripts
     /**
      * Get current platform.php value.
      */
-    private static function getCurrentPlatformPhp(Event $event) {
+    private static function getCurrentPlatformPhp(Event $event)
+    {
         $composer = $event->getComposer();
         $config = $composer->getConfig();
         $platform = $config->get('platform') ?: [];
@@ -137,7 +141,8 @@ class ComposerScripts
     /**
      * Get the PHP version from pantheon.yml or pantheon.upstream.yml file.
      */
-    private static function getPantheonConfigPhpVersion($path) {
+    private static function getPantheonConfigPhpVersion($path)
+    {
         if (!file_exists($path)) {
             return null;
         }
@@ -150,16 +155,17 @@ class ComposerScripts
     /**
      * Get the PHP version from pantheon.yml.
      */
-    private static function getPantheonPhpVersion(Event $event) {
+    private static function getPantheonPhpVersion(Event $event)
+    {
         $composer = $event->getComposer();
         $config = $composer->getConfig();
         $pantheonYmlPath = dirname($config->get('vendor-dir')) . '/pantheon.yml';
         $pantheonUpstreamYmlPath = dirname($config->get('vendor-dir')) . '/pantheon.upstream.yml';
 
         if ($pantheonYmlVersion = static::getPantheonConfigPhpVersion($pantheonYmlPath)) {
-          return $pantheonYmlVersion;
+            return $pantheonYmlVersion;
         } elseif ($pantheonUpstreamYmlVersion = static::getPantheonConfigPhpVersion($pantheonUpstreamYmlPath)) {
-          return $pantheonUpstreamYmlVersion;
+            return $pantheonUpstreamYmlVersion;
         }
         return null;
     }
@@ -167,7 +173,8 @@ class ComposerScripts
     /**
      * Determine which patch version to use when the user changes their platform php version.
      */
-    private static function bestPhpPatchVersion($pantheonPhpVersion) {
+    private static function bestPhpPatchVersion($pantheonPhpVersion)
+    {
         // Integrated Composer requires PHP 7.1 at a minimum.
         $patchVersions = [
             '8.2' => '8.2.0',
