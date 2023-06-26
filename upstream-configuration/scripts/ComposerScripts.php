@@ -17,7 +17,8 @@ class ComposerScripts
     * Prepare for Composer to update dependencies.
     */
     public static function preUpdate(Event $event)
-    {}
+    {
+    }
 
     /**
      * postUpdate
