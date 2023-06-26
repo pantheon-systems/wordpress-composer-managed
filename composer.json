@@ -124,5 +124,8 @@
   },
   "scripts-descriptions": {
       "upstream-require": "Add a dependency to an upstream. See https://pantheon.io/docs/create-custom-upstream for information on creating custom upstreams."
+  },
+  "suggest": {
+    "pantheon-systems/upstream-management": "Composer plugin that provides commands for managing custom upstreams on Pantheon."
   }
 }
