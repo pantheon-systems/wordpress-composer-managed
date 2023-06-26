@@ -1,3 +1,8 @@
+### 2023-06-27
+* Fixed a bug that failed to prevent a `composer.lock` file from being committed to the repository. ([#103](https://github.com/pantheon-systems/wordpress-composer-managed/pull/103))
+* Removed the `upstream-require` script ([#105](https://github.com/pantheon-systems/wordpress-composer-managed/pull/105)). This is now available as a standalone Composer plugin: [`pantheon-systems/upstream-management`](https://packagist.org/packages/pantheon-systems/upstream-management)
+* Added a README to the Upstream Configuration path repository with notes about the new `upstream-management` package. ([#104](https://github.com/pantheon-systems/wordpress-composer-managed/pull/104))
+
 ### 2023-05-23
 * Removes the `lh-hsts` plugin requirement from the `composer.json` file. ([#91](https://github.com/pantheon-systems/wordpress-composer-managed/pull/91))
 * Adds the [Pantheon WP Coding Standards](https://github.com/pantheon-systems/pantheon-wp-coding-standards) to use instead of the default PHPCS/WPCS standards ([#94](https://github.com/pantheon-systems/wordpress-composer-managed/pull/94))
