@@ -89,17 +89,38 @@ class ComposerScripts
             $composerJson['config']['platform']['php'] = $updatedPlatformPhpVersion;
         }
 
-        // Remove our upstream convenience scripts, if the user has not removed them.
-        if (isset($composerJson['scripts']['upstream-require'])) {
-            unset($composerJson['scripts']['upstream-require']);
+        // add our post-update-cmd hook if it's not already present
+        $our_hook = 'WordPressComposerManaged\\ComposerScripts::postUpdate';
+        // if does not exist, add as an empty arry
+        if (! isset($composerJson['scripts']['post-update-cmd'])) {
+            $composerJson['scripts']['post-update-cmd'] = [];
         }
-        // Also remove it from the scripts-descriptions section.
-        if (isset($composerJson['scripts-descriptions']['upstream-require'])) {
-            unset($composerJson['scripts-descriptions']['upstream-require']);
+
+        // if exists and is a string, convert to a single-item array
+        if (is_string($composerJson['scripts']['post-update-cmd'])) {
+            $composerJson['scripts']['post-update-cmd'] = [$composerJson['scripts']['post-update-cmd']];
         }
-        // Now, if scripts-descriptions is empty, remove it. This prevents an issue where it's re-encoded as an array instead of an (empty) object.
-        if (empty($composerJson['scripts-descriptions'])) {
-            unset($composerJson['scripts-descriptions']);
+
+        // if exists and is an array and does not contain our hook, add our hook (again, only the last check is needed)
+        if (! in_array($our_hook, $composerJson['scripts']['post-update-cmd'])) {
+            // We're making our other changes if and only if we're already adding our hook
+            // so that we don't overwrite customer's changes if they undo these changes.
+            // We don't want customers to remove our hook, so it will be re-added if they remove it.
+            $io->write("<info>Adding post-update-cmd hook to composer.json</info>");
+            $composerJson['scripts']['post-update-cmd'][] = $our_hook;
+
+            // Remove our upstream convenience scripts, if the user has not removed them.
+            if (isset($composerJson['scripts']['upstream-require'])) {
+                unset($composerJson['scripts']['upstream-require']);
+            }
+            // Also remove it from the scripts-descriptions section.
+            if (isset($composerJson['scripts-descriptions']['upstream-require'])) {
+                unset($composerJson['scripts-descriptions']['upstream-require']);
+            }
+            // Now, if scripts-descriptions is empty, remove it. This prevents an issue where it's re-encoded as an array instead of an (empty) object.
+            if (empty($composerJson['scripts-descriptions'])) {
+                unset($composerJson['scripts-descriptions']);
+            }
         }
 
         if (serialize($composerJson) == serialize($originalComposerJson)) {
