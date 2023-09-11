@@ -18,6 +18,7 @@
   <exclude-pattern>web/app/mu-plugins/*</exclude-pattern>
   <exclude-pattern>web/app/plugins/*</exclude-pattern>
   <exclude-pattern>web/private/*</exclude-pattern>
+  <exclude-pattern>upstream-configuration/*</exclude-pattern>
   <!-- End Pantheon addition -->
 
   <!-- Show colors in console -->
