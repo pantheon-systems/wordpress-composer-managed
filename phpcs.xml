@@ -16,6 +16,7 @@
 
   <!-- Start Pantheon addition: Ignore plugins and quicksilver scripts -->
   <exclude-pattern>web/app/mu-plugins/*</exclude-pattern>
+  <!-- This line prevents all plugins from being linted. Remove this line if you want to lint plugins. -->
   <exclude-pattern>web/app/plugins/*</exclude-pattern>
   <exclude-pattern>web/private/*</exclude-pattern>
   <exclude-pattern>upstream-configuration/*</exclude-pattern>
