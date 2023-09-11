@@ -20,6 +20,22 @@
   <exclude-pattern>web/app/plugins/*</exclude-pattern>
   <exclude-pattern>web/private/*</exclude-pattern>
   <exclude-pattern>upstream-configuration/*</exclude-pattern>
+
+  <!-- Ignore sniffs against things that we explicitly want for Pantheon upstreams. -->
+  <rule ref="Pantheon-WP">
+    <exclude name="WordPress.PHP.IniSet.display_errors_Disallowed">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+  </rule>
   <!-- End Pantheon addition -->
 
   <!-- Show colors in console -->
