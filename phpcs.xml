@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Roots">
-  <description>Roots Coding Standards</description>
+<ruleset name="Pantheon WP Composer Managed">
+  <description>Pantheon WordPress Composer Managed Upstream</description>
 
   <!-- Scan all files in directory -->
   <file>.</file>
