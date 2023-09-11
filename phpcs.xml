@@ -26,6 +26,6 @@
   <!-- Show sniff codes in all reports -->
   <arg value="ns"/>
 
-  <!-- Use PSR-2 as a base -->
-  <rule ref="PSR2"/>
+  <!-- Use Pantheon-WP as a base -->
+  <rule ref="Pantheon-WP"/>
 </ruleset>
