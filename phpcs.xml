@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Roots">
-  <description>Roots Coding Standards</description>
+<ruleset name="Pantheon WP Composer Managed">
+  <description>Pantheon WordPress Composer Managed Upstream</description>
 
   <!-- Scan all files in directory -->
   <file>.</file>
@@ -16,8 +16,29 @@
 
   <!-- Start Pantheon addition: Ignore plugins and quicksilver scripts -->
   <exclude-pattern>web/app/mu-plugins/*</exclude-pattern>
+  <!-- This line prevents all plugins from being linted. Remove this line if you want to lint plugins. -->
   <exclude-pattern>web/app/plugins/*</exclude-pattern>
   <exclude-pattern>web/private/*</exclude-pattern>
+  <exclude-pattern>upstream-configuration/*</exclude-pattern>
+
+  <!-- Ignore sniffs against things that we explicitly want for Pantheon upstreams. -->
+  <rule ref="Pantheon-WP">
+    <exclude name="WordPress.PHP.IniSet.display_errors_Disallowed">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.PHP.IniSet.display_errors_Blacklisted">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+    <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited">
+      <exclude-pattern>config/application.php</exclude-pattern>
+    </exclude>
+  </rule>
   <!-- End Pantheon addition -->
 
   <!-- Show colors in console -->
@@ -26,6 +47,6 @@
   <!-- Show sniff codes in all reports -->
   <arg value="ns"/>
 
-  <!-- Use PSR-2 as a base -->
-  <rule ref="PSR2"/>
+  <!-- Use Pantheon-WP as a base -->
+  <rule ref="Pantheon-WP"/>
 </ruleset>

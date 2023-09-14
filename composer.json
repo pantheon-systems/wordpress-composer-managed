@@ -133,7 +133,7 @@
       "php -l web/wp/wp-settings.php"
     ],
     "lint:phpcs": [
-      "phpcs"
+      "vendor/bin/phpcs -s ."
     ],
     "lint:bash": [
       "shellcheck private/scripts/*.sh"
