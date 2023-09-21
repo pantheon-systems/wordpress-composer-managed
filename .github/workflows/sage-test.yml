@@ -20,6 +20,29 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+      - name: Generate multidev name
+        id: generate_name
+        run: |
+          os_short=""
+          case "${{ matrix.os }}" in
+            ubuntu-latest)
+              os_short="nix"
+              ;;
+            macos-latest)
+              os_short="mac"
+              ;;
+            windows-latest)
+              os_short="win"
+              ;;
+          esac
+
+          php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
+          pr_num="${{ github.event.pull_request.number }}"
+
+          multidev_name="${os_short}-${php_short}-${pr_num}"
+          echo "Generated multidev name: $multidev_name"
+          echo "multidev_name=$multidev_name" >> $GITHUB_ENV
+        shell: bash
       - name: Get latest Terminus release
         run: |
           latest_version=$(curl --silent "https://api.github.com/repos/pantheon-systems/terminus/releases/latest" | jq -r .tag_name)
@@ -33,7 +56,7 @@ jobs:
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
           terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
-          terminus site:create-env --site=wpcm-sage-install-tests --to-env=${{ matrix.os }}-${{ github.event.pull_request.number }} --from-env=dev
+          terminus site:create-env --site=wpcm-sage-install-tests --to-env=$multidev_name --from-env=dev
       - name: Run Sage Install Script
         run: |
           composer install-sage || exit_code=$?
