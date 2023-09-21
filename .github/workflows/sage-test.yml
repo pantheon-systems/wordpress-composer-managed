@@ -1,9 +1,9 @@
 name: Sage Install Tests
 on:
+  push:
   pull_request:
     branches:
       - main
-      - '**'
     paths:
       - '/private/scripts/**'
 jobs:
