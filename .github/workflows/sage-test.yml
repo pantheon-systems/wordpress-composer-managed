@@ -29,9 +29,13 @@ jobs:
           sudo mv terminus /usr/local/bin/
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
-      - name: Run Sage Install Script
+      - name: Log into Terminus & Create Multidev
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+          terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
+          terminus site:create-env --site=wpcm-sage-install-tests --to-env=${{ matrix.os }}-${{ github.event.pull_request.number }} --from-env=dev
+      - name: Run Sage Install Script
+        run: |
           composer install-sage || exit_code=$?
           if [[ -n "${exit_code}" ]]; then
             echo "❌ Sage Install Script Failed with exit code ${exit_code}"
