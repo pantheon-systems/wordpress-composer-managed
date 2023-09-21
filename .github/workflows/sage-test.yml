@@ -17,12 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get PR number
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            const pr = context.payload.number;
-            core.exportVariable('PR_NUMBER', pr);
+        id: pr
+        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
