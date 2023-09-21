@@ -56,7 +56,8 @@ jobs:
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
           terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
-          terminus site:create-env --site=wpcm-sage-install-tests --to-env=$multidev_name --from-env=dev
+          terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+        shell: bash
       - name: Run Sage Install Script
         run: |
           composer install-sage || exit_code=$?
@@ -68,3 +69,6 @@ jobs:
             exit 0;
           fi
         shell: bash
+      - name: Delete multidev
+        if: always()
+        run: terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
