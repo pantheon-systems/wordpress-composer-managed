@@ -42,7 +42,7 @@ jobs:
           esac
 
           php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
-          pr_num=$(echo "$PR_NUMBER")
+          pr_num=$(echo ${{ steps.pr.outputs.pull_request_number }})
           echo "PR number: $pr_num"
           echo "OS: $os_short"
           echo "PHP: $php_short"
