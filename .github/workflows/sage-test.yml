@@ -21,7 +21,6 @@ jobs:
         with:
           github-token: ${{ github.token }}
           script: |
-            const core = require('@actions/core');
             const pr = context.payload.number;
             core.exportVariable('PR_NUMBER', pr);
       - name: Setup PHP
