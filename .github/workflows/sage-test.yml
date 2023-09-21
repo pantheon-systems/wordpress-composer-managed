@@ -37,7 +37,7 @@ jobs:
           esac
 
           php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
-          pr_num="${{ github.event.pull_request.number }}"
+          pr_num="${{ github.event.number }}"
 
           multidev_name="${os_short}-${php_short}-${pr_num}"
           echo "Generated multidev name: $multidev_name"
