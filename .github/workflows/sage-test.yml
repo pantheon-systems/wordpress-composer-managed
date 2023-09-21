@@ -20,6 +20,13 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+      - name: Get latest Terminus release
+        run: |
+          latest_version=$(curl --silent "https://api.github.com/repos/pantheon-systems/terminus/releases/latest" | jq -r .tag_name)
+          echo "Terminus Latest version is $latest_version"
+          curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
+          chmod +x terminus
+          sudo mv terminus /usr/local/bin/
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
       - name: Run Sage Install Script
