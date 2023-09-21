@@ -45,7 +45,9 @@ jobs:
 
           php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
           pr_num=$(echo "$PR_NUMBER")
-
+          echo "PR number: $pr_num"
+          echo "OS: $os_short"
+          echo "PHP: $php_short"
           multidev_name="${os_short}-${php_short}-${pr_num}"
           echo "Generated multidev name: $multidev_name"
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
