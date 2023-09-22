@@ -396,8 +396,7 @@ function update_composer() {
   git add composer.json
   git commit -m "[Sage Install] Add post-install-cmd hook to also run install on ${sagename}"
 
-  git pull --ff --commit
-  if ! git push origin master; then
+  if ! git push origin master; then+
     echo "${red}Push failed. Stopping here.${normal}"
     echo "Next steps are to push the changes to the repo and then set the connection mode back to Git."
     exit 1;
@@ -424,6 +423,8 @@ function update_composer() {
     echo "${yellow}Workflow still running, waiting another ${waittime} seconds.${normal}"
     terminus workflow:wait --max="$waittime" "$sitename"."$siteenv"
   fi
+
+  git pull --ff --commit
 }
 
 # Finish up the Sage install process.
