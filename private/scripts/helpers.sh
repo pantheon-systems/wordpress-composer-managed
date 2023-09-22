@@ -50,6 +50,7 @@ function get_info() {
   sftpuser="${SFTPUSER:-}"
   sftphost="${SFTPHOST:-}"
   sagename="${SAGENAME:-}"
+  is_ci="${CI:-}"
 
   # If is_restarted is unset, set it to 0.
   if [ -z "$is_restarted" ]; then
@@ -60,6 +61,10 @@ function get_info() {
 
   # Unset the variables if we're doing this a second time.
   if [ "$is_restarted" -eq 1 ]; then
+    if [ "$is_ci" -eq 1 ]; then
+      echo "${yellow}CI detected. We're not going to restart. Bailing here.${normal}"
+      exit 1;
+    fi
     unset sitename
     unset sagename
     unset sftpuser
