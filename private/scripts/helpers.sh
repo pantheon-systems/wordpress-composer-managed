@@ -437,7 +437,7 @@ function install_sage() {
   check_login
 
   themedir="web/app/themes"
-  siteinfo=$(terminus site:info $sitename)
+  siteinfo=$(terminus site:info "$sitename")
   id=$(get_field "ID" "$siteinfo")
   name=$(get_field "Name" "$siteinfo")
 
