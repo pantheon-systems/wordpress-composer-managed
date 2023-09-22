@@ -74,6 +74,12 @@ jobs:
             terminus --version
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
+      - name: Validate Pantheon Host Key
+        run: |
+          ssh-keyscan -t rsa drush.in >> ~/.ssh/known_hosts
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
       - name: Log into Terminus, Create Multidev and Clone Site
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
