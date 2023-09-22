@@ -77,6 +77,8 @@ jobs:
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
       - name: Run Sage Install Script
         run: |
+          SAGENAME=sage-test
+          SITENAME=wpcm-sage-install-tests
           composer install-sage || exit_code=$?
           if [[ -n "${exit_code}" ]]; then
             echo "❌ Sage Install Script Failed with exit code ${exit_code}"
