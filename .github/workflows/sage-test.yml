@@ -78,10 +78,11 @@ jobs:
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
           terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
-          terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
           echo "Cloning site..."
           terminus local:clone wpcm-sage-install-tests
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+          echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
           echo "Installing Composer dependencies..."
