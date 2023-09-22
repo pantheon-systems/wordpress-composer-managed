@@ -7,7 +7,8 @@ on:
     paths:
       - '/private/scripts/**'
 jobs:
-  linux:
+  test:
+    name: Sage Theme Install Tests
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -54,11 +55,15 @@ jobs:
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
       - name: Get latest Terminus release
         run: |
-          latest_version=$(curl --silent "https://api.github.com/repos/pantheon-systems/terminus/releases/latest" | jq -r .tag_name)
-          echo "Terminus Latest version is $latest_version"
-          curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
-          chmod +x terminus
-          sudo mv terminus /usr/local/bin/
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "☕ Installing Terminus on macOS from Homebrew..."
+            brew install pantheon-systems/external/terminus
+          else
+            echo "💻 Installing Terminus from phar on Linux..."
+            curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
+            chmod +x terminus
+            sudo mv terminus /usr/local/bin/
+          fi
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
       - name: Log into Terminus & Create Multidev
