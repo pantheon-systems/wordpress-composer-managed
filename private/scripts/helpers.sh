@@ -406,7 +406,7 @@ function update_composer() {
   echo "${yellow}Waiting for the deploy to finish.${normal}"
   if [ "$is_ci" -eq 1 ]; then
     echo "${yellow}CI detected. We'll need to wait longer.${normal}"
-    waittime=300
+    waittime=180
   else
     waittime=90
   fi
