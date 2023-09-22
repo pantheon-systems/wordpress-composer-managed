@@ -404,8 +404,9 @@ function update_composer() {
 
   # Check for long-running workflows.
   if [[ "$(terminus workflow:wait --max=1 "${sitename}".dev)" == *"running"* ]]; then
-    echo "${yellow}Workflow still running, waiting another 30 seconds.${normal}"
-    terminus workflow:wait --max=30 "$sitename"."$siteenv"
+    waittime=$(( waittime / 3 ))
+    echo "${yellow}Workflow still running, waiting another ${waittime} seconds.${normal}"
+    terminus workflow:wait --max="$waittime" "$sitename"."$siteenv"
   fi
 }
 
