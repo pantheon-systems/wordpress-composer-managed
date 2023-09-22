@@ -14,6 +14,14 @@ yellow=$(tput setaf 3)
 #magenta=$(tput setaf 5)
 #cyan=$(tput setaf 6)
 
+  # Use environment variables if set, otherwise prompt for input
+  sitename="${SITENAME:-}"
+  sftpuser="${SFTPUSER:-}"
+  sftphost="${SFTPHOST:-}"
+  sagename="${SAGENAME:-}"
+  is_ci="${CI:-}"
+  siteenv="${SITEENV:-dev}"
+
 # Main function that runs the script.
 function main() {
   help_msg="Usage: bash ./private/scripts/helpers.sh <command>
@@ -45,13 +53,6 @@ function main() {
 
 # Get the site name, theme name, and SFTP credentials from the user.
 function get_info() {
-  # Use environment variables if set, otherwise prompt for input
-  sitename="${SITENAME:-}"
-  sftpuser="${SFTPUSER:-}"
-  sftphost="${SFTPHOST:-}"
-  sagename="${SAGENAME:-}"
-  is_ci="${CI:-}"
-
   # If is_restarted is unset, set it to 0.
   if [ -z "$is_restarted" ]; then
     is_restarted=0
