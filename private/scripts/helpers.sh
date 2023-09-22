@@ -325,8 +325,8 @@ EOF
 }
 
 # Check if jq is installed. If it's not, try a couple ways of installing it.
-# Check if jq is installed. If it's not, try a couple ways of installing it.
 function check_jq() {
+  echo "${yellow}Checking if jq is installed.${normal}"
   # Check if jq is already installed.
   if command -v jq &> /dev/null; then
       return # jq is already installed
