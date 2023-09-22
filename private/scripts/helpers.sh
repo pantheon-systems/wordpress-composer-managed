@@ -377,14 +377,15 @@ function update_composer() {
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OS
-    sed -i '' "s,%sagedir%,$sagedir," composer.new.json
+    if ! sed -i '' "s,%sagedir%,$sagedir," composer.new.json; then
+      echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
+      exit 1;
   else
     # Linux
-    sed -i "s,%sagedir%,$sagedir," composer.new.json
-  fi
-  if ! sed -i '' "s,%sagedir%,$sagedir," composer.new.json; then
-    echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
-    exit 1;
+    if ! sed -i "s,%sagedir%,$sagedir," composer.new.json; then
+      echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
+      exit 1;
+    fi
   fi
 
   rm composer.json
