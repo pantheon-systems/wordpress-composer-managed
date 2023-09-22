@@ -98,7 +98,8 @@ jobs:
           rsync -av --exclude='.git/' ${{ github.workspace }}/ ~/pantheon-local-copies/wpcm-sage-install-tests/
           # Navigate to Pantheon local copies directory
           cd ~/pantheon-local-copies/wpcm-sage-install-tests/
-
+          git config --global user.email "bot@getpantheon.com"
+          git config --global user.name "Pantheon TestBot"
           # Add, commit and push
           git add .
           git commit -m "Sync latest changes to test environment"
