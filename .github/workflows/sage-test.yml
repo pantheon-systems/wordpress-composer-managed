@@ -58,7 +58,12 @@ jobs:
           echo "Terminus Latest version is $latest_version"
           curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
           chmod +x terminus
-          sudo mv terminus /usr/local/bin/
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "Adding currnt directory to PATH for Windows..."
+            echo "./" >> $GITHUB_PATH
+          else
+            sudo mv terminus /usr/local/bin/
+          fi
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
       - name: Log into Terminus & Create Multidev
