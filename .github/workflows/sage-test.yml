@@ -70,11 +70,18 @@ jobs:
             terminus --version
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
-      - name: Log into Terminus & Create Multidev
+      - name: Log into Terminus, Create Multidev and Clone Site
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
           terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+          echo "Cloning site..."
+          terminus local:clone wpcm-sage-install-tests
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          git fetch --all
+          git checkout $multidev_name
+          echo "Installing Composer dependencies..."
+          composer install --no-progress --no-suggest --prefer-dist
       - name: Run Sage Install Script
         run: |
           SAGENAME=sage-test
