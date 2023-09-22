@@ -45,6 +45,12 @@ function main() {
 
 # Get the site name, theme name, and SFTP credentials from the user.
 function get_info() {
+  # Use environment variables if set, otherwise prompt for input
+  sitename="${SITENAME:-}"
+  sftpuser="${SFTPUSER:-}"
+  sftphost="${SFTPHOST:-}"
+  sagename="${SAGENAME:-}"
+
   # If is_restarted is unset, set it to 0.
   if [ -z "$is_restarted" ]; then
     is_restarted=0
@@ -425,11 +431,13 @@ function clean_up() {
 
 # Install Sage theme.
 function install_sage() {
+  sitename="${SITENAME:-}"
+
   # Check if the user is logged into Terminus before trying to run other Terminus commands.
   check_login
 
   themedir="web/app/themes"
-  siteinfo=$(terminus site:info)
+  siteinfo=$(terminus site:info $sitename)
   id=$(get_field "ID" "$siteinfo")
   name=$(get_field "Name" "$siteinfo")
 
