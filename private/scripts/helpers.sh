@@ -149,15 +149,16 @@ function get_info() {
   Theme name: ${sagename}
   SFTP username: ${sftpuser}
   SFTP hostname: ${sftphost}"
-  read -p "Is this correct? (y/n) " -n 1 -r
-  # If the user enters n, redo the prompts.
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Restarting..."
+  if [ "$is_ci" != 1 ]; then
+    read -p "Is this correct? (y/n) " -n 1 -r
+    # If the user enters n, redo the prompts.
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "Restarting..."
 
-    # Toggle the restarted state.
-    is_restarted=1
-
-    get_info
+      # Toggle the restarted state.
+      is_restarted=1
+      get_info
+    fi
   fi
 
   if [ -z "$sitename" ] || [ -z "$sagename" ] || [ -z "$sftpuser" ] || [ -z "$sftphost" ]; then
