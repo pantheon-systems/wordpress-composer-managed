@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     name: Sage Install Tests
+    env:
+      TERM: xterm-256color
     runs-on: ${{ matrix.os }}
     defaults:
       run:
