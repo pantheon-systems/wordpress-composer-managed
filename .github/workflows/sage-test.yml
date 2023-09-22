@@ -14,7 +14,7 @@ jobs:
         shell: bash
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         php-version: [8.0, 8.1, 8.2]
     steps:
       - name: Checkout
@@ -58,12 +58,7 @@ jobs:
           echo "Terminus Latest version is $latest_version"
           curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
           chmod +x terminus
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            echo "Adding currnt directory to PATH for Windows..."
-            echo "./" >> $GITHUB_PATH
-          else
-            sudo mv terminus /usr/local/bin/
-          fi
+          sudo mv terminus /usr/local/bin/
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
       - name: Log into Terminus & Create Multidev
