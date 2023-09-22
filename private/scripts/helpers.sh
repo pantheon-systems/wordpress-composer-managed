@@ -293,7 +293,7 @@ function install_sage_theme() {
 # Create the symlink to the cache directory.
 function add_symlink() {
   # Switch to SFTP mode
-  terminus connection:set "$sitename".dev sftp
+  terminus connection:set "$sitename"."$siteenv" sftp
 
   if [ ! -d "web/app/uploads" ]; then
     echo "${yellow}Creating the uploads directory.${normal}"
@@ -312,7 +312,7 @@ function add_symlink() {
 EOF
 
     # Switch back to Git mode.
-    terminus connection:set "$sitename".dev git
+    terminus connection:set "$sitename"."$siteenv" git
 
   # Create the symlink to /files/cache.
   cd web/app || return
@@ -395,7 +395,7 @@ function update_composer() {
   else
     waittime=90
   fi
-  if ! terminus workflow:wait --max="$waittime" "$sitename".dev; then
+  if ! terminus workflow:wait --max="$waittime" "$sitename"."$siteenv"; then
     echo "${red}terminus workflow:wait command not found. Stopping here.${normal}"
     echo "You will need to install the terminus-build-tools-plugin."
     echo "terminus self:plugin:install terminus-build-tools-plugin"
@@ -405,20 +405,20 @@ function update_composer() {
   # Check for long-running workflows.
   if [[ "$(terminus workflow:wait --max=1 "${sitename}".dev)" == *"running"* ]]; then
     echo "${yellow}Workflow still running, waiting another 30 seconds.${normal}"
-    terminus workflow:wait --max=30 "$sitename".dev
+    terminus workflow:wait --max=30 "$sitename"."$siteenv"
   fi
 }
 
 # Finish up the Sage install process.
 function clean_up() {
   # If the site is multisite, we'll need to enable the theme so we can activate it.
-  terminus wp -- "$sitename".dev theme enable "$sagename"
+  terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
   # List the themes.
-  terminus wp -- "$sitename".dev theme list
+  terminus wp -- "$sitename"."$siteenv" theme list
 
   # Activate the new theme
   echo "${yellow}Activating the ${sagename} theme.${normal}"
-  if ! terminus wp -- "$sitename".dev theme activate "$sagename"; then
+  if ! terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"; then
     echo "${red}Theme activation failed. Exiting here.${normal}"
     echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
     echo "terminus wp -- $sitename.dev theme activate $sagename"
@@ -427,7 +427,7 @@ function clean_up() {
   fi
 
   # Switch back to SFTP so files can be written.
-  terminus connection:set "$sitename".dev sftp
+  terminus connection:set "$sitename"."$siteenv" sftp
 
   # Open the site. This should generate requisite files on page load.
   echo "${yellow}Opening the dev-${sitename}.pantheonsite.io to generate requisite files.${normal}"
@@ -435,10 +435,10 @@ function clean_up() {
 
   # Commit any additions found in SFTP mode.
   echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"
-  terminus env:commit "$sitename".dev --message="[Sage Install] Add any leftover files found in SFTP mode."
+  terminus env:commit "$sitename"."$siteenv" --message="[Sage Install] Add any leftover files found in SFTP mode."
 
   # Switch back to Git.
-  terminus connection:set "$sitename".dev git
+  terminus connection:set "$sitename"."$siteenv" git
   git pull --ff --commit
 }
 
