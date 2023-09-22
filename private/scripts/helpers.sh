@@ -379,8 +379,7 @@ function update_composer() {
     # Linux
     sed -i "s,%sagedir%,$sagedir," composer.new.json
   fi
-  sed -i '' "s,%sagedir%,$sagedir," composer.new.json
-  if [ $? -ne 0 ]; then
+  if ! sed -i '' "s,%sagedir%,$sagedir," composer.new.json; then
     echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
     exit 1;
   fi
