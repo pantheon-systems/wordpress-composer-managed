@@ -254,7 +254,7 @@ function update_php() {
       echo "php_version: 8.0" >> pantheon.yml
     fi
     git commit -am "[Sage Install] Update PHP version to 8.0"
-    git push origin $branch
+    git push origin "$branch"
   else
     echo "${green}PHP version is already 8.x.${normal}"
   fi
@@ -291,7 +291,7 @@ function install_sage_theme() {
   # Commit the theme
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
-  git push origin $branch
+  git push origin "$branch"
   echo "${green}Sage installed!${normal}"
 }
 
@@ -325,7 +325,7 @@ EOF
   ln -sfn uploads/cache .
   git add .
   git commit -m "[Sage Install] Add a symlink for /files/cache to /uploads/cache"
-  git push origin $branch
+  git push origin "$branch"
   cd ../..
 }
 
@@ -366,7 +366,7 @@ function update_composer() {
     echo "${yellow}Updating composer.lock.${normal}"
     git add composer.lock
     git commit -m "[Sage Install] Update composer.lock"
-    git push origin $branch
+    git push origin "$branch"
   fi
 
   echo "${yellow}Attempting to add a post-install hook to composer.json.${normal}"
@@ -401,7 +401,7 @@ function update_composer() {
   git add composer.json
   git commit -m "[Sage Install] Add post-install-cmd hook to also run install on ${sagename}"
 
-  if ! git push origin $branch; then
+  if ! git push origin "$branch"; then
     echo "${red}Push failed. Stopping here.${normal}"
     echo "Next steps are to push the changes to the repo and then set the connection mode back to Git."
     exit 1;
