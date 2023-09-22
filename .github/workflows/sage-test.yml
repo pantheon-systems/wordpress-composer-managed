@@ -8,7 +8,7 @@ on:
       - '/private/scripts/**'
 jobs:
   test:
-    name: Sage Theme Install Tests
+    name: Sage Install Tests
     runs-on: ${{ matrix.os }}
     defaults:
       run:
