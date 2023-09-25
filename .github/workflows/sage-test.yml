@@ -74,8 +74,6 @@ jobs:
             fi
             # Test that terminus works...
             terminus --version
-      - name: Install Composer Dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
