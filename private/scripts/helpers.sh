@@ -270,6 +270,7 @@ function update_php() {
       # Add full PHP version declaration to pantheon.yml.
       echo "php_version: ${phpversion}" >> pantheon.yml
     fi
+    git status
     git commit -am "[Sage Install] Update PHP version to ${phpversion}"
     git push origin "$branch"
   else
