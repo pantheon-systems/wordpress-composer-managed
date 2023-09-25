@@ -27,6 +27,41 @@ If you have all the above requirements, including a copy of the site locally, `c
 composer install-sage
 ```
 
+### Running the Script in Headless Mode
+
+The script can also be run with no user interaction at all. Instead of answering the prompts in the script itself, you can pass information via environment variables before running the script. The following environment variables are available:
+
+* **`SITENAME`** - The name of the site on Pantheon. This is the name that you would use to run Terminus commands like `terminus site:info` or `terminus wp`. This is not required if the script is being run from inside a site repo.
+* **`SFTPUSER`** - The SFTP username for the site. This is not required if the script is being run from inside a site repo. This is the SFTP username that you can get from the Pantheon dashboard.
+* **`SFTPHOST`** - The SFTP hostname for the site. This is not required if the script is being run from inside a site repo. This is the SFTP hostname that you can get from the Pantheon dashboard.
+* **`SAGENAME`** - The name of the theme that you want to create. This is _required_.
+* **`PHPVERSION`** - The PHP version that you want to use. This is optional and defaults to `8.0`. `8.3` is a valid option but will be updated to 8.2 until PHP 8.3 is available on Pantheon.
+* **`SITEENV`** - The Pantheon environment that you want to use. This is optional and defaults to `dev`. This is the environment that you want to install the theme on. This can be `dev` or any valid multidev.
+* **`CI`** - Whether the script is being run from a Continuous Integration (CI) environment. When this exists, additional time is given to allow simultaneous workflows to run and the script will not attempt to open the site in a browser. This is optional and defaults to `0` (`false`). If you want to enable CI-mode, set this to `1`.
+
+### Using environment variables
+
+You can use any environment variables you want by simply `export`ing them in your shell or bash script before running the script. For example:
+
+```bash
+export SAGENAME="sage-theme"
+export PHPVERSION="8.2"
+export SITEENV="sage-1"
+export SITENAME="my-site"
+terminus multidev:create "$SITENAME".dev "$SITEENV"
+git fetch --all
+git checkout "$SITEENV"
+composer install-sage
+``` 
+
+The above code will:
+
+* Set the Sage theme name to `sage-theme`
+* Set the PHP version to `8.2` in `pantheon.yml`
+* Create a multidev environment named `sage-1`
+* Check out the `sage-1` branch
+* Run the Sage installation script on the `sage-1` multidev environment
+
 ## How it Works
 The script does a lot of things and each step builds onto the last. You can look at the script in [`private/scripts/sage-theme-install.sh`](../private/scripts/sage-theme-install.sh) if you're interested in the precise commands that are being run. This overview will walk through each step.
 
