@@ -88,7 +88,10 @@ jobs:
           echo "Cloning site..."
           terminus local:clone wpcm-sage-install-tests
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          git diff
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "❌ Local clone is dirty. Exiting..."
+            exit 1
+          fi
           # If sage-test exists, delete it.
           if [[ -d "web/app/themes/sage-test" ]]; then
             echo "Deleting existing sage-test..."
