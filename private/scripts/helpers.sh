@@ -389,8 +389,6 @@ function update_composer() {
   echo "${yellow}Adding a post-install hook to composer.json.${normal}"
   jq -r '.scripts += { "post-install-cmd": [ "@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=%sagedir%" ] }' composer.json > composer.new.json
 
-  pwd
-
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OS
     if ! sed -i '' "s,%sagedir%,$sagedir," composer.new.json; then
