@@ -169,7 +169,7 @@ function get_info() {
   fi
 
   if [ -z "$sitename" ] || [ -z "$sagename" ] || [ -z "$sftpuser" ] || [ -z "$sftphost" ]; then
-    echo "${red}Missing information!${normal} Make sure you've everything for all the prompts."
+    echo "${red}Missing information!${normal} Make sure you input everything for all the prompts."
     get_info
   fi
 
