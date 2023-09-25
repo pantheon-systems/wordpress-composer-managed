@@ -446,7 +446,7 @@ function update_composer() {
 # Finish up the Sage install process.
 function clean_up() {
   # List the app/ehemes directory.
-  echo "${yellow}Listing the themes directory.${normal}"
+  echo "${yellow}Checking the themes directory for ${sagename}.${normal}"
   # If the previous output did not include $sagename, bail.
   if [[ ! "$(ls -la web/app/themes)" == *"$sagename"* ]]; then
     echo "${red}Theme not found. Exiting here.${normal}"
