@@ -119,9 +119,9 @@ jobs:
           SAGENAME: sage-test
           SITENAME: wpcm-sage-install-tests
           CI: 1
-          SITEENV: "$multidev_name"
           PHPVERSION: ${{ matrix.php-version }}
         run: |
+          export SITEENV=$multidev_name
           cd ~/pantheon-local-copies/$SITENAME
           composer install-sage
           echo "✅ Sage Install Script passed!"
