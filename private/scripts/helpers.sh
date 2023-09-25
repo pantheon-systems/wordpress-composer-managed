@@ -235,8 +235,7 @@ function update_php() {
   fi
   if [ "$phpversion" != "8.0" ]; then
     echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
-    if [ "$phpversion" == "8.3" ];
-    then
+    if [ "$phpversion" == "8.3" ]; then
       echo "${yellow}PHP 8.3 is not yet supported. Using 8.2 instead.${normal}"
       phpversion="8.2"
     fi
