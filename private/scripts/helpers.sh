@@ -291,7 +291,6 @@ function install_sage_theme() {
   # Commit the theme
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
-  git push origin "$branch"
   echo "${green}Sage installed!${normal}"
 }
 
@@ -325,7 +324,6 @@ EOF
   ln -sfn uploads/cache .
   git add .
   git commit -m "[Sage Install] Add a symlink for /files/cache to /uploads/cache"
-  git push origin "$branch"
   cd ../..
 }
 
@@ -366,7 +364,6 @@ function update_composer() {
     echo "${yellow}Updating composer.lock.${normal}"
     git add composer.lock
     git commit -m "[Sage Install] Update composer.lock"
-    git push origin "$branch"
   fi
 
   echo "${yellow}Attempting to add a post-install hook to composer.json.${normal}"
