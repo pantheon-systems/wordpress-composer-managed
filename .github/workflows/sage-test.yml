@@ -97,10 +97,14 @@ jobs:
             echo "Deleting existing sage-test..."
             rm -rf web/app/themes/sage-test
           fi
+          # Temporarily gitignore web/apps/themes/sage-test.
+          echo "web/app/themes/sage-test" >> .gitignore
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
+          # Remove web/app/themes/sage-test from .gitignore.
+          sed -i '' '/web\/app\/themes\/sage-test/d' .gitignore
       - name: Copy latest repository changes
         run: |
           # Sync the files from checked-out repo to pantheon-local-copies, excluding the .git folder
