@@ -63,7 +63,7 @@ The above code will:
 * Run the Sage installation script on the `sage-1` multidev environment
 
 ## How it Works
-The script does a lot of things and each step builds onto the last. You can look at the script in [`private/scripts/sage-theme-install.sh`](../private/scripts/sage-theme-install.sh) if you're interested in the precise commands that are being run. This overview will walk through each step.
+The script does a lot of things and each step builds onto the last. You can look at the script in [`private/scripts/helpers.sh`](../private/scripts/helpers.sh) if you're interested in the precise commands that are being run. This overview will walk through each step.
 
 ### Check Login
 The first thing the script will do is check to see if you are logged into Terminus with a `terminus whoami` command. If you are not logged in, the script will end and you will be prompted to log in first.
