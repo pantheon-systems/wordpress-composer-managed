@@ -26,16 +26,13 @@ jobs:
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Get PR number
+      - name: Get and Set PR number
         id: pr
-        run: echo "pull_request_number=$(gh pr view --json number -q .number || echo '')" >> $GITHUB_OUTPUT
+        run: |
+          pr_num=$(gh pr view --json number -q .number || echo "")
+          echo "pr_num=$pr_num" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: Extract PR number
-        id: extract_pr
-        run: |
-          pr_num=$(grep "pull_request_number" $GITHUB_OUTPUT | cut -d '=' -f2)
-          echo "pr_num=$pr_num" >> $GITHUB_ENV
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
