@@ -64,14 +64,12 @@ jobs:
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
       - name: Get latest Terminus release
         run: |
-          latest_version=$(curl --silent "https://api.github.com/repos/pantheon-systems/terminus/releases/latest" | jq -r .tag_name)
-          echo "Latest Terminus version: $latest_version"
           if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             echo "☕ Installing Terminus on macOS from Homebrew..."
             brew install pantheon-systems/external/terminus
           else
             echo "💻 Installing Terminus from phar on Linux..."
-            curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
+            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
             chmod +x terminus
             sudo mv terminus /usr/local/bin/
           fi
