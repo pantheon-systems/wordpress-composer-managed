@@ -79,10 +79,12 @@ jobs:
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
           echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Log into Terminus, Create Multidev and Clone Site
+      - name: Log into Terminus and Check for updates
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
           terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
+      - name: Clone site and create multidev
+        run: |
           echo "Cloning site..."
           terminus local:clone wpcm-sage-install-tests
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
