@@ -120,6 +120,7 @@ jobs:
           SITENAME: wpcm-sage-install-tests
           CI: 1
           PHPVERSION: ${{ matrix.php-version }}
+          SITEENV: ${{ env.multidev_name }}
         run: |
           export SITEENV=$multidev_name
           cd ~/pantheon-local-copies/$SITENAME
