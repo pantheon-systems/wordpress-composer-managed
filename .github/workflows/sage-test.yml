@@ -119,12 +119,13 @@ jobs:
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           composer install
       - name: Run Sage Install Script
+        env:
+          SAGENAME: sage-test
+          SITENAME: wpcm-sage-install-tests
+          CI: 1
+          SITEENV: $multidev_name
+          PHPVERSION: ${{ matrix.php-version }}
         run: |
-          export SAGENAME=sage-test
-          export SITENAME=wpcm-sage-install-tests
-          export CI=1
-          export SITEENV=$multidev_name
-          export PHPVERSION=${{ matrix.php-version }}
           cd ~/pantheon-local-copies/$SITENAME
           composer install-sage
           echo "✅ Sage Install Script passed!"
