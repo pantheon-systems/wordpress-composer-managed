@@ -244,7 +244,7 @@ function update_php() {
     fi
   fi
   echo ""
-  echo "${yellow}Updating PHP version to 8.0.${normal}"
+  echo "${yellow}Updating PHP version to ${phpversion}.${normal}"
 
   # Check for pantheon.yml file.
   if [ ! -f "pantheon.yml" ]; then
@@ -262,12 +262,12 @@ function update_php() {
     # Test for PHP version declartion already in pantheon.yml.
     if [ ! "$phpDeclaredInFile" -eq 0 ]; then
       # Update version to 8.x.
-      sed -i '' "s/7.4/8.0/" pantheon.yml
+      sed -i '' "s/7.4/${phpversion}/" pantheon.yml
     else
       # Add full PHP version declaration to pantheon.yml.
-      echo "php_version: 8.0" >> pantheon.yml
+      echo "php_version: ${phpversion}" >> pantheon.yml
     fi
-    git commit -am "[Sage Install] Update PHP version to 8.0"
+    git commit -am "[Sage Install] Update PHP version to ${phpversion}"
     git push origin "$branch"
   else
     echo "${green}PHP version is already 8.x.${normal}"
