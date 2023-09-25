@@ -139,9 +139,9 @@ jobs:
       - name: Delete multidev
         if: always()
         run: terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
-      - name: Delete all tags
+      - name: Delete the multidev build artifact
         if: always()
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          git tag -d $(git tag -l)
-          git push origin --delete $(git tag -l)
+          git tag -d pantheon_build_artifacts-$multidev_name
+          git push origin --delete pantheon_build_artifacts-$multidev_name
