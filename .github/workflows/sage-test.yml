@@ -1,11 +1,11 @@
 name: Sage Install Tests
 on:
-  push:
   pull_request:
     branches:
       - main
     paths:
       - '/private/scripts/**'
+      - '/.github/workflows/sage-test.yml'
 jobs:
   test:
     name: Sage Install Tests
