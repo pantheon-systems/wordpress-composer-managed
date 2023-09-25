@@ -74,9 +74,9 @@ jobs:
             curl -L "https://github.com/pantheon-systems/terminus/releases/download/$latest_version/terminus.phar" -o terminus
             chmod +x terminus
             sudo mv terminus /usr/local/bin/
-            fi
-            # Test that terminus works...
-            terminus --version
+          fi
+          # Test that terminus works...
+          terminus --version
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
