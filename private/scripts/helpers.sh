@@ -476,8 +476,8 @@ function clean_up() {
 
   if [ "$is_ci" -ne 1 ]; then
     # Open the site. This should generate requisite files on page load.
-    echo "${yellow}Opening the dev-${sitename}.pantheonsite.io to generate requisite files.${normal}"
-    open https://dev-"$sitename".pantheonsite.io
+    echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
+    open https://"$siteenv"-"$sitename".pantheonsite.io
 
     # Commit any additions found in SFTP mode.
     echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"
