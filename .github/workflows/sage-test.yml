@@ -88,6 +88,12 @@ jobs:
           echo "Cloning site..."
           terminus local:clone wpcm-sage-install-tests
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          ls -la ~/pantheon-local-copies/wpcm-sage-install-tests
+          # If sage-test exists, delete it.
+          if [[ -d "web/app/themes/sage-test" ]]; then
+            echo "Deleting existing sage-test..."
+            rm -rf web/app/themes/sage-test
+          fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
           echo "Checking out multidev..."
           git fetch --all
