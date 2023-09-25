@@ -267,6 +267,7 @@ function update_php() {
       sed -i '' "s/7.4/${phpversion}/" pantheon.yml
     else
       # Add full PHP version declaration to pantheon.yml.
+      echo "" >> pantheon.yml
       echo "php_version: ${phpversion}" >> pantheon.yml
     fi
     git status
