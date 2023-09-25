@@ -98,8 +98,6 @@ jobs:
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
-          echo "Installing Composer dependencies..."
-          composer install --no-progress --no-suggest --prefer-dist
       - name: Copy latest repository changes
         run: |
           # Sync the files from checked-out repo to pantheon-local-copies, excluding the .git folder
@@ -112,6 +110,10 @@ jobs:
           git add .
           git commit -m "Sync latest changes to test environment"
           git push origin $multidev_name
+      - name: Install Composer Dependencies
+        run: |
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          composer install
       - name: Run Sage Install Script
         run: |
           export SAGENAME=sage-test
