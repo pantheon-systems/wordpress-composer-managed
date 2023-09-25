@@ -230,6 +230,9 @@ get_field() {
 
 # Update to PHP 8.0
 function update_php() {
+  if [ "$phpversion" == "8" ]; then
+    phpversion="8.0"
+  fi
   if [ "$phpversion" != "8.0" ]; then
     echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
     if [ "$phpversion" == "8.3" ];
