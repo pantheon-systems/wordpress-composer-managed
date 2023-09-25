@@ -14,18 +14,19 @@ yellow=$(tput setaf 3)
 #magenta=$(tput setaf 5)
 #cyan=$(tput setaf 6)
 
-  # Use environment variables if set, otherwise prompt for input
-  sitename="${SITENAME:-}"
-  sftpuser="${SFTPUSER:-}"
-  sftphost="${SFTPHOST:-}"
-  sagename="${SAGENAME:-}"
-  is_ci="${CI:-}"
-  siteenv="${SITEENV:-dev}"
-  if [ "$siteenv" == "dev" ]; then
-    branch="master"
-  else
-    branch="$siteenv"
-  fi
+# Use environment variables if set, otherwise prompt for input
+sitename="${SITENAME:-}"
+sftpuser="${SFTPUSER:-}"
+sftphost="${SFTPHOST:-}"
+sagename="${SAGENAME:-}"
+phpversion="${PHPVERSION:-8.0}"
+is_ci="${CI:-}"
+siteenv="${SITEENV:-dev}"
+if [ "$siteenv" == "dev" ]; then
+  branch="master"
+else
+  branch="$siteenv"
+fi
 
 # Main function that runs the script.
 function main() {
@@ -229,6 +230,19 @@ get_field() {
 
 # Update to PHP 8.0
 function update_php() {
+  if [ "$phpversion" != "8.0" ]; then
+    echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
+    if [ "$phpversion" == "8.3" ];
+    then
+      echo "${yellow}PHP 8.3 is not yet supported. Using 8.2 instead.${normal}"
+      phpversion="8.2"
+    fi
+    # Check if $phpversion is < 8.0.
+    if [ "$(echo "$phpversion < 8.0" | bc)" -eq 1 ]; then
+      echo "${red}PHP version must be 8.0 or greater. Exiting here.${normal}"
+      exit 1;
+    fi
+  fi
   echo ""
   echo "${yellow}Updating PHP version to 8.0.${normal}"
 
