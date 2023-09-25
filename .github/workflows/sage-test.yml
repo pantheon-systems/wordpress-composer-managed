@@ -3,10 +3,6 @@ on:
   push:
     paths:
       - '.github/workflows/sage-test.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
       - 'private/scripts/**'
 jobs:
   test:
