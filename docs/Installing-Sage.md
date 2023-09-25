@@ -37,7 +37,7 @@ The script can also be run with no user interaction at all. Instead of answering
 * **`SAGENAME`** - The name of the theme that you want to create. This is _required_.
 * **`PHPVERSION`** - The PHP version that you want to use. This is optional and defaults to `8.0`. `8.3` is a valid option but will be updated to 8.2 until PHP 8.3 is available on Pantheon.
 * **`SITEENV`** - The Pantheon environment that you want to use. This is optional and defaults to `dev`. This is the environment that you want to install the theme on. This can be `dev` or any valid multidev.
-* **`CI`** - Whether the script is being run from a Continuous Integration (CI) environment. When this exists, additional time is given to allow simultaneous workflows to run and the script will not attempt to open the site in a browser. This is optional and defaults to `0` (`false`). If you want to enable CI-mode, set this to `1`.
+* **`CI`** - Whether the script is being run from a Continuous Integration (CI) environment. When this exists, additional time is given to allow simultaneous workflows to run and the script will not attempt to open the site in a browser. This is optional and defaults to `0` (`false`). If you want to enable CI-mode, set this to `1`. Setting the `CI` variable to `1` will also remove the confirmation prompts and prevent the script from restarting if no input is entered. _Only use this if you are sure you have the correct information_ as the script will run autonomously with whatever data it is able to fetch from Terminus based on the current site repository.
 
 ### Using environment variables
 
