@@ -142,4 +142,5 @@ jobs:
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           git fetch --tags origin
           git tag -d pantheon_build_artifacts_$multidev_name
-          git push origin --delete pantheon_build_artifacts_$multidev_name
+          # Allow this to fail.
+          git push origin --delete pantheon_build_artifacts_$multidev_name || true
