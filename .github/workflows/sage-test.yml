@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        php-version: [8.0, 8.1, 8.2]
+        php-version: [8.0, 8.1, 8.2, 8.3]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -123,6 +123,7 @@ jobs:
           export SITENAME=wpcm-sage-install-tests
           export CI=1
           export SITEENV=$multidev_name
+          export PHPVERSION=${{ matrix.php-version }}
           cd ~/pantheon-local-copies/$SITENAME
           composer install-sage || exit_code=$?
           if [[ -n "${exit_code}" ]]; then
