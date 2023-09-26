@@ -1,0 +1,139 @@
+name: Sage Install Tests
+on:
+  push:
+    paths:
+      - '.github/workflows/sage-test.yml'
+      - 'private/scripts/**'
+jobs:
+  test:
+    name: Sage Install Tests
+    env:
+      TERM: xterm-256color
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        php-version: [8.0, 8.1, 8.2, 8.3]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Get and Set PR number
+        id: pr
+        run: |
+          pr_num=$(gh pr view --json number -q .number || echo "")
+          echo "PR_NUM=$pr_num" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+      - name: Generate multidev name
+        id: generate_name
+        run: |
+          os_short=""
+          case "${{ matrix.os }}" in
+            ubuntu-latest)
+              os_short="nix"
+              ;;
+            macos-latest)
+              os_short="mac"
+              ;;
+            windows-latest)
+              os_short="win"
+              ;;
+          esac
+
+          php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
+          echo "PR number: $PR_NUM"
+          echo "OS: $os_short"
+          echo "PHP: $php_short"
+          multidev_name="${os_short}-${php_short}-${PR_NUM}"
+          echo "Generated multidev name: $multidev_name"
+          echo "multidev_name=$multidev_name" >> $GITHUB_ENV
+      - name: Get latest Terminus release
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "☕ Installing Terminus on macOS from Homebrew..."
+            brew install pantheon-systems/external/terminus
+          else
+            echo "💻 Installing Terminus from phar on Linux..."
+            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
+            chmod +x terminus
+            sudo mv terminus /usr/local/bin/
+          fi
+          # Test that terminus works...
+          terminus --version
+      - name: Validate Pantheon Host Key
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - name: Log into Terminus and Check for updates
+        run: |
+          terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+          terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
+      - name: Clone site and create multidev
+        run: |
+          echo "Cloning site..."
+          terminus local:clone wpcm-sage-install-tests
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "❌ Local clone is dirty. Exiting..."
+            exit 1
+          fi
+          # If sage-test exists, delete it.
+          if [[ -d "web/app/themes/sage-test" ]]; then
+            echo "Deleting existing sage-test..."
+            rm -rf web/app/themes/sage-test
+          fi
+          terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+          echo "Checking out multidev..."
+          git fetch --all
+          git checkout $multidev_name
+      - name: Copy latest repository changes
+        run: |
+          # Sync the files from checked-out repo to pantheon-local-copies, excluding the .git folder
+          rsync -av --exclude='.git/' ${{ github.workspace }}/ ~/pantheon-local-copies/wpcm-sage-install-tests/
+          # Navigate to Pantheon local copies directory
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests/
+          git config --global user.email "bot@getpantheon.com"
+          git config --global user.name "Pantheon TestBot"
+          # Add, commit and push
+          git add .
+          git commit -m "Sync latest changes to test environment"
+          git push origin $multidev_name
+      - name: Install Composer Dependencies
+        run: |
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          composer install
+      - name: Run Sage Install Script
+        env:
+          SAGENAME: sage-test
+          SITENAME: wpcm-sage-install-tests
+          CI: 1
+          PHPVERSION: ${{ matrix.php-version }}
+          SITEENV: ${{ env.multidev_name }}
+        run: |
+          export SITEENV=$multidev_name
+          cd ~/pantheon-local-copies/$SITENAME
+          composer install-sage
+          echo "✅ Sage Install Script passed!"
+      - name: Delete multidev
+        if: always()
+        run: terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
+      - name: Delete the multidev build artifact
+        if: always()
+        run: |
+          cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          git fetch --tags origin
+          # Allow these to fail.
+          git tag -d pantheon_build_artifacts_$multidev_name || true
+          git push origin --delete pantheon_build_artifacts_$multidev_name || true
