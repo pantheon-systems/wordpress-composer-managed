@@ -28,7 +28,7 @@ jobs:
         id: pr
         run: |
           pr_num=$(gh pr view --json number -q .number || echo "")
-          echo "pr_num=$pr_num" >> $GITHUB_ENV
+          echo "PR_NUM=$pr_num" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Setup PHP
@@ -52,10 +52,10 @@ jobs:
           esac
 
           php_short=$(echo "${{ matrix.php-version }}" | tr -d '.')
-          echo "PR number: $pr_num"
+          echo "PR number: $PR_NUM"
           echo "OS: $os_short"
           echo "PHP: $php_short"
-          multidev_name="${os_short}-${php_short}-${pr_num}"
+          multidev_name="${os_short}-${php_short}-${PR_NUM}"
           echo "Generated multidev name: $multidev_name"
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
       - name: Get latest Terminus release
