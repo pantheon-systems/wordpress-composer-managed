@@ -1,82 +1,40 @@
 name: Sage Install Tests
-permissions:
-  pull-requests: read
-  contents: read
 on:
-  pull_request:
+  push:
     paths:
       - '.github/workflows/sage-test.yml'
       - 'private/scripts/**'
-    types: [opened, synchronize, reopened, ready_for_review]
 jobs:
-  apply_upstream_updates:
-    name: Apply Upstream Updates
-    runs-on: ubuntu-latest
-    env:
-      TERM: xterm-256color
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Get latest Terminus release
-        uses: pantheon-systems/terminus-github-actions@v1
-        with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
-      - name: Validate Pantheon Host Key
-        run: |
-          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Log into Terminus
-        run: |
-          terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
-          terminus upstream:updates:apply wpcm-sage-install-tests
   test:
     name: Sage Install Tests
     env:
       TERM: xterm-256color
-    needs: apply_upstream_updates
     runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
     strategy:
-      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        php-version: [8.1, 8.2, 8.3]
+        php-version: [8.0, 8.1, 8.2, 8.3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Get and Set PR number
         id: pr
         run: |
-          pr_num=${{ github.run_number }}
-          if [ "${pr_num}" == "" ]; then
-            echo "PR_NUM=rel" >> $GITHUB_ENV
-          else
-            echo "PR_NUM=${pr_num}" >> $GITHUB_ENV
-          fi
+          pr_num=$(gh pr view --json number -q .number || echo "")
+          echo "PR_NUM=$pr_num" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: current
       - name: Generate multidev name
         id: generate_name
         run: |
@@ -101,17 +59,27 @@ jobs:
           echo "Generated multidev name: $multidev_name"
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
       - name: Get latest Terminus release
-        uses: pantheon-systems/action-terminus-install@v1
-        with:
-          os: ${{ matrix.os }}
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "☕ Installing Terminus on macOS from Homebrew..."
+            brew install pantheon-systems/external/terminus
+          else
+            echo "💻 Installing Terminus from phar on Linux..."
+            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
+            chmod +x terminus
+            sudo mv terminus /usr/local/bin/
+          fi
+          # Test that terminus works...
+          terminus --version
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
           echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Log into Terminus
+      - name: Log into Terminus and Check for updates
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+          terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
       - name: Clone site and create multidev
         run: |
           echo "Cloning site..."
@@ -126,18 +94,7 @@ jobs:
             echo "Deleting existing sage-test..."
             rm -rf web/app/themes/sage-test
           fi
-          echo "Checking for existing multidev..."
-          multidevs=$(terminus env:list wpcm-sage-install-tests --format=json --fields=id)
-          # Use jq to check if the key exists in the JSON
-          match_exists=$(echo "$json_output" | jq --arg id "$multidev_name" 'any(.[]; .id == $id)')
-          if [ "$match_exists" == "true" ]; then
-            echo "Environment $multidev_name exists."
-            terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
-          else
-            echo "Environment $multidev_name does not exist."
-          fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
-          terminus workflow:wait wpcm-sage-install-tests."$multidev_name" --quiet --max=15
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
@@ -156,17 +113,10 @@ jobs:
       - name: Install Composer Dependencies
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          composer update
-      - name: Generate random theme name
-        run: |
-          # Fetch the genre name from the Genrenator API
-          SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
-          # Replace spaces with hyphens and remove all non-alphanumeric characters except hyphens
-          SAGENAME=$(echo "$SAGENAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-')
-          echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
+          composer install
       - name: Run Sage Install Script
         env:
-          SAGENAME: ${{ env.SAGENAME }}
+          SAGENAME: sage-test
           SITENAME: wpcm-sage-install-tests
           CI: 1
           PHPVERSION: ${{ matrix.php-version }}
@@ -178,12 +128,12 @@ jobs:
           echo "✅ Sage Install Script passed!"
       - name: Delete multidev
         if: always()
-        run: terminus multidev:delete --delete-branch --yes "wpcm-sage-install-tests.${multidev_name}"
+        run: terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
       - name: Delete the multidev build artifact
         if: always()
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
+          git fetch --tags origin
           # Allow these to fail.
-          git fetch --tags origin || true
-          git tag -d "pantheon_build_artifacts_${multidev_name}" || true
-          git push origin --delete "pantheon_build_artifacts_${multidev_name}" || true
+          git tag -d pantheon_build_artifacts_$multidev_name || true
+          git push origin --delete pantheon_build_artifacts_$multidev_name || true
