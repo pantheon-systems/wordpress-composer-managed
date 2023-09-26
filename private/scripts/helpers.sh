@@ -14,6 +14,20 @@ yellow=$(tput setaf 3)
 #magenta=$(tput setaf 5)
 #cyan=$(tput setaf 6)
 
+# Use environment variables if set, otherwise prompt for input
+sitename="${SITENAME:-}"
+sftpuser="${SFTPUSER:-}"
+sftphost="${SFTPHOST:-}"
+sagename="${SAGENAME:-}"
+phpversion="${PHPVERSION:-8.0}"
+is_ci="${CI:-0}"
+siteenv="${SITEENV:-dev}"
+if [ "$siteenv" == "dev" ]; then
+  branch="master"
+else
+  branch="$siteenv"
+fi
+
 # Main function that runs the script.
 function main() {
   help_msg="Usage: bash ./private/scripts/helpers.sh <command>
@@ -54,6 +68,10 @@ function get_info() {
 
   # Unset the variables if we're doing this a second time.
   if [ "$is_restarted" -eq 1 ]; then
+    if [ "$is_ci" -eq 1 ]; then
+      echo "${yellow}CI detected. We're not going to restart. Bailing here.${normal}"
+      exit 1;
+    fi
     unset sitename
     unset sagename
     unset sftpuser
@@ -138,19 +156,20 @@ function get_info() {
   Theme name: ${sagename}
   SFTP username: ${sftpuser}
   SFTP hostname: ${sftphost}"
-  read -p "Is this correct? (y/n) " -n 1 -r
-  # If the user enters n, redo the prompts.
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Restarting..."
+  if [ "$is_ci" != 1 ]; then
+    read -p "Is this correct? (y/n) " -n 1 -r
+    # If the user enters n, redo the prompts.
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "Restarting..."
 
-    # Toggle the restarted state.
-    is_restarted=1
-
-    get_info
+      # Toggle the restarted state.
+      is_restarted=1
+      get_info
+    fi
   fi
 
   if [ -z "$sitename" ] || [ -z "$sagename" ] || [ -z "$sftpuser" ] || [ -z "$sftphost" ]; then
-    echo "${red}Missing information!${normal} Make sure you've everything for all the prompts."
+    echo "${red}Missing information!${normal} Make sure you input everything for all the prompts."
     get_info
   fi
 
@@ -211,8 +230,23 @@ get_field() {
 
 # Update to PHP 8.0
 function update_php() {
+  if [ "$phpversion" == "8" ]; then
+    phpversion="8.0"
+  fi
+  if [ "$phpversion" != "8.0" ]; then
+    echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
+    if [ "$phpversion" == "8.3" ]; then
+      echo "${yellow}PHP 8.3 is not yet supported. Using 8.2 instead.${normal}"
+      phpversion="8.2"
+    fi
+    # Check if $phpversion is < 8.0.
+    if [ "$(echo "$phpversion < 8.0" | bc)" -eq 1 ]; then
+      echo "${red}PHP version must be 8.0 or greater. Exiting here.${normal}"
+      exit 1;
+    fi
+  fi
   echo ""
-  echo "${yellow}Updating PHP version to 8.0.${normal}"
+  echo "${yellow}Updating PHP version to ${phpversion}.${normal}"
 
   # Check for pantheon.yml file.
   if [ ! -f "pantheon.yml" ]; then
@@ -230,13 +264,15 @@ function update_php() {
     # Test for PHP version declartion already in pantheon.yml.
     if [ ! "$phpDeclaredInFile" -eq 0 ]; then
       # Update version to 8.x.
-      sed -i '' "s/7.4/8.0/" pantheon.yml
+      sed -i '' "s/7.4/${phpversion}/" pantheon.yml
     else
       # Add full PHP version declaration to pantheon.yml.
-      echo "php_version: 8.0" >> pantheon.yml
+      echo "" >> pantheon.yml
+      echo "php_version: ${phpversion}" >> pantheon.yml
     fi
-    git commit -am "[Sage Install] Update PHP version to 8.0"
-    git push origin master
+    git diff HEAD~1 HEAD -- pantheon.yml
+    git commit -am "[Sage Install] Update PHP version to ${phpversion}"
+    git push origin "$branch"
   else
     echo "${green}PHP version is already 8.x.${normal}"
   fi
@@ -273,14 +309,13 @@ function install_sage_theme() {
   # Commit the theme
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
-  git push origin master
   echo "${green}Sage installed!${normal}"
 }
 
 # Create the symlink to the cache directory.
 function add_symlink() {
   # Switch to SFTP mode
-  terminus connection:set "$sitename".dev sftp
+  terminus connection:set "$sitename"."$siteenv" sftp
 
   if [ ! -d "web/app/uploads" ]; then
     echo "${yellow}Creating the uploads directory.${normal}"
@@ -299,7 +334,7 @@ function add_symlink() {
 EOF
 
     # Switch back to Git mode.
-    terminus connection:set "$sitename".dev git
+    terminus connection:set "$sitename"."$siteenv" git
 
   # Create the symlink to /files/cache.
   cd web/app || return
@@ -307,13 +342,12 @@ EOF
   ln -sfn uploads/cache .
   git add .
   git commit -m "[Sage Install] Add a symlink for /files/cache to /uploads/cache"
-  git push origin master
   cd ../..
 }
 
 # Check if jq is installed. If it's not, try a couple ways of installing it.
-# Check if jq is installed. If it's not, try a couple ways of installing it.
 function check_jq() {
+  echo "${yellow}Checking if jq is installed.${normal}"
   # Check if jq is already installed.
   if command -v jq &> /dev/null; then
       return # jq is already installed
@@ -348,7 +382,6 @@ function update_composer() {
     echo "${yellow}Updating composer.lock.${normal}"
     git add composer.lock
     git commit -m "[Sage Install] Update composer.lock"
-    git push origin master
   fi
 
   echo "${yellow}Attempting to add a post-install hook to composer.json.${normal}"
@@ -359,7 +392,21 @@ function update_composer() {
   # Add a post-install hook to the composer.json.
   echo "${yellow}Adding a post-install hook to composer.json.${normal}"
   jq -r '.scripts += { "post-install-cmd": [ "@composer install --no-dev --prefer-dist --ignore-platform-reqs --working-dir=%sagedir%" ] }' composer.json > composer.new.json
-  sed -i '' "s,%sagedir%,$sagedir," composer.new.json
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac OS
+    if ! sed -i '' "s,%sagedir%,$sagedir," composer.new.json; then
+      echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
+      exit 1;
+    fi
+  else
+    # Linux
+    if ! sed -i "s,%sagedir%,$sagedir," composer.new.json; then
+      echo "${red}Failed to add post-install hook to composer.json. Exiting here.${normal}"
+      exit 1;
+    fi
+  fi
+
   rm composer.json
   mv composer.new.json composer.json
 
@@ -367,8 +414,7 @@ function update_composer() {
   git add composer.json
   git commit -m "[Sage Install] Add post-install-cmd hook to also run install on ${sagename}"
 
-  git pull --ff --commit
-  if ! git push origin master; then
+  if ! git push origin "$branch"; then
     echo "${red}Push failed. Stopping here.${normal}"
     echo "Next steps are to push the changes to the repo and then set the connection mode back to Git."
     exit 1;
@@ -376,7 +422,13 @@ function update_composer() {
 
   # Wait for the build to finish.
   echo "${yellow}Waiting for the deploy to finish.${normal}"
-  if ! terminus workflow:wait --max=90 "$sitename".dev; then
+  if [ "$is_ci" -eq 1 ]; then
+    echo "${yellow}CI detected. We'll need to wait longer.${normal}"
+    waittime=180
+  else
+    waittime=90
+  fi
+  if ! terminus workflow:wait --max="$waittime" "$sitename"."$siteenv"; then
     echo "${red}terminus workflow:wait command not found. Stopping here.${normal}"
     echo "You will need to install the terminus-build-tools-plugin."
     echo "terminus self:plugin:install terminus-build-tools-plugin"
@@ -384,22 +436,34 @@ function update_composer() {
   fi
 
   # Check for long-running workflows.
-  if [[ "$(terminus workflow:wait --max=1 "${sitename}".dev)" == *"running"* ]]; then
-    echo "${yellow}Workflow still running, waiting another 30 seconds.${normal}"
-    terminus workflow:wait --max=30 "$sitename".dev
+  echo "${yellow}Checking for long-running workflows.${normal}"
+  if [[ "$(terminus workflow:wait --max=1 "${sitename}"."$siteenv")" == *"running"* ]]; then
+    waittime=$(( waittime / 3 ))
+    echo "${yellow}Workflow still running, waiting another ${waittime} seconds.${normal}"
+    terminus workflow:wait --max="$waittime" "$sitename"."$siteenv"
   fi
+
+  git pull --ff --commit
 }
 
 # Finish up the Sage install process.
 function clean_up() {
+  # List the app/themes directory.
+  echo "${yellow}Checking the themes directory for ${sagename}.${normal}"
+  # If the previous output did not include $sagename, bail.
+  if [[ ! "$(ls -la web/app/themes)" == *"$sagename"* ]]; then
+    echo "${red}Theme not found. Exiting here.${normal}"
+    exit 1;
+  fi
+
   # If the site is multisite, we'll need to enable the theme so we can activate it.
-  terminus wp -- "$sitename".dev theme enable "$sagename"
+  terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
   # List the themes.
-  terminus wp -- "$sitename".dev theme list
+  terminus wp -- "$sitename"."$siteenv" theme list
 
   # Activate the new theme
   echo "${yellow}Activating the ${sagename} theme.${normal}"
-  if ! terminus wp -- "$sitename".dev theme activate "$sagename"; then
+  if ! terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"; then
     echo "${red}Theme activation failed. Exiting here.${normal}"
     echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
     echo "terminus wp -- $sitename.dev theme activate $sagename"
@@ -408,28 +472,32 @@ function clean_up() {
   fi
 
   # Switch back to SFTP so files can be written.
-  terminus connection:set "$sitename".dev sftp
+  terminus connection:set "$sitename"."$siteenv" sftp
 
-  # Open the site. This should generate requisite files on page load.
-  echo "${yellow}Opening the dev-${sitename}.pantheonsite.io to generate requisite files.${normal}"
-  open https://dev-"$sitename".pantheonsite.io
+  if [ "$is_ci" -ne 1 ]; then
+    # Open the site. This should generate requisite files on page load.
+    echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
+    open https://"$siteenv"-"$sitename".pantheonsite.io
+  fi
 
   # Commit any additions found in SFTP mode.
   echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"
-  terminus env:commit "$sitename".dev --message="[Sage Install] Add any leftover files found in SFTP mode."
+  terminus env:commit "$sitename"."$siteenv" --message="[Sage Install] Add any leftover files found in SFTP mode."
 
   # Switch back to Git.
-  terminus connection:set "$sitename".dev git
+  terminus connection:set "$sitename"."$siteenv" git
   git pull --ff --commit
 }
 
 # Install Sage theme.
 function install_sage() {
+  sitename="${SITENAME:-}"
+
   # Check if the user is logged into Terminus before trying to run other Terminus commands.
   check_login
 
   themedir="web/app/themes"
-  siteinfo=$(terminus site:info)
+  siteinfo=$(terminus site:info "$sitename")
   id=$(get_field "ID" "$siteinfo")
   name=$(get_field "Name" "$siteinfo")
 
