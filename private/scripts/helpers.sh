@@ -471,10 +471,10 @@ function clean_up() {
     exit 1;
   fi
 
-  # Switch back to SFTP so files can be written.
-  terminus connection:set "$sitename"."$siteenv" sftp
-
   if [ "$is_ci" -ne 1 ]; then
+    # Switch back to SFTP so files can be written.
+    terminus connection:set "$sitename"."$siteenv" sftp
+
     # Open the site. This should generate requisite files on page load.
     echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
     open https://"$siteenv"-"$sitename".pantheonsite.io
