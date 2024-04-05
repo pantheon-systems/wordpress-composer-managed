@@ -103,7 +103,7 @@ jobs:
           # Use jq to check if the key exists in the JSON
           if echo "$json_output" | jq --exit-status '.["'"$multidev_name"'"]' > /dev/null; then
             echo "Environment $multidev_name exists."
-            terminus env:delete wpcm-sage-install-tests.$multidev_name --delete-branch --yes
+            terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
           else
             echo "Environment $multidev_name does not exist."
           fi
