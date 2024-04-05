@@ -108,7 +108,7 @@ jobs:
             echo "Environment $multidev_name does not exist."
           fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
-          terminus workflow:wait wpcm-sage-install-tests."$multidev_name"
+          terminus workflow:wait wpcm-sage-install-tests."$multidev_name" --quiet
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
