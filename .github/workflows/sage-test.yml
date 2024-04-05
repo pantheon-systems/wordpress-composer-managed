@@ -132,7 +132,7 @@ jobs:
       - name: Install Composer Dependencies
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          composer install
+          composer update
       - name: Run Sage Install Script
         env:
           SAGENAME: sage-test

@@ -31,7 +31,7 @@ jobs:
       run: composer validate --no-check-all
 
     - name: Install Composer dependencies
-      run: composer install --no-progress --prefer-dist --optimize-autoloader
+      run: composer update --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run lints
       run: composer lint
