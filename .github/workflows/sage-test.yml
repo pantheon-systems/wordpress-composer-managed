@@ -98,6 +98,15 @@ jobs:
             echo "Deleting existing sage-test..."
             rm -rf web/app/themes/sage-test
           fi
+          echo "Checking for existing multidev..."
+          multidevs=$(terminus env:list wpcm-sage-install-tests --format=json)
+          # Use jq to check if the key exists in the JSON
+          if echo "$json_output" | jq --exit-status '.["'"$multidev_name"'"]' > /dev/null; then
+            echo "Environment $multidev_name exists."
+            terminus env:delete wpcm-sage-install-tests.$multidev_name --delete-branch --yes
+          else
+            echo "Environment $multidev_name does not exist."
+          fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
           terminus workflow:wait wpcm-sage-install-tests."$multidev_name"
           echo "Checking out multidev..."
