@@ -54,7 +54,7 @@ workflows:
       - deploy-public-upstream:
           requires:
             - check-commits
-    filters:
-      branches:
-        only:
-          - release
+          filters:
+            branches:
+              only:
+                - release
