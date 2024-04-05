@@ -50,11 +50,9 @@ workflows:
   version: 2
   deploy-public-upstream:
     jobs:
+      - check-commits
       - deploy-public-upstream:
           filters:
             branches:
               only:
                 - release
-  check-commits:
-    jobs:
-      - check-commits
