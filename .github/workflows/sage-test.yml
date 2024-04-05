@@ -43,7 +43,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: current
-          cache: npm
       - name: Generate multidev name
         id: generate_name
         run: |
