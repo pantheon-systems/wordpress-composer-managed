@@ -138,7 +138,7 @@ jobs:
         if: always()
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          git fetch --tags origin
           # Allow these to fail.
+          git fetch --tags origin || true
           git tag -d pantheon_build_artifacts_$multidev_name || true
           git push origin --delete pantheon_build_artifacts_$multidev_name || true
