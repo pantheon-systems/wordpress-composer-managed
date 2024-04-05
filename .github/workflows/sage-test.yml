@@ -39,6 +39,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: current
+          cache: npm
       - name: Generate multidev name
         id: generate_name
         run: |
@@ -129,11 +134,6 @@ jobs:
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           composer install
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: current
-          cache: npm
       - name: Run Sage Install Script
         env:
           SAGENAME: sage-test
