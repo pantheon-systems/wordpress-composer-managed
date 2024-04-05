@@ -130,9 +130,9 @@ jobs:
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           composer install
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: current
           cache: npm
       - name: Run Sage Install Script
         env:
