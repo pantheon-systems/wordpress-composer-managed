@@ -52,7 +52,9 @@ workflows:
     jobs:
       - check-commits
       - deploy-public-upstream:
-          filters:
-            branches:
-              only:
-                - release
+          requires:
+            - check-commits
+    filters:
+      branches:
+        only:
+          - release
