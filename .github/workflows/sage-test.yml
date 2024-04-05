@@ -99,6 +99,7 @@ jobs:
             rm -rf web/app/themes/sage-test
           fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+          terminus workflow:wait wpcm-sage-install-tests."$multidev_name"
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
