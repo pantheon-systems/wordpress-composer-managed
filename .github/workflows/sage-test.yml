@@ -1,4 +1,6 @@
 name: Sage Install Tests
+permissions:
+  pull-requests: read
 on:
   push:
     paths:
