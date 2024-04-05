@@ -281,7 +281,7 @@ function update_php() {
 # Install sage and related dependencies.
 function install_sage_theme() {
   # Check if the directory $sagedir is empty. If it's not, bail.
-  echo "Checking if ${sagedir} is exists and if it's empty."
+  echo "Checking if ${sagedir} exists and if it's empty."
 
   if [ "$(ls -A "$sagedir")" ]; then
     echo "${red}Directory not empty!${normal}"
