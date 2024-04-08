@@ -32,9 +32,11 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'lando' !== $_ENV['PANTHEON_ENVIR
 
 		$homeurl = $scheme . '://' . $baseurl;
 		Config::define( 'WP_HOME', $homeurl );
+        putenv( 'WP_HOME=' . $homeurl );
 
 		if ( ! env( 'WP_SITEURL' ) ) {
 			Config::define( 'WP_SITEURL', $homeurl . '/wp' );
+            putenv( 'WP_SITEURL=' . $homeurl . '/wp' );
 		}
 	}
 }
