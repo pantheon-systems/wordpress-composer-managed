@@ -4,7 +4,7 @@ version: 2.1
 executors:
   deployer:
     docker:
-      - image: cimg/base:2020.12
+      - image: cimg/base:current
 
 jobs:
   deploy-public-upstream:
@@ -50,11 +50,15 @@ workflows:
   version: 2
   deploy-public-upstream:
     jobs:
-      - deploy-public-upstream:
+      - check-commits:
           filters:
             branches:
               only:
                 - release
-  check-commits:
-    jobs:
-      - check-commits
+      - deploy-public-upstream:
+          requires:
+            - check-commits
+          filters:
+            branches:
+              only:
+                - release
