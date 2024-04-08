@@ -38,6 +38,9 @@
     <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited">
       <exclude-pattern>config/application.php</exclude-pattern>
     </exclude>
+    <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase">
+      <exclude-pattern>config/application.pantheon.php</exclude-pattern>
+    </exclude>
   </rule>
   <!-- End Pantheon addition -->
 
