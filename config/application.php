@@ -46,6 +46,11 @@ if (
 }
 
 /**
+ * Include Pantheon application settings.
+ */
+require_once __DIR__ . '/application.pantheon.php';
+
+/**
  * Set up our global environment constant and load its config first
  * Default: production
  */
