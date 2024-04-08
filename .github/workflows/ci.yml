@@ -1,16 +1,22 @@
-name: CI
+name: Lint and Test
 
-on: [push]
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1']
+        php-version: ['8.0', '8.1', '8.2', '8.3']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -31,7 +37,7 @@ jobs:
       run: composer validate --no-check-all
 
     - name: Install Composer dependencies
-      run: composer install --no-progress --prefer-dist --optimize-autoloader
+      run: composer update --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run lints
       run: composer lint
