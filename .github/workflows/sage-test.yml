@@ -1,4 +1,7 @@
 name: Sage Install Tests
+permissions:
+  pull-requests: read
+  contents: read
 on:
   push:
     paths:
@@ -14,14 +17,15 @@ jobs:
       run:
         shell: bash
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        php-version: [8.0, 8.1, 8.2, 8.3]
+        php-version: [8.1, 8.2, 8.3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.8.0
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Get and Set PR number
@@ -35,6 +39,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: current
       - name: Generate multidev name
         id: generate_name
         run: |
@@ -94,7 +102,18 @@ jobs:
             echo "Deleting existing sage-test..."
             rm -rf web/app/themes/sage-test
           fi
+          echo "Checking for existing multidev..."
+          multidevs=$(terminus env:list wpcm-sage-install-tests --format=json --fields=id)
+          # Use jq to check if the key exists in the JSON
+          match_exists=$(echo "$json_output" | jq --arg id "$multidev_name" 'any(.[]; .id == $id)')
+          if [ "$match_exists" == "true" ]; then
+            echo "Environment $multidev_name exists."
+            terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
+          else
+            echo "Environment $multidev_name does not exist."
+          fi
           terminus multidev:create wpcm-sage-install-tests.dev $multidev_name
+          terminus workflow:wait wpcm-sage-install-tests."$multidev_name" --quiet --max=15
           echo "Checking out multidev..."
           git fetch --all
           git checkout $multidev_name
@@ -113,7 +132,7 @@ jobs:
       - name: Install Composer Dependencies
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          composer install
+          composer update
       - name: Run Sage Install Script
         env:
           SAGENAME: sage-test
@@ -133,7 +152,7 @@ jobs:
         if: always()
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
-          git fetch --tags origin
           # Allow these to fail.
+          git fetch --tags origin || true
           git tag -d pantheon_build_artifacts_$multidev_name || true
           git push origin --delete pantheon_build_artifacts_$multidev_name || true
