@@ -41,6 +41,9 @@
     <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase">
       <exclude-pattern>config/application.pantheon.php</exclude-pattern>
     </exclude>
+    <exclude name="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv">
+      <exclude-pattern>config/application.pantheon.php</exclude-pattern>
+    </exclude>
   </rule>
   <!-- End Pantheon addition -->
 
