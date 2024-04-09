@@ -13,7 +13,7 @@
 use Roots\WPConfig\Config;
 use function Env\env;
 
-if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT'] ) {
+if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && ! isset( $_ENV['LANDO'] ) ) {
 	// We can use PANTHEON_SITE_NAME here because it's safe to assume we're on a Pantheon environment if PANTHEON_ENVIRONMENT is set.
 	$sitename = $_ENV['PANTHEON_SITE_NAME'];
 	$baseurl = $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $sitename . '.pantheonsite.io';
