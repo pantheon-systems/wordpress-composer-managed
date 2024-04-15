@@ -37,7 +37,7 @@ if (
 	// Check if a .env file exists.
 	file_exists( $root_dir . '/.env' ) ||
 	// Also check if we're using Lando and a .env.local file exists.
-	( file_exists( $root_dir . '/.env.local' ) && 'lando' === $_ENV['PANTHEON_ENVIRONMENT'] )
+	( file_exists( $root_dir . '/.env.local' ) && isset( $_ENV['LANDO'] ) && 'ON' === $_ENV['LANDO'] )
 ) {
 	$dotenv->load();
 	if ( ! env( 'DATABASE_URL' ) ) {
@@ -46,19 +46,9 @@ if (
 }
 
 /**
- * Pantheon modifications
+ * Include Pantheon application settings.
  */
-if (isset($_ENV['PANTHEON_ENVIRONMENT']) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT']) {
-    Config::define('DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT']);
-} else {
-    /**
-     * URLs
-     */
-    Config::define('WP_HOME', env('WP_HOME'));
-    Config::define('WP_SITEURL', env('WP_SITEURL'));
-    Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
-    Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
-}
+require_once __DIR__ . '/application.pantheon.php';
 
 /**
  * Set up our global environment constant and load its config first
@@ -96,7 +86,7 @@ if ( env( 'DATABASE_URL' ) ) {
 /**
  * Pantheon modifications
  */
-if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'lando' !== $_ENV['PANTHEON_ENVIRONMENT'] ) {
+if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && ! isset( $_ENV['LANDO'] ) ) {
 	Config::define( 'DB_HOST', $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT'] );
 } else {
 	/**
