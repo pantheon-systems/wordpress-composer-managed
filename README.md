@@ -1,6 +1,6 @@
 # Composer-enabled WordPress template
 
-[![Early Access](https://img.shields.io/badge/Pantheon-Early%20Access-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#early-access)
+[![Actively Maintained](https://img.shields.io/badge/Pantheon-Actively_Maintained-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#actively-maintained-support)
 
 This is Pantheon's recommended starting point for forking new [WordPress](https://wordpress.org) upstreams that work with the Platform's Integrated Composer build process.
 
@@ -56,7 +56,7 @@ terminus site:create --org ORG --region REGION -- <site_name> <label> "WordPress
 4. Create a new WordPress site from the Upstream.
 
 #### On the use of `master` for custom upstreams
-We acknowledge and apologize for the continued use of the `master` branch name. We understand that the use of the word `master` is offensive and hurtful to people in our community, and changing branch names to `main` has been on our roadmap for [a long time](https://discuss.pantheon.io/t/changing-primary-branch-name/1305). We strive to be an [inclusive platform](https://pantheon.io/docs/inclusive-language) and we know that until we are able to completely rename all of our `master` branch names to something less offensive, we still have work to do. Unfortunately in this context, at a platform level, the use of `master` is hard-coded as the expected default branch name and therefore, when creating custom upstreams off of this repository (which uses `main` by default), a `master` branch is necessary for the platform to recognize the upstream without errors or the assistance of Customer Support. We hope this is a temporary solution and that the platform-level changes can happen soon, and we appreciate your continued patience as we transition our default branch names. Alternately, you can use a [CI-based build workflow](https://pantheon.io/docs/guides/wordpress-composer/create-wp-site-composer-ci-auto-test) to automate pushing your code to `master` on the Pantheon side, but keep the `main` branch naming scheme (or any other branch name) in your custom upstream's repository.
+We acknowledge and apologize for the continued use of the `master` branch name. We understand that the use of the word `master` is offensive and hurtful to people in our community, and changing branch names to `main` has been on our roadmap for a long time. We strive to be an [inclusive platform](https://pantheon.io/docs/inclusive-language) and we know that until we are able to completely rename all of our `master` branch names to something less offensive, we still have work to do. Unfortunately in this context, at a platform level, the use of `master` is hard-coded as the expected default branch name and therefore, when creating custom upstreams off of this repository (which uses `main` by default), a `master` branch is necessary for the platform to recognize the upstream without errors or the assistance of Customer Support. We hope this is a temporary solution and that the platform-level changes can happen soon, and we appreciate your continued patience as we transition our default branch names. Alternately, you can use a [CI-based build workflow](https://pantheon.io/docs/guides/wordpress-composer/create-wp-site-composer-ci-auto-test) to automate pushing your code to `master` on the Pantheon side, but keep the `main` branch naming scheme (or any other branch name) in your custom upstream's repository.
 
 ## Using Roots Bedrock
 
@@ -98,28 +98,28 @@ Bedrock installs WordPress as a required package so updates can be managed by Co
 
 [WPackagist](https://wpackagist.org) is a Packagist-like mirror of the WordPress.org [plugin](https://wordpress.org/plugins) and [theme](https://wordpress.org/themes) repositories and is included with Bedrock out of the box. 
 
-You may install packages from Packagist or WPackagist without any additional configuration using `composer upstream-require`.
+You may install packages from Packagist or WPackagist without any additional configuration using `composer require`.
 
 #### Requiring a package from Packagist
 
 Some WordPress developers push their packages to Packagist in addition to the WordPress plugin and theme repositories. In this way, it may be beneficial to pull those packages directly from Packagist to get the latest code directly from the source.
 
 ```
-composer upstream-require yoast/wordpress-seo
+composer require yoast/wordpress-seo
 ```
 
 Packages that are flagged as `wordpress-plugin`, `wordpress-theme` or `wordpress-muplugin` in their `composer.json` files will be installed automatically in the appropriate `web/app/` directory by Composer.
 
 #### Requiring a package from WPackagist
 
-For all other plugins and themes that are not managed on Packagist, you can use `composer upstream-require` as well, using `wpackagist-plugin` or `wpackagist-theme` as the vendor and the plugin or theme slug as the package name.
+For all other plugins and themes that are not managed on Packagist, you can use `composer require` as well, using `wpackagist-plugin` or `wpackagist-theme` as the vendor and the plugin or theme slug as the package name.
 
 ```
-composer upstream-require wpackagist-theme/twentytwentytwo
+composer require wpackagist-theme/twentytwentytwo
 ```
 
 ```
-composer upstream-require wpackagist-plugin/advanced-custom-fields
+composer require wpackagist-plugin/advanced-custom-fields
 ```
 
 ### Using Roots Sage starter theme
@@ -142,8 +142,8 @@ Feature or bugfix development branches and pull requests should originate from a
 
 There are large, thriving communities in both the Roots ecosystem and the Pantheon community that you can reach out to if you have any questions. 
 
-- Join the [Pantheon Community Slack](https://join.slack.com/t/pantheon-community/shared_invite/zt-1e1reft3q-UXHfFovNWlUkBxodEkExBQ) and check out the #wordpress and #composer-workflow channels
+- Join the [Pantheon Community Slack](https://join.slack.com/t/pantheon-community/shared_invite/zt-1e1reft3q-UXHfFovNWlUkBxodEkExBQ)
 - Join the Roots community on Discord by [sponsoring them on GitHub](https://github.com/sponsors/roots)
-- Participate on the [Roots Discourse](https://discourse.roots.io/) or the [Pantheon Community Forums](https://discuss.pantheon.io/).
+- Participate on the [Roots Discourse](https://discourse.roots.io/).
 - Follow [@rootswp](https://twitter.com/rootswp) and [@getpantheon](https://twitter.com/getpantheon) on Twitter
 
