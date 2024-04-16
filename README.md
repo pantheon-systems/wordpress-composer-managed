@@ -142,7 +142,7 @@ Feature or bugfix development branches and pull requests should originate from a
 
 There are large, thriving communities in both the Roots ecosystem and the Pantheon community that you can reach out to if you have any questions. 
 
-- Join the [Pantheon Community Slack](https://join.slack.com/t/pantheon-community/shared_invite/zt-1e1reft3q-UXHfFovNWlUkBxodEkExBQ) and check out the #wordpress and #composer-workflow channels
+- Join the [Pantheon Community Slack](https://join.slack.com/t/pantheon-community/shared_invite/zt-1e1reft3q-UXHfFovNWlUkBxodEkExBQ)
 - Join the Roots community on Discord by [sponsoring them on GitHub](https://github.com/sponsors/roots)
 - Participate on the [Roots Discourse](https://discourse.roots.io/).
 - Follow [@rootswp](https://twitter.com/rootswp) and [@getpantheon](https://twitter.com/getpantheon) on Twitter
