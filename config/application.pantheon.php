@@ -41,4 +41,11 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
             }
         }
     }
+
+    if ( ! defined('PANTHEON_HOSTNAME' ) ) {
+        $site_name = $_ENV['PANTHEON_SITE_NAME'];
+        $hostname = ! isset( $_SERVER['HTTP_HOST'] ) ? $_ENV['PANTHEON_ENVIRONMENT'] . "-$site_name.pantheonsite.io" : $_SERVER['HTTP_HOST'];
+        $hostname = $_ENV['PANTHEON_ENVIRONMENT'] === 'lando' ? "$site_name.lndo.site" : $hostname;
+        define( 'PANTHEON_HOSTNAME', $hostname );
+    }
 }
