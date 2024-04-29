@@ -51,6 +51,7 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 }
 
 // Update the multisite configuration to use Config::define() instead of define.
-add_filter( 'pantheon.multisite.config_contents', function( $config_contents ) {
-    $config_contents = str_replace( 'define(', 'Config::define(', $config_contents );
+add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) {
+	$config_contents = str_replace( 'define(', 'Config::define(', $config_contents );
+	return $config_contents;
 } );
