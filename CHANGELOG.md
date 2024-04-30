@@ -1,6 +1,7 @@
 ### 2024-04-30
 * Adds a new `PANTHEON_HOSTNAME` constant to `application.pantheon.php` to be used for configuring multisites. For more information, see our [mulstisite configuration documentation](https://docs.pantheon.io/guides/multisite/config). ([#119](https://github.com/pantheon-systems/wordpress-composer-managed/pull/119))
 * Implements `pantheon.multisite.config_contents` filter to correct the multisite configuration instructions (to use `Config::define` instead of `define`).
+* Adds a new `filters.php` mu-plugin for the `pantheon.multisite.config_contents` filter and any future filters we might add.
 * Adds `lint:phpcbf` script to the `composer.json`.
 
 ### 2024-04-15
