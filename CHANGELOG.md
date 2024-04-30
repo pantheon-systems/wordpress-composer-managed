@@ -1,3 +1,8 @@
+### 2024-04-30
+* Adds a new `PANTHEON_HOSTNAME` constant to `application.pantheon.php` to be used for configuring multisites. For more information, see our [mulstisite configuration documentation](https://docs.pantheon.io/guides/multisite/config). ([#119](https://github.com/pantheon-systems/wordpress-composer-managed/pull/119))
+* Implements `pantheon.multisite.config_contents` filter to correct the multisite configuration instructions (to use `Config::define` instead of `define`).
+* Adds `lint:phpcbf` script to the `composer.json`.
+
 ### 2024-04-15
 * Fixed an issue where `WP_HOME` was left undefined and throwing notices into New Relic logs. For more information, see our [release note](https://docs.pantheon.io/release-notes/2024/04/wordpress-composer-managed-update). ([#115](https://github.com/pantheon-systems/wordpress-composer-managed/pull/115))
 
