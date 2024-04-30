@@ -32,10 +32,7 @@ jobs:
       - name: Get and Set PR number
         id: pr
         run: |
-          pr_num=$(gh pr view --json number -q .number || echo "")
-          if [[ -z "$pr_num" ]]; then
-            pr_num=rel
-          fi
+          pr_num=$(gh pr view --json number -q .number || echo "rel")
           echo "PR_NUM=$pr_num" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ github.token }}
