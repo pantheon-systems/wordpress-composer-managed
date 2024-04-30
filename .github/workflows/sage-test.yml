@@ -25,18 +25,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Get latest Terminus release
-        run: |
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            echo "☕ Installing Terminus on macOS from Homebrew..."
-            brew install pantheon-systems/external/terminus
-          else
-            echo "💻 Installing Terminus from phar on Linux..."
-            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
-            chmod +x terminus
-            sudo mv terminus /usr/local/bin/
-          fi
-          # Test that terminus works...
-          terminus --version
+        uses: pantheon-systems/action-terminus-install@v1
+        with:
+          os: ${{ matrix.os }}
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
@@ -110,18 +101,9 @@ jobs:
           echo "Generated multidev name: $multidev_name"
           echo "multidev_name=$multidev_name" >> $GITHUB_ENV
       - name: Get latest Terminus release
-        run: |
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            echo "☕ Installing Terminus on macOS from Homebrew..."
-            brew install pantheon-systems/external/terminus
-          else
-            echo "💻 Installing Terminus from phar on Linux..."
-            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
-            chmod +x terminus
-            sudo mv terminus /usr/local/bin/
-          fi
-          # Test that terminus works...
-          terminus --version
+        uses: pantheon-systems/action-terminus-install@v1
+        with:
+          os: ${{ matrix.os }}
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
