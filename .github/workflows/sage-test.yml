@@ -9,10 +9,48 @@ on:
       - 'private/scripts/**'
     types: [opened, synchronize, reopened, ready_for_review]
 jobs:
+  apply_upstream_updates:
+    name: Apply Upstream Updates
+    runs-on: ubuntu-latest
+    env:
+      TERM: xterm-256color
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Get latest Terminus release
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "☕ Installing Terminus on macOS from Homebrew..."
+            brew install pantheon-systems/external/terminus
+          else
+            echo "💻 Installing Terminus from phar on Linux..."
+            curl -L "https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar" -o terminus
+            chmod +x terminus
+            sudo mv terminus /usr/local/bin/
+          fi
+          # Test that terminus works...
+          terminus --version
+      - name: Validate Pantheon Host Key
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - name: Log into Terminus
+        run: |
+          terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+          terminus upstream:updates:apply wpcm-sage-install-tests
   test:
     name: Sage Install Tests
     env:
       TERM: xterm-256color
+    needs: apply_upstream_updates
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -85,10 +123,9 @@ jobs:
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
           echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Log into Terminus and Check for updates
+      - name: Log into Terminus
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
-          terminus upstream:updates:apply "wpcm-sage-install-tests.${multidev_name}" --accept-upstream
       - name: Clone site and create multidev
         run: |
           echo "Cloning site..."
