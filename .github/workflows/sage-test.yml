@@ -70,8 +70,12 @@ jobs:
       - name: Get and Set PR number
         id: pr
         run: |
-          pr_num=${{ github.event.pull_request.number }} || "rel"
-          echo "PR_NUM=$pr_num" >> $GITHUB_ENV
+          pr_num=${{ github.event.pull_request.number }}
+          if [ "${pr_num}" == "" ]; then
+            echo "PR_NUM=rel" >> $GITHUB_ENV
+          else
+            echo "PR_NUM=${pr_num}" >> $GITHUB_ENV
+          fi
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Setup PHP
