@@ -91,7 +91,7 @@ jobs:
       - name: Log into Terminus and Check for updates
         run: |
           terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
-          terminus upstream:updates:apply wpcm-sage-install-tests.dev --accept-upstream
+          terminus upstream:updates:apply "wpcm-sage-install-tests.${multidev_name}"" --accept-upstream
       - name: Clone site and create multidev
         run: |
           echo "Cloning site..."
