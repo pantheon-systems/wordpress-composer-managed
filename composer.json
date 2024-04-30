@@ -114,6 +114,9 @@
     "lint:phpcs": [
       "vendor/bin/phpcs -s ."
     ],
+    "lint:phpcbf": [
+      "vendor/bin/phpcbf ."
+    ],
     "lint:bash": [
       "shellcheck private/scripts/*.sh"
     ],
