@@ -150,12 +150,12 @@ jobs:
           echo "✅ Sage Install Script passed!"
       - name: Delete multidev
         if: always()
-        run: terminus multidev:delete --delete-branch --yes wpcm-sage-install-tests.$multidev_name
+        run: terminus multidev:delete --delete-branch --yes "wpcm-sage-install-tests.${multidev_name}"
       - name: Delete the multidev build artifact
         if: always()
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           # Allow these to fail.
           git fetch --tags origin || true
-          git tag -d pantheon_build_artifacts_$multidev_name || true
-          git push origin --delete pantheon_build_artifacts_$multidev_name || true
+          git tag -d "pantheon_build_artifacts_${multidev_name}" || true
+          git push origin --delete "pantheon_build_artifacts_${multidev_name}" || true
