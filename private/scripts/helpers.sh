@@ -318,6 +318,9 @@ function install_sage_theme() {
 
 # Create the symlink to the cache directory.
 function add_symlink() {
+  echo "Waiting for the last step to finish before switching to SFTP mode."
+  terminus workflow:wait "$sitename"."$siteenv"
+
   # Switch to SFTP mode
   terminus connection:set "$sitename"."$siteenv" sftp
 
@@ -331,11 +334,15 @@ function add_symlink() {
     mkdir web/app/uploads/cache
   fi
 
-  # Create a files/cache directory on the host.
-  sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
-    cd /files
-    mkdir cache
+  # Create a files/cache directory on the host if one does not already exist.
+  echo "Checking if /files/cache exists..."
+  if [ "$(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "/cache[[:space:]]*$")" -eq 0 ]; then
+    echo "Creating /files/cache directory..."
+    sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
+cd /files
+mkdir cache
 EOF
+  fi
 
     # Switch back to Git mode.
     terminus connection:set "$sitename"."$siteenv" git
@@ -460,8 +467,14 @@ function clean_up() {
     exit 1;
   fi
 
+
   # If the site is multisite, we'll need to enable the theme so we can activate it.
-  terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
+  echo "${yellow}Checking if this is a multisite.${normal}"
+  if terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE; then
+    echo "${yellow}Site is multisite.${normal}"
+    terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
+  fi
+
   # List the themes.
   terminus wp -- "$sitename"."$siteenv" theme list
 
@@ -475,14 +488,18 @@ function clean_up() {
     exit 1;
   fi
 
+  # If this is a CI environment, stop here.
+  if [ "$is_ci" == 1 ]; then
+    echo "${yellow}CI detected. All done here.${normal} 🍵"
+    exit 0;
+  fi
+
   # Switch back to SFTP so files can be written.
   terminus connection:set "$sitename"."$siteenv" sftp
 
-  if [ "$is_ci" -ne 1 ]; then
-    # Open the site. This should generate requisite files on page load.
-    echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
-    open https://"$siteenv"-"$sitename".pantheonsite.io
-  fi
+  # Open the site. This should generate requisite files on page load.
+  echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
+  open https://"$siteenv"-"$sitename".pantheonsite.io
 
   # Commit any additions found in SFTP mode.
   echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"

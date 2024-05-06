@@ -25,9 +25,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Get latest Terminus release
-        uses: pantheon-systems/action-terminus-install@v1
+        uses: pantheon-systems/terminus-github-actions@v1
         with:
-          os: ${{ matrix.os }}
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
@@ -157,9 +157,16 @@ jobs:
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           composer update
+      - name: Generate random theme name
+        run: |
+          # Fetch the genre name from the Genrenator API
+          SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
+          # Replace spaces with hyphens and remove all non-alphanumeric characters except hyphens
+          SAGENAME=$(echo "$SAGENAME" | tr ' ' '-' | sed 's/[^a-zA-Z0-9\-]//g')
+          echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
       - name: Run Sage Install Script
         env:
-          SAGENAME: sage-test
+          SAGENAME: ${{ env.SAGENAME }}
           SITENAME: wpcm-sage-install-tests
           CI: 1
           PHPVERSION: ${{ matrix.php-version }}
