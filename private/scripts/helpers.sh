@@ -334,11 +334,13 @@ function add_symlink() {
     mkdir web/app/uploads/cache
   fi
 
-  # Create a files/cache directory on the host.
-  sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
-    cd /files
-    mkdir cache
+  # Create a files/cache directory on the host if one does not already exist.
+  if [ $(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "^cache$") -eq 0 ]; then
+    sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
+cd /files
+mkdir cache
 EOF
+  fi
 
     # Switch back to Git mode.
     terminus connection:set "$sitename"."$siteenv" git
