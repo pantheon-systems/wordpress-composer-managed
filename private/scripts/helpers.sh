@@ -335,9 +335,10 @@ function add_symlink() {
   fi
 
   # Create a files/cache directory on the host if one does not already exist.
-  if [ "$(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "^cache$")" -eq 0 ]; then
-    sftp -v -P 2222 "$sftpuser"@"$sftphost" <<EOF
-ls /files
+  echo "Checking if /files/cache exists..."
+  if [ "$(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "/cache[[:space:]]*$")" -eq 0 ]; then
+    echo "Creating /files/cache directory..."
+    sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
 cd /files
 mkdir cache
 EOF
@@ -468,7 +469,7 @@ function clean_up() {
     exit 1;
   fi
 
-  echo "${yellow}Checking if this site is a multisite.${normal}"
+  echo "${yellow}Checking if this is a multisite.${normal}"
   is_multisite=$(terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE)
 
   # If the site is multisite, we'll need to enable the theme so we can activate it.
