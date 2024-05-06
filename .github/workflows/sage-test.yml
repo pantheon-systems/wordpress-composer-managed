@@ -25,9 +25,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Get latest Terminus release
-        uses: pantheon-systems/action-terminus-install@v1
+        uses: pantheon-systems/terminus-github-actions@v1
         with:
-          os: ${{ matrix.os }}
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
       - name: Validate Pantheon Host Key
         run: |
           echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
