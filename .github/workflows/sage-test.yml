@@ -159,10 +159,10 @@ jobs:
           composer update
       - name: Generate random theme name
         run: |
-          # Hit https://binaryjazz.us/wp-json/genrenator/v1/genre/ to get a random string we can use as a name.
+          # Fetch the genre name from the Genrenator API
           SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
-          # Replace spaces with hyphens.
-          SAGENAME=$(echo $SAGENAME | tr ' ' '-')
+          # Replace spaces with hyphens and remove all non-alphanumeric characters except hyphens
+          SAGENAME=$(echo "$SAGENAME" | tr ' ' '-' | sed 's/[^a-zA-Z0-9\-]//g')
           echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
       - name: Run Sage Install Script
         env:
