@@ -157,9 +157,14 @@ jobs:
         run: |
           cd ~/pantheon-local-copies/wpcm-sage-install-tests
           composer update
+      - name: Generate random theme name
+        run: |
+          # Hit https://binaryjazz.us/wp-json/genrenator/v1/genre/ to get a random string we can use as a name.
+          SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
+          echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
       - name: Run Sage Install Script
         env:
-          SAGENAME: sage-test
+          SAGENAME: ${{ env.SAGENAME }}
           SITENAME: wpcm-sage-install-tests
           CI: 1
           PHPVERSION: ${{ matrix.php-version }}
