@@ -452,6 +452,8 @@ function update_composer() {
 
 # Finish up the Sage install process.
 function clean_up() {
+  local is_multisite=""
+
   # List the app/themes directory.
   echo "${yellow}Checking the themes directory for ${sagename}.${normal}"
   # If the previous output did not include $sagename, bail.
@@ -460,8 +462,14 @@ function clean_up() {
     exit 1;
   fi
 
+  is_multisite=$(terminus wp -- "$sitename"."$siteenv" config get MULTISITE)
+
   # If the site is multisite, we'll need to enable the theme so we can activate it.
-  terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
+  if [ -n "$is_multisite" ]; then
+    echo "${yellow}Site is multisite.${normal}"
+    terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
+  fi
+
   # List the themes.
   terminus wp -- "$sitename"."$siteenv" theme list
 
