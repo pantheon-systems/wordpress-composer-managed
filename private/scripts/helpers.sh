@@ -335,7 +335,7 @@ function add_symlink() {
   fi
 
   # Create a files/cache directory on the host if one does not already exist.
-  if [ $(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "^cache$") -eq 0 ]; then
+  if [ "$(sftp -P 2222 "$sftpuser"@"$sftphost" <<< "ls /files" | grep -c "^cache$")" -eq 0 ]; then
     sftp -P 2222 "$sftpuser"@"$sftphost" <<EOF
 cd /files
 mkdir cache
