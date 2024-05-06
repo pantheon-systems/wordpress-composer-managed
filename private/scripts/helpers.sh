@@ -486,23 +486,26 @@ function clean_up() {
     exit 1;
   fi
 
-  # If this is a CI environment, we can skip these steps.
-  if [ "$is_ci" -ne 1 ]; then
-    # Switch back to SFTP so files can be written.
-    terminus connection:set "$sitename"."$siteenv" sftp
-
-    # Open the site. This should generate requisite files on page load.
-    echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
-    open https://"$siteenv"-"$sitename".pantheonsite.io
-
-    # Commit any additions found in SFTP mode.
-    echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"
-    terminus env:commit "$sitename"."$siteenv" --message="[Sage Install] Add any leftover files found in SFTP mode."
-
-    # Switch back to Git.
-    terminus connection:set "$sitename"."$siteenv" git
-    git pull --ff --commit
+  # If this is a CI environment, stop here.
+  if [ "$is_ci" == 1 ]; then
+    echo "${yellow}CI detected. All done here.${normal} 🍵"
+    exit 0;
   fi
+
+  # Switch back to SFTP so files can be written.
+  terminus connection:set "$sitename"."$siteenv" sftp
+
+  # Open the site. This should generate requisite files on page load.
+  echo "${yellow}Opening the ${siteenv}-${sitename}.pantheonsite.io to generate requisite files.${normal}"
+  open https://"$siteenv"-"$sitename".pantheonsite.io
+
+  # Commit any additions found in SFTP mode.
+  echo "${yellow}Committing any files found in SFTP mode that were created by Sage.${normal}"
+  terminus env:commit "$sitename"."$siteenv" --message="[Sage Install] Add any leftover files found in SFTP mode."
+
+  # Switch back to Git.
+  terminus connection:set "$sitename"."$siteenv" git
+  git pull --ff --commit
 }
 
 # Install Sage theme.
