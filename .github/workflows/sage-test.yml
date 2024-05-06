@@ -161,6 +161,8 @@ jobs:
         run: |
           # Hit https://binaryjazz.us/wp-json/genrenator/v1/genre/ to get a random string we can use as a name.
           SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
+          # Replace spaces with hyphens.
+          SAGENAME=$(echo $SAGENAME | tr ' ' '-')
           echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
       - name: Run Sage Install Script
         env:
