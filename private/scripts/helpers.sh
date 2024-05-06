@@ -458,7 +458,7 @@ function update_composer() {
 
 # Finish up the Sage install process.
 function clean_up() {
-  local is_multisite=""
+  local is_multisite
 
   # List the app/themes directory.
   echo "${yellow}Checking the themes directory for ${sagename}.${normal}"
