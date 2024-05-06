@@ -469,7 +469,7 @@ function clean_up() {
   fi
 
   echo "${yellow}Checking if this site is a multisite.${normal}"
-  is_multisite=$(terminus wp -- "$sitename"."$siteenv" config get MULTISITE)
+  is_multisite=$(terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE)
 
   # If the site is multisite, we'll need to enable the theme so we can activate it.
   if [ "$is_multisite" == 1 ]; then
