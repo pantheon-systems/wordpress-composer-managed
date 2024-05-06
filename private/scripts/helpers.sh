@@ -318,6 +318,9 @@ function install_sage_theme() {
 
 # Create the symlink to the cache directory.
 function add_symlink() {
+  echo "Waiting for the last step to finish before switching to SFTP mode."
+  terminus workflow:wait "$sitename"."$siteenv"
+
   # Switch to SFTP mode
   terminus connection:set "$sitename"."$siteenv" sftp
 
