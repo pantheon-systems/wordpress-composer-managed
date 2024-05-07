@@ -139,7 +139,8 @@
       "vendor/bin/phpcbf ."
     ],
     "lint:bash": [
-      "shellcheck private/scripts/*.sh"
+      "shellcheck private/scripts/*.sh",
+      "shellcheck devops/scripts/*.sh"
     ],
     "test": [],
     "upstream-require": [
