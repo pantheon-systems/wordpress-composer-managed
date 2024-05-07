@@ -140,7 +140,7 @@
     ],
     "lint:bash": [
       "shellcheck private/scripts/*.sh",
-      "shellcheck devops/scripts/*.sh"
+      "[ -d devops/scripts ] && shellcheck devops/scripts/*.sh"
     ],
     "test": [],
     "upstream-require": [
