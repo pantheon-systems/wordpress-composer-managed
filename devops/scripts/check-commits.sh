@@ -9,7 +9,8 @@ set -euo pipefail
 . devops/scripts/commit-type.sh
 
 # List commits between release-pointer and HEAD, in reverse
-prcommits=$(git log "$(git merge-base default HEAD)"..HEAD --pretty=format:"%h")
+merge_base=$(git merge-base default HEAD)
+prcommits=$(git log "${merge_base}"..HEAD --pretty=format:"%h")
 
 status=0
 
