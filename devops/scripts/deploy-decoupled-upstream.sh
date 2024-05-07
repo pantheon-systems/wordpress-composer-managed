@@ -40,7 +40,7 @@ for commit in $newcommits; do
   # Exclude commits which have been manually rejected
   skip=false
   for item in "${exclude_list[@]}"; do
-    if [[ $item == $commit ]]; then
+    if [[ $item == "$commit" ]]; then
       echo "Commit ${commit} has been manually excluded."
       skip=true
     fi
@@ -52,17 +52,18 @@ for commit in $newcommits; do
 
   commit_type=$(identify_commit_type "$commit")
   if [[ $commit_type == "normal" ]] ; then
-    commits+=($commit)
+    commits+=("$commit")
   fi
 
   if [[ $commit_type == "mixed" ]] ; then
     2>&1 echo "Commit ${commit} contains both release and nonrelease changes. Skipping this commit."
     echo "You may wish to ensure that nothing in this commit is meant for release."
-    delete=(${commit})
+    delete=("${commit}")
     for remove in "${delete[@]}"; do
       if (( ${#commits[@]} )); then
+        # shellcheck disable=SC2034
         for i in "${commits[@]}"; do
-          if [[ ${commits[0]} = $remove ]]; then
+          if [[ ${commits[0]} = "$remove" ]]; then
             unset 'commits[i]'
           fi
         done
@@ -101,6 +102,7 @@ for commit in "${commits[@]}"; do
 done
 
 echo "Executing decoupledpatch.sh"
+# shellcheck disable=SC1091
 . /tmp/decoupledpatch.sh
 
 echo "Copying README to docroot."
@@ -118,7 +120,7 @@ echo
 # Push to the decoupled repository
 git push decoupled decoupled:main
 
-git checkout $CIRCLE_BRANCH
+git checkout "$CIRCLE_BRANCH"
 
 # update the decoupled-release-pointer
 git tag -f -m 'Last commit set on upstream repo' decoupled-release-pointer HEAD
