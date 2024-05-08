@@ -102,7 +102,7 @@ for commit in "${commits[@]}"; do
 done
 
 echo "Executing decoupledpatch.sh"
-# shellcheck disable=SC1091
+# shellcheck source=devops/scripts/decoupledpatch.sh
 . /tmp/decoupledpatch.sh
 
 echo "Copying README to docroot."
