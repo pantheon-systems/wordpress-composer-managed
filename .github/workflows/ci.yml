@@ -40,7 +40,9 @@ jobs:
       run: composer update --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run lints
-      run: composer lint
+      run: |
+        composer lint:devops
+        composer lint
 
     - name: Run tests
       run: composer test

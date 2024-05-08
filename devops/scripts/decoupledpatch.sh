@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SED=`which gsed || which sed`
+SED=$(which gsed || which sed)
 
 $SED -i'' 's#"name": "pantheon-systems/wordpress-composer-managed"#"name": "pantheon-upstreams/decoupled-wordpress-composer-managed"#g' composer.json
 

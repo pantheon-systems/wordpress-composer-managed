@@ -141,6 +141,9 @@
     "lint:bash": [
       "shellcheck private/scripts/*.sh"
     ],
+    "lint:devops": [
+      "[ -d devops/scripts ] && shellcheck devops/scripts/*.sh"
+    ],
     "test": [],
     "upstream-require": [
         "WordPressComposerManaged\\ComposerScripts::upstreamRequire"
