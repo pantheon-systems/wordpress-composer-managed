@@ -40,6 +40,7 @@ function only_allowed_files() {
 
   affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
   for path in $affected_paths; do
+    # shellcheck disable=SC2076
     if [[ " ${forbidden_files[*]} " =~ " ${path} " ]]; then
       has_forbidden_files=1
       break
