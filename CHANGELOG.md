@@ -1,5 +1,6 @@
 ### 2024-06-04
 * Filters the configuration file filename on the Setup Network instructions page to use `config/application.php` instead of `wp-config.php`. ([#125](https://github.com/pantheon-systems/wordpress-composer-managed/pull/125))
+* Adds Composer script to update the `platform.php` value to the version of PHP consistent with the version in the `pantheon.yml` file. ([#127](https://github.com/pantheon-systems/wordpress-composer-managed/pull/127)
 
 ### 2024-04-30
 * Adds a new `PANTHEON_HOSTNAME` constant to `application.pantheon.php` to be used for configuring multisites. For more information, see our [mulstisite configuration documentation](https://docs.pantheon.io/guides/multisite/config). ([#119](https://github.com/pantheon-systems/wordpress-composer-managed/pull/119))
