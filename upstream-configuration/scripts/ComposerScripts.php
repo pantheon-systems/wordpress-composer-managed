@@ -18,6 +18,7 @@ class ComposerScripts
     */
     public static function preUpdate(Event $event)
     {
+        static::applyComposerJsonUpdates($event);
     }
 
     /**
