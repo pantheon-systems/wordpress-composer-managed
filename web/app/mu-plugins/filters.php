@@ -19,3 +19,12 @@ add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) 
 	$config_contents = str_replace( 'define(', 'Config::define(', $config_contents );
 	return $config_contents;
 } );
+
+/**
+ * Update the wp-config filename to use config/application.php.
+ *
+ * @return string
+ */
+add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) {
+    return 'config/application.php';
+} );
