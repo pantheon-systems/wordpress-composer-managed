@@ -26,6 +26,5 @@ add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) 
  * @return string
  */
 add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) {
-    $config_filename = 'config/application.php';
-    return $config_filename;
+    return 'config/application.php';
 } );
