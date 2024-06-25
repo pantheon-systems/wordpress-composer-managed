@@ -318,6 +318,7 @@ function install_sage_theme() {
   # Commit the theme
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
+  git push
   echo "${green}Sage installed!${normal}"
 }
 
