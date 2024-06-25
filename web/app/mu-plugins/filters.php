@@ -74,12 +74,12 @@ function fix_core_resource_urls( $url ) {
 
 // Only run the filter on non-main sites in a subdirectory multisite network.
 if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
-    add_filter( 'script_loader_src', 'fix_core_resource_urls', 10 );
-    add_filter( 'style_loader_src', 'fix_core_resource_urls', 10 );
-    add_filter( 'plugins_url', 'fix_core_resource_urls', 10 );
-    add_filter( 'theme_file_uri', 'fix_core_resource_urls', 10 );
-    add_filter( 'stylesheet_directory_uri', 'fix_core_resource_urls', 10 );
-    add_filter( 'template_directory_uri', 'fix_core_resource_urls', 10 );
-    add_filter( 'site_url', 'fix_core_resource_urls', 10 );
-    add_filter( 'content_url', 'fix_core_resource_urls', 10 );
+    add_filter( 'script_loader_src', 'fix_core_resource_urls', 9 );
+    add_filter( 'style_loader_src', 'fix_core_resource_urls', 9 );
+    add_filter( 'plugins_url', 'fix_core_resource_urls', 9 );
+    add_filter( 'theme_file_uri', 'fix_core_resource_urls', 9 );
+    add_filter( 'stylesheet_directory_uri', 'fix_core_resource_urls', 9 );
+    add_filter( 'template_directory_uri', 'fix_core_resource_urls', 9 );
+    add_filter( 'site_url', 'fix_core_resource_urls', 9 );
+    add_filter( 'content_url', 'fix_core_resource_urls', 9 );
 }
