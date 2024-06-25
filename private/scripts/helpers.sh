@@ -4,7 +4,7 @@ IFS=$'\n\t'
 
 # Function to safely call tput
 safe_tput() {
-  tput "$@" 2>/dev/null || echo ""
+  tput "$@" 2>/dev/null
 }
 
 # Defines some global variables for colors with fallback values.
