@@ -47,19 +47,21 @@ function fix_core_resource_urls( $url ) {
         return $url;
     }
 
-    // Extract the path from the parsed URL.
-    $path = $parsed_url['path'];
+$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
+$path_modified = false;
 
-    // Correct the path for core resources.
-    if ( strpos( $path, $current_site_path . 'wp-includes/' ) !== false ) {
-        $path = str_replace( $current_site_path . 'wp-includes/', 'wp-includes/', $path );
-    } elseif ( strpos( $path, $current_site_path . 'wp-admin/' ) !== false ) {
-        $path = str_replace( $current_site_path . 'wp-admin/', 'wp-admin/', $path );
-    } elseif ( strpos( $path, $current_site_path . 'wp-content/' ) !== false ) {
-        $path = str_replace( $current_site_path . 'wp-content/', 'wp-content/', $path );
-    } else {
-        return $url; // Return the original URL if no changes were needed.
+foreach ( $core_paths as $core_path ) {
+    if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
+        $path = str_replace( $current_site_path . $core_path, $core_path, $path );
+        $path_modified = true;
+        break;
     }
+}
+
+// If the path was not modified, return the original URL.
+if ( ! $path_modified ) {
+    return $url;
+}
 
     // Prepend the main site URL to the modified path.
     $new_url = $main_site_url . ltrim( $path, '/' );
