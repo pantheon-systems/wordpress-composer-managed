@@ -2,17 +2,22 @@
 set -o pipefail
 IFS=$'\n\t'
 
-# Defines some global variables for colors.
-normal=$(tput sgr0)
-bold=$(tput bold)
-red=$(tput setaf 1)
-green=$(tput setaf 2)
-yellow=$(tput setaf 3)
+# Function to safely call tput
+safe_tput() {
+  tput "$@" 2>/dev/null
+}
+
+# Defines some global variables for colors with fallback values.
+normal=$(safe_tput sgr0)
+bold=$(safe_tput bold)
+red=$(safe_tput setaf 1)
+green=$(safe_tput setaf 2)
+yellow=$(safe_tput setaf 3)
 # Additional styles we aren't currently using.
-# italic=$(tput sitm)
-#blue=$(tput setaf 4)
-#magenta=$(tput setaf 5)
-#cyan=$(tput setaf 6)
+#italic=$(safe_tput sitm)
+#blue=$(safe_tput setaf 4)
+#magenta=$(safe_tput setaf 5)
+#cyan=$(safe_tput setaf 6)
 
 # Use environment variables if set, otherwise prompt for input
 sitename="${SITENAME:-}"
@@ -313,6 +318,7 @@ function install_sage_theme() {
   # Commit the theme
   git add "$sagedir"
   git commit -m "[Sage Install] Add the Sage theme ${sagename}."
+  git push
   echo "${green}Sage installed!${normal}"
 }
 
