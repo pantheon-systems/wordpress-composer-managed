@@ -266,7 +266,7 @@ function update_php() {
     echo "php_version: ${phpversion}" >> pantheon.yml
   elif [ "$(echo "$currentPhpVersion < 8.1" | bc)" -eq 1 ]; then
     # Update the PHP version declaration if it's less than 8.1.
-    sed -i '' "s/php_version: [0-9.]*/php_version: ${phpversion}/" pantheon.yml
+    sed -i.bak "s/php_version: [0-9.]*/php_version: ${phpversion}/" pantheon.yml && rm pantheon.yml.bak
   else
     # We've got a good PHP version, so we can bail here.
     echo "${green}PHP version is already ${currentPhpVersion} which is >= 8.1.${normal}"
@@ -274,8 +274,8 @@ function update_php() {
   fi
 
   # If we're in CI, don't run the push actions. Note: if you're running Bats tests locally, you should pass CI=1 before running the tests.
-  if [ "$is_ci" -eq 1  ]; then
-    echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}."
+  if [ "$is_ci" -eq 1 ]; then
+    echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}.${normal}"
     exit 0
   fi
   git add pantheon.yml
