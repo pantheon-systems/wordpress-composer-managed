@@ -476,17 +476,24 @@ function clean_up() {
 
   # If the site is multisite, we'll need to enable the theme so we can activate it.
   echo "${yellow}Checking if this is a multisite.${normal}"
-  if terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE; then
+  if terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE > /dev/null 2>&1; then
     echo "${yellow}Site is multisite.${normal}"
     terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
   fi
 
-  # List the themes.
-  terminus wp -- "$sitename"."$siteenv" theme list
+  # Get the themes.
+  themelist=$(terminus wp -- "$sitename"."$siteenv" theme list --format=csv)
+
+  if ! echo "$themelist" | grep -w "^sagename"; then
+    echo "${red}Theme $sagename not found in the theme list. Exiting here.${normal}"
+    terminus wp -- "$sitename"."$siteenv" theme list
+    exit 1;
+  fi
 
   # Activate the new theme
   echo "${yellow}Activating the ${sagename} theme.${normal}"
   if ! terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"; then
+    terminus wp -- "$sitename"."$siteenv" theme list
     echo "${red}Theme activation failed. Exiting here.${normal}"
     echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
     echo "terminus wp -- $sitename.dev theme activate $sagename"
