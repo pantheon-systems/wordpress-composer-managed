@@ -162,7 +162,7 @@ jobs:
           # Fetch the genre name from the Genrenator API
           SAGENAME=$(curl -s https://binaryjazz.us/wp-json/genrenator/v1/genre/)
           # Replace spaces with hyphens and remove all non-alphanumeric characters except hyphens
-          SAGENAME=$(echo "$SAGENAME" | tr ' ' '-' | sed 's/[^a-zA-Z0-9\-]//g')
+          SAGENAME=$(echo "$SAGENAME" | tr ' ' '-' | tr -cd 'a-zA-Z0-9-')
           echo "SAGENAME=$SAGENAME" >> $GITHUB_ENV
       - name: Run Sage Install Script
         env:
