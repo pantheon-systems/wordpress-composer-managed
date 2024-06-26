@@ -486,20 +486,16 @@ function clean_up() {
 
   if ! echo "$themelist" | grep -q "$sagename"; then
     echo "${red}Theme $sagename not found in the theme list. Exiting here.${normal}"
-    echo "$themelist"
-    exit 1;
-  fi
-
-  # Activate the new theme
-  echo "${yellow}Activating the ${sagename} theme.${normal}"
-  if ! terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"; then
     terminus wp -- "$sitename"."$siteenv" theme list
-    echo "${red}Theme activation failed. Exiting here.${normal}"
     echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
     echo "terminus wp -- $sitename.dev theme activate $sagename"
     echo "Once you do this, you will need to open the site to generate the requisite files and then commit them in SFTP mode."
     exit 1;
   fi
+
+  # Activate the new theme
+  echo "${yellow}Activating the ${sagename} theme.${normal}"
+  terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"
 
   # If this is a CI environment, stop here.
   if [ "$is_ci" == 1 ]; then
