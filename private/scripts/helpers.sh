@@ -247,7 +247,7 @@ function update_php() {
   fi
 
   echo ""
-  echo "${yellow}Updating PHP version to ${phpversion}.${normal}"
+  echo "${yellow}Checking PHP version and maybe updating to ${phpversion}.${normal}"
 
   # Check for pantheon.yml file.
   if [ ! -f "pantheon.yml" ]; then
