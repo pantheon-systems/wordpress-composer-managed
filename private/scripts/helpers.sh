@@ -486,7 +486,7 @@ function clean_up() {
 
   if ! echo "$themelist" | grep -w "^sagename"; then
     echo "${red}Theme $sagename not found in the theme list. Exiting here.${normal}"
-    terminus wp -- "$sitename"."$siteenv" theme list
+    echo "$themelist"
     exit 1;
   fi
 
