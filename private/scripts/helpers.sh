@@ -274,13 +274,13 @@ function update_php() {
   fi
 
   # If we're in CI, don't run the push actions. Note: if you're running Bats tests locally, you should pass CI=1 before running the tests.
-  if [ "$is_ci" -eq 1 ]; then
+  if [ "$is_ci" -eq 0 ]; then
+    git add pantheon.yml
+    git commit -m "[Sage Install] Update PHP version to ${phpversion}"
+    git push origin "$branch"
+  else
     echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}.${normal}"
-    exit 0
   fi
-  git add pantheon.yml
-  git commit -m "[Sage Install] Update PHP version to ${phpversion}"
-  git push origin "$branch"
 }
 
 # Install sage and related dependencies.
