@@ -24,7 +24,7 @@ sitename="${SITENAME:-}"
 sftpuser="${SFTPUSER:-}"
 sftphost="${SFTPHOST:-}"
 sagename="${SAGENAME:-}"
-phpversion="${PHPVERSION:-8.0}"
+phpversion="${PHPVERSION:-8.1}"
 is_ci="${CI:-0}"
 siteenv="${SITEENV:-dev}"
 if [ "$siteenv" == "dev" ]; then
