@@ -484,7 +484,7 @@ function clean_up() {
   # Get the themes.
   themelist=$(terminus wp -- "$sitename"."$siteenv" theme list --format=csv | tr -d '\n' | tr -d ' ')
 
-  if ! echo "$themelist" | grep -q -E "(^|,)$sagename($|,)"; then
+  if ! echo "$themelist" | grep -q "$sagename"; then
     echo "${red}Theme $sagename not found in the theme list. Exiting here.${normal}"
     echo "$themelist"
     exit 1;
