@@ -8,6 +8,9 @@ on:
       - synchronize
       - ready_for_review
 
+permissions:
+    contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
