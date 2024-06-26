@@ -4,7 +4,7 @@ custom_setup() {
   local version=$1
   # Print debugging information
   echo "BATS_TEST_DIRNAME: $BATS_TEST_DIRNAME"
-  echo "Current directory before cd: $(pwd)"
+  echo "Current directory: $(pwd)"
 
   # Check if the .github directory exists
   if [ ! -d ".github" ]; then
@@ -19,6 +19,12 @@ custom_setup() {
 
   # Copy the fixture file to pantheon.yml before each test
   cp ".github/fixtures/pantheon-${version}.yml" pantheon.yml
+
+  if [ ! -f "pantheon.yml" ]; then
+    echo "Failed to copy the fixture file to $(pwd)/pantheon.yml"
+  else
+    cat pantheon.yml
+  fi
 }
 
 teardown() {
