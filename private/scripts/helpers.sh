@@ -233,23 +233,18 @@ get_field() {
   echo "$2" | awk -v field="$1" '$1 == field { print $2 }'
 }
 
-# Update to PHP 8.0
+# Update to PHP 8.1 or higher
 function update_php() {
-  if [ "$phpversion" == "8" ]; then
-    phpversion="8.0"
+  if [ "$phpversion" == "8" ] || [ "$phpversion" == "8.0" ]; then
+    phpversion="8.1"
   fi
-  if [ "$phpversion" != "8.0" ]; then
-    echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
-    if [ "$phpversion" == "8.3" ]; then
-      echo "${yellow}PHP 8.3 is not yet supported. Using 8.2 instead.${normal}"
-      phpversion="8.2"
-    fi
-    # Check if $phpversion is < 8.0.
-    if [ "$(echo "$phpversion < 8.0" | bc)" -eq 1 ]; then
-      echo "${red}PHP version must be 8.0 or greater. Exiting here.${normal}"
-      exit 1;
-    fi
+
+  # Check if $phpversion is < 8.1.
+  if [ "$(echo "$phpversion < 8.1" | bc)" -eq 1 ]; then
+    echo "${red}PHP version must be 8.1 or greater. Exiting here.${normal}"
+    exit 1
   fi
+
   echo ""
   echo "${yellow}Updating PHP version to ${phpversion}.${normal}"
 
@@ -257,30 +252,31 @@ function update_php() {
   if [ ! -f "pantheon.yml" ]; then
     echo "${red}No pantheon.yml file found. Exiting here.${normal}"
     echo "Make sure you are inside a valid Pantheon repository."
-    exit 1;
+    exit 1
   fi
 
-  # Testing for any version of PHP 8.x and/or PHP 7.4.
-  phpAlreadyVersion8=$(grep -c "php_version: 8." < pantheon.yml)
-  phpDeclaredInFile=$(grep -c "php_version: 7.4" < pantheon.yml)
+  # Check the current PHP version declared in pantheon.yml
+  currentPhpVersion=$(awk '/php_version:/{print $2}' pantheon.yml)
 
-  # Only alter if not already PHP 8.x.
-  if [ "$phpAlreadyVersion8" -eq 0 ]; then
-    # Test for PHP version declartion already in pantheon.yml.
-    if [ ! "$phpDeclaredInFile" -eq 0 ]; then
-      # Update version to 8.x.
-      sed -i '' "s/7.4/${phpversion}/" pantheon.yml
-    else
-      # Add full PHP version declaration to pantheon.yml.
-      echo "" >> pantheon.yml
-      echo "php_version: ${phpversion}" >> pantheon.yml
-    fi
-    git diff HEAD~1 HEAD -- pantheon.yml
-    git commit -am "[Sage Install] Update PHP version to ${phpversion}"
-    git push origin "$branch"
+  if [ -z "$currentPhpVersion" ]; then
+    # Add the PHP version declaration if not present.
+    echo "" >> pantheon.yml
+    echo "php_version: ${phpversion}" >> pantheon.yml
+  elif [ "$(echo "$currentPhpVersion < 8.1" | bc)" -eq 1 ]; then
+    # Update the PHP version declaration if it's less than 8.1.
+    sed -i '' "s/php_version: [0-9.]*/php_version: ${phpversion}/" pantheon.yml
   else
-    echo "${green}PHP version is already 8.x.${normal}"
+    echo "${green}PHP version is already ${currentPhpVersion} which is >= 8.1.${normal}"
+    exit 0
   fi
+
+  if [ "$is_ci" -eq 1  ]; then
+    echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}."
+    exit 0
+  fi
+  git add pantheon.yml
+  git commit -m "[Sage Install] Update PHP version to ${phpversion}"
+  git push origin "$branch"
 }
 
 # Install sage and related dependencies.
