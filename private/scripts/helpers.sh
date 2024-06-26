@@ -236,11 +236,12 @@ get_field() {
 
 # Update to PHP 8.1 or higher
 function update_php() {
+  # If an old PHP version was passed into the script from the outside, fall back to 8.1.
   if [ "$phpversion" == "8" ] || [ "$phpversion" == "8.0" ]; then
     phpversion="8.1"
   fi
 
-  # Check if $phpversion is < 8.1.
+  # Check if $phpversion is < 8.1. We shouldn't get here because we just updated $phpversion (which is passed from the environment), so if we are here, it's a problem.
   if [ "$(echo "$phpversion < 8.1" | bc)" -eq 1 ]; then
     echo "${red}PHP version must be 8.1 or greater. Exiting here.${normal}"
     exit 1
@@ -267,10 +268,12 @@ function update_php() {
     # Update the PHP version declaration if it's less than 8.1.
     sed -i '' "s/php_version: [0-9.]*/php_version: ${phpversion}/" pantheon.yml
   else
+    # We've got a good PHP version, so we can bail here.
     echo "${green}PHP version is already ${currentPhpVersion} which is >= 8.1.${normal}"
     exit 0
   fi
 
+  # If we're in CI, don't run the push actions. Note: if you're running Bats tests locally, you should pass CI=1 before running the tests.
   if [ "$is_ci" -eq 1  ]; then
     echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}."
     exit 0
