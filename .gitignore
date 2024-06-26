@@ -26,6 +26,9 @@ web/license.txt
 web/readme.html
 web/index.php
 web/wp-*
+!web/wp-cli.yml
+!web/wp-config.php
+!web/wp-config-pantheon.php
 web/xmlrpc.php
 
 # Logfiles should always be ignored.
