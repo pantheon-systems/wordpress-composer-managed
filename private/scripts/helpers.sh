@@ -38,7 +38,8 @@ function main() {
   help_msg="Usage: bash ./private/scripts/helpers.sh <command>
   Available commands:
     install_sage: Install Sage.
-    maybe_create_symlinks: Create a symlinks to WordPress files, if they don't already exist."
+    maybe_create_symlinks: Create a symlinks to WordPress files, if they don't already exist.
+    update_php: Updates PHP version to 8.1 if it's not already set at 8.1 or higher."
 
   if [ -z "$1" ]; then
     echo "${red}No command specified.${normal}"
@@ -52,7 +53,7 @@ function main() {
   fi
 
   # Check for a valid command.
-  if [ "$1" != "install_sage" ] && [ "$1" != "maybe_create_symlinks" ]; then
+  if [ "$1" != "install_sage" ] && [ "$1" != "maybe_create_symlinks" ] && [ "$1" != "update_php" ]; then
     echo "${red}Invalid command specified.${normal}"
     echo "${help_msg}"
     exit 1;
