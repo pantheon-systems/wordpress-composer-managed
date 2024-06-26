@@ -24,7 +24,7 @@ sitename="${SITENAME:-}"
 sftpuser="${SFTPUSER:-}"
 sftphost="${SFTPHOST:-}"
 sagename="${SAGENAME:-}"
-phpversion="${PHPVERSION:-8.0}"
+phpversion="${PHPVERSION:-8.1}"
 is_ci="${CI:-0}"
 siteenv="${SITEENV:-dev}"
 if [ "$siteenv" == "dev" ]; then
@@ -38,7 +38,8 @@ function main() {
   help_msg="Usage: bash ./private/scripts/helpers.sh <command>
   Available commands:
     install_sage: Install Sage.
-    maybe_create_symlinks: Create a symlinks to WordPress files, if they don't already exist."
+    maybe_create_symlinks: Create a symlinks to WordPress files, if they don't already exist.
+    update_php: Updates PHP version to 8.1 if it's not already set at 8.1 or higher."
 
   if [ -z "$1" ]; then
     echo "${red}No command specified.${normal}"
@@ -52,7 +53,7 @@ function main() {
   fi
 
   # Check for a valid command.
-  if [ "$1" != "install_sage" ] && [ "$1" != "maybe_create_symlinks" ]; then
+  if [ "$1" != "install_sage" ] && [ "$1" != "maybe_create_symlinks" ] && [ "$1" != "update_php" ]; then
     echo "${red}Invalid command specified.${normal}"
     echo "${help_msg}"
     exit 1;
@@ -233,53 +234,52 @@ get_field() {
   echo "$2" | awk -v field="$1" '$1 == field { print $2 }'
 }
 
-# Update to PHP 8.0
+# Update to PHP 8.1 or higher
 function update_php() {
-  if [ "$phpversion" == "8" ]; then
-    phpversion="8.0"
+  # If an old PHP version was passed into the script from the outside, fall back to 8.1.
+  if [ "$phpversion" == "8" ] || [ "$phpversion" == "8.0" ]; then
+    phpversion="8.1"
   fi
-  if [ "$phpversion" != "8.0" ]; then
-    echo "${yellow}You've specified PHP version ${phpversion}. The default is 8.0, but we'll use the version you asked for.${normal}"
-    if [ "$phpversion" == "8.3" ]; then
-      echo "${yellow}PHP 8.3 is not yet supported. Using 8.2 instead.${normal}"
-      phpversion="8.2"
-    fi
-    # Check if $phpversion is < 8.0.
-    if [ "$(echo "$phpversion < 8.0" | bc)" -eq 1 ]; then
-      echo "${red}PHP version must be 8.0 or greater. Exiting here.${normal}"
-      exit 1;
-    fi
+
+  # Check if $phpversion is < 8.1. We shouldn't get here because we just updated $phpversion (which is passed from the environment), so if we are here, it's a problem.
+  if [ "$(echo "$phpversion < 8.1" | bc)" -eq 1 ]; then
+    echo "${red}PHP version must be 8.1 or greater. Exiting here.${normal}"
+    exit 1
   fi
+
   echo ""
-  echo "${yellow}Updating PHP version to ${phpversion}.${normal}"
+  echo "${yellow}Checking PHP version and maybe updating to ${phpversion}.${normal}"
 
   # Check for pantheon.yml file.
   if [ ! -f "pantheon.yml" ]; then
     echo "${red}No pantheon.yml file found. Exiting here.${normal}"
     echo "Make sure you are inside a valid Pantheon repository."
-    exit 1;
+    exit 1
   fi
 
-  # Testing for any version of PHP 8.x and/or PHP 7.4.
-  phpAlreadyVersion8=$(grep -c "php_version: 8." < pantheon.yml)
-  phpDeclaredInFile=$(grep -c "php_version: 7.4" < pantheon.yml)
+  # Check the current PHP version declared in pantheon.yml
+  currentPhpVersion=$(awk '/php_version:/{print $2}' pantheon.yml)
 
-  # Only alter if not already PHP 8.x.
-  if [ "$phpAlreadyVersion8" -eq 0 ]; then
-    # Test for PHP version declartion already in pantheon.yml.
-    if [ ! "$phpDeclaredInFile" -eq 0 ]; then
-      # Update version to 8.x.
-      sed -i '' "s/7.4/${phpversion}/" pantheon.yml
-    else
-      # Add full PHP version declaration to pantheon.yml.
-      echo "" >> pantheon.yml
-      echo "php_version: ${phpversion}" >> pantheon.yml
-    fi
-    git diff HEAD~1 HEAD -- pantheon.yml
-    git commit -am "[Sage Install] Update PHP version to ${phpversion}"
+  if [ -z "$currentPhpVersion" ]; then
+    # Add the PHP version declaration if not present.
+    echo "" >> pantheon.yml
+    echo "php_version: ${phpversion}" >> pantheon.yml
+  elif [ "$(echo "$currentPhpVersion < 8.1" | bc)" -eq 1 ]; then
+    # Update the PHP version declaration if it's less than 8.1.
+    sed -i.bak "s/php_version: [0-9.]*/php_version: ${phpversion}/" pantheon.yml && rm pantheon.yml.bak
+  else
+    # We've got a good PHP version, so we can bail here.
+    echo "${green}PHP version is already ${currentPhpVersion} which is >= 8.1.${normal}"
+    exit 0
+  fi
+
+  # If we're in CI, don't run the push actions. Note: if you're running Bats tests locally, you should pass CI=1 before running the tests.
+  if [ "$is_ci" -eq 0 ]; then
+    git add pantheon.yml
+    git commit -m "[Sage Install] Update PHP version to ${phpversion}"
     git push origin "$branch"
   else
-    echo "${green}PHP version is already 8.x.${normal}"
+    echo "${yellow}CI detected. Skipping Git operations. PHP updated to ${phpversion}.${normal}"
   fi
 }
 
@@ -476,23 +476,26 @@ function clean_up() {
 
   # If the site is multisite, we'll need to enable the theme so we can activate it.
   echo "${yellow}Checking if this is a multisite.${normal}"
-  if terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE; then
+  if terminus wp -- "$sitename"."$siteenv" config is-true MULTISITE > /dev/null 2>&1; then
     echo "${yellow}Site is multisite.${normal}"
     terminus wp -- "$sitename"."$siteenv" theme enable "$sagename"
   fi
 
-  # List the themes.
-  terminus wp -- "$sitename"."$siteenv" theme list
+  # Get the themes.
+  themelist=$(terminus wp -- "$sitename"."$siteenv" theme list --format=csv | tr -d '\n' | tr -d ' ')
 
-  # Activate the new theme
-  echo "${yellow}Activating the ${sagename} theme.${normal}"
-  if ! terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"; then
-    echo "${red}Theme activation failed. Exiting here.${normal}"
+  if ! echo "$themelist" | grep -q "$sagename"; then
+    echo "${red}Theme $sagename not found in the theme list. Exiting here.${normal}"
+    terminus wp -- "$sitename"."$siteenv" theme list
     echo "Check the theme list above. If the theme you created is not listed, it's possible that the deploy has not completed. You can try again in a few minutes using the following command:"
     echo "terminus wp -- $sitename.dev theme activate $sagename"
     echo "Once you do this, you will need to open the site to generate the requisite files and then commit them in SFTP mode."
     exit 1;
   fi
+
+  # Activate the new theme
+  echo "${yellow}Activating the ${sagename} theme.${normal}"
+  terminus wp -- "$sitename"."$siteenv" theme activate "$sagename"
 
   # If this is a CI environment, stop here.
   if [ "$is_ci" == 1 ]; then

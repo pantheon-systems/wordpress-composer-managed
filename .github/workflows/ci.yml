@@ -8,6 +8,9 @@ on:
       - synchronize
       - ready_for_review
 
+permissions:
+    contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,3 +49,12 @@ jobs:
 
     - name: Run tests
       run: composer test
+
+    - name: Install bats
+      uses: bats-core/bats-action@2.0.0
+
+    - name: Test Helper functions
+      env:
+        CI: 1
+      run: |
+          bats -p -t .github/tests
