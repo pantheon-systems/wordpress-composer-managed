@@ -10,7 +10,7 @@
 use Roots\WPConfig\Config;
 use function Env\env;
 
-// USE_ENV_ARRAY + CONVERT_* + STRIP_QUOTES
+// USE_ENV_ARRAY + CONVERT_* + STRIP_QUOTES.
 Env\Env::$options = 31;
 
 /**
