@@ -63,6 +63,14 @@ class ComposerScripts
             $composerJson['config']['platform']['php'] = $updatedPlatformPhpVersion;
         }
 
+        // Check to see if the PHP version in the require section of composer.json matches the pantheon.yml PHP version.
+        // If it does not, update it to match the PHP version defined in pantheon.yml.
+        $requirePhpVersion = static::getCurrentRequirePhp($composerJson);
+        if ($requirePhpVersion && false === stripos($requirePhpVersion, $pantheonPhpVersion)) {
+            $io->write("<info>Setting require.php from '$requirePhpVersion' to '>=$pantheonPhpVersion' to conform to pantheon php version.</info>");
+            $composerJson['require']['php'] = ">=$pantheonPhpVersion";
+        }
+
         // add our post-update-cmd hook if it's not already present
         $our_hook = 'WordPressComposerManaged\\ComposerScripts::postUpdate';
         // if does not exist, add as an empty arry
@@ -121,6 +129,18 @@ class ComposerScripts
         $prettyContents = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $prettyContents = preg_replace('#": \[\s*("[^"]*")\s*\]#m', '": [\1]', $prettyContents);
         return $prettyContents;
+    }
+
+    /**
+     * Get the current require.php value.
+     */
+    private static function getCurrentRequirePhp($composerJson)
+    {
+        $require = $composerJson['require'];
+        if (isset($require['php'])) {
+            return $require['php'];
+        }
+        return null;
     }
 
     /**
