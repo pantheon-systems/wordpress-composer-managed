@@ -34,23 +34,6 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 define('WP_TEMP_DIR', sys_get_temp_dir());
 
 /**
- * Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment
- */
-if (getenv('WP_ENVIRONMENT_TYPE') === false) {
-    switch ($_ENV['PANTHEON_ENVIRONMENT']) {
-        case 'live':
-            putenv('WP_ENVIRONMENT_TYPE=production');
-            break;
-        case 'test':
-            putenv('WP_ENVIRONMENT_TYPE=staging');
-            break;
-        default:
-            putenv('WP_ENVIRONMENT_TYPE=development');
-            break;
-    }
-}
-
-/**
  * Force SSL
  */
 if ( ! env('FORCE_SSL_ADMIN') ) {
