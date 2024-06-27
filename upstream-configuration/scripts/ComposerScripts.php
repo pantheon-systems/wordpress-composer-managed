@@ -67,8 +67,11 @@ class ComposerScripts
         // If it does not, update it to match the PHP version defined in pantheon.yml.
         $requirePhpVersion = static::getCurrentRequirePhp($composerJson);
         if ($requirePhpVersion && false === stripos($requirePhpVersion, $pantheonPhpVersion)) {
-            $io->write("<info>Setting require.php from '$requirePhpVersion' to '>=$pantheonPhpVersion' to conform to pantheon php version.</info>");
-            $composerJson['require']['php'] = ">=$pantheonPhpVersion";
+            $strippedRequirePhpVersion = str_replace( '>=', '', $requirePhpVersion);
+            if (version_compare($strippedRequirePhpVersion, '8.1', '<')) {
+                $io->write("<info>Setting require.php from '$requirePhpVersion' to '>=$pantheonPhpVersion' to conform to pantheon php version.</info>");
+                $composerJson['require']['php'] = ">=$pantheonPhpVersion";
+            }
         }
 
         // add our post-update-cmd hook if it's not already present
