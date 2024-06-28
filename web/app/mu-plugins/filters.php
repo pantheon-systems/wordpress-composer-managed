@@ -104,7 +104,7 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  */
 function adjust_main_site_urls( string $url ) : string {
 	// If this is the main site, drop the /wp.
-	if ( is_main_site() ) {
+	if ( is_main_site() && ! __is_login_url( $url ) ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
 
