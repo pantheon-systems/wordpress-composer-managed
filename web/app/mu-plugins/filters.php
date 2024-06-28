@@ -73,7 +73,7 @@ function fix_core_resource_urls( string $url ) : string {
 		$new_url .= '?' . $parsed_url['query'];
 	}
 
-	return $new_url;
+	return __normalize_wp_url( $new_url );
 }
 
 // Only run the filter on non-main sites in a subdirectory multisite network.
