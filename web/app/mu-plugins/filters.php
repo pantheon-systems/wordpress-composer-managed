@@ -135,3 +135,20 @@ function __is_login_url( string $url ) : bool {
 
 	return $is_login_url;
 }
+
+function __normalize_wp_url( string $url ) : string {
+	$scheme_end_pos = strpos( $url, '://' );
+
+	// Extract the scheme from the URL.
+	if ( $scheme_end_pos !== false ) {
+		$scheme = substr( $url, 0, $scheme_end_pos + 3 );
+		$remaining_url = substr( $url, $scheme_end_pos + 3 );
+	} else {
+		$scheme = '';
+		$remaining_url = $url;
+	}
+
+	// Normalize the URL to remove any double slashes.
+	$url = str_replace( '//', '/', $remaining_url );
+	return $scheme . $url;
+}
