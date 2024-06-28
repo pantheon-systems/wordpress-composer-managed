@@ -116,6 +116,14 @@ function adjust_main_site_urls( string $url ) : string {
 add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 
+/**
+ * Add /wp prefix to all admin and login URLs.
+ * Since /wp is where the core files are installed, this normalizes all non-front-facing urls to use the correct url structure.
+ *
+ * @since 1.1.0
+ * @param string $url The URL to check.
+ * @return string The corrected admin or login URL (or the base url if not an admin or login url).
+ */
 function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
 	if ( __is_login_url( $url ) ) {
 		if ( strpos( $url, '/wp/' ) === false ) {
@@ -128,6 +136,15 @@ function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
 add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 
+/**
+ * Check the URL to see if it's either an admin or wp-login URL.
+ *
+ * Validates that the URL is actually a URL before checking.
+ *
+ * @since 1.1.0
+ * @param string $url The URL to check.
+ * @return bool True if the URL is a login or admin URL. False if it's not or is not actually a URL.
+ */
 function __is_login_url( string $url ) : bool {
 	$is_login_url = false;
 
@@ -154,6 +171,13 @@ function __is_login_url( string $url ) : bool {
 	return $is_login_url;
 }
 
+/**
+ * Remove double-slashes (that aren't http/https://) from URLs.
+ *
+ * @since 1.1.0
+ * @param string $url The URL to test.
+ * @return string The normalized URL.
+ */
 function __normalize_wp_url( string $url ) : string {
 	$scheme_end_pos = strpos( $url, '://' );
 
