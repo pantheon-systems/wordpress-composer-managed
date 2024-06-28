@@ -36,7 +36,7 @@ add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) 
  * @param string $url The URL to fix.
  * @return string The fixed URL.
  */
-function fix_core_resource_urls( $url ) {
+function fix_core_resource_urls( string $url ) : string {
 	$main_site_url = trailingslashit( network_site_url( '/' ) );
 	$current_site_path = trailingslashit( get_blog_details()->path );
 
@@ -102,7 +102,7 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  *
  * @return string The filtered URL.
  */
-function adjust_main_site_urls( $url ) {
+function adjust_main_site_urls( string $url ) : string {
 	// If this is the main site, drop the /wp.
 	if ( is_main_site() ) {
 		$url = str_replace( '/wp/', '/', $url );
