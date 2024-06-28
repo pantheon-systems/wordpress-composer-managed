@@ -14,6 +14,7 @@ namespace Pantheon\WordPressComposerManaged\Filters;
 /**
  * Update the multisite configuration to use Config::define() instead of define.
  *
+ * @since 1.0.0
  * @return string
  */
 add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) {
@@ -24,6 +25,7 @@ add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) 
 /**
  * Update the wp-config filename to use config/application.php.
  *
+ * @since 1.0.0
  * @return string
  */
 add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) {
@@ -33,6 +35,7 @@ add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) 
 /**
  * Correct core resource URLs for non-main sites in a subdirectory multisite network.
  *
+ * @since 1.1.0
  * @param string $url The URL to fix.
  * @return string The fixed URL.
  */
@@ -98,8 +101,8 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  *
  * is_main_site will return true if the site is not multisite.
  *
+ * @since 1.1.0
  * @param string $url The URL to check.
- *
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( string $url ) : string {
