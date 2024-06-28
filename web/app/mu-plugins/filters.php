@@ -47,6 +47,7 @@ function fix_core_resource_urls( $url ) {
 		return $url;
 	}
 
+	$path = $parsed_url['path'];
 	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
 	$path_modified = false;
 
@@ -101,12 +102,12 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( $url ) {
-    // If this is the main site, drop the /wp.
-    if ( is_main_site() ) {
-        $url = str_replace( '/wp/', '/', $url );
-    }
+	// If this is the main site, drop the /wp.
+	if ( is_main_site() ) {
+		$url = str_replace( '/wp/', '/', $url );
+	}
 
-    return $url;
+	return $url;
 }
 add_filter( 'home_url', 'adjust_main_site_urls', 9 );
 add_filter( 'site_url', 'adjust_main_site_urls', 9 );
