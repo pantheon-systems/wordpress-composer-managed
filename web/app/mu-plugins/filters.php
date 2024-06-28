@@ -9,6 +9,7 @@
  * License:      MIT License
  */
 
+namespace Pantheon\WordPressComposerManaged\Filters;
 
 /**
  * Update the multisite configuration to use Config::define() instead of define.
@@ -88,7 +89,7 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 		'content_url'
 	];
 	foreach ( $filters as $filter ) {
-		add_filter( $filter, 'fix_core_resource_urls', 9 );
+		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 	}
 }
 
@@ -109,6 +110,8 @@ function adjust_main_site_urls( $url ) {
 
 	return $url;
 }
+add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
+add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 
 function __is_login_url( string $url ) : bool {
 	$is_login_url = false;
