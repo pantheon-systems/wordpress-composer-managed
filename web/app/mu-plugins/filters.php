@@ -113,6 +113,18 @@ function adjust_main_site_urls( string $url ) : string {
 add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 
+function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
+	if ( __is_login_url( $url ) ) {
+		if ( strpos( $url, '/wp/' ) === false ) {
+			$url = preg_replace( '/(\/wp-(login|admin))/', '/wp/$1', $url );
+		}
+	}
+
+	return __normalize_wp_url( $url );
+}
+add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
+add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
+
 function __is_login_url( string $url ) : bool {
 	$is_login_url = false;
 
