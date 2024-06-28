@@ -109,5 +109,29 @@ function adjust_main_site_urls( $url ) {
 
 	return $url;
 }
-add_filter( 'home_url', 'adjust_main_site_urls', 9 );
-add_filter( 'site_url', 'adjust_main_site_urls', 9 );
+
+function __is_login_url( string $url ) : bool {
+	$is_login_url = false;
+
+	// Validate that the string passed was actually a URL.
+	if ( ! preg_match( '/^https?:\/\//i', $url ) ) {
+		$url = 'http://' . ltrim( $url, '/' );
+	}
+
+	// Bail if the string is not a valid URL.
+	if ( ! wp_http_validate_url( $url ) ) {
+		return $is_login_url;
+	}
+
+	// Login page?
+	if ( strpos( $url, 'wp-login' ) !== false ) {
+		$is_login_url = true;
+	}
+
+	// Admin page?
+	if ( strpos( $url, 'wp-admin' ) !== false ) {
+		$is_login_url = true;
+	}
+
+	return $is_login_url;
+}
