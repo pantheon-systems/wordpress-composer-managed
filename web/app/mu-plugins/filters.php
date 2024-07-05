@@ -125,13 +125,13 @@ add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
  * @return string The corrected admin or login URL (or the base url if not an admin or login url).
  */
 function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
-	if ( __is_login_url( $url ) ) {
-		if ( strpos( $url, '/wp/' ) === false ) {
-			$url = __normalize_wp_url( preg_replace( '/(\/wp-(login|admin))/', '/wp/$1', $url ) );
-		}
+	if (  ! __is_login_url( $url ) ) {
+		return $url;
 	}
-
-	return $url;
+	if ( strpos( $url, '/wp/' ) !== false ) {
+		return $url;
+	}
+	return __normalize_wp_url( preg_replace( '/(\/wp-(login|admin))/', '/wp/$1', $url ) );
 }
 add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
