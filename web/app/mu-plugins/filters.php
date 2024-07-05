@@ -146,8 +146,6 @@ add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_url
  * @return bool True if the URL is a login or admin URL. False if it's not or is not actually a URL.
  */
 function __is_login_url( string $url ) : bool {
-	$is_login_url = false;
-
 	// Validate that the string passed was actually a URL.
 	if ( ! preg_match( '/^https?:\/\//i', $url ) ) {
 		$url = 'http://' . ltrim( $url, '/' );
@@ -155,20 +153,15 @@ function __is_login_url( string $url ) : bool {
 
 	// Bail if the string is not a valid URL.
 	if ( ! wp_http_validate_url( $url ) ) {
-		return $is_login_url;
+		return false;
 	}
 
-	// Login page?
-	if ( strpos( $url, 'wp-login' ) !== false ) {
-		$is_login_url = true;
+	// Check if the URL is a login or admin page
+	if (strpos($url, 'wp-login') !== false || strpos($url, 'wp-admin') !== false) {
+		return true;
 	}
 
-	// Admin page?
-	if ( strpos( $url, 'wp-admin' ) !== false ) {
-		$is_login_url = true;
-	}
-
-	return $is_login_url;
+	return false
 }
 
 /**
