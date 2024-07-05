@@ -13,6 +13,12 @@
 use Roots\WPConfig\Config;
 use function Env\env;
 
+// Cookie settings.
+defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', $_SERVER['HTTP_HOST'] );
+defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
+defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
+defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
+
 if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 	if ( ! isset( $_ENV['LANDO'] ) ) {
 		// We can use PANTHEON_SITE_NAME here because it's safe to assume we're on a Pantheon environment if PANTHEON_ENVIRONMENT is set.
