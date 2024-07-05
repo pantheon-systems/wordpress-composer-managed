@@ -171,19 +171,16 @@ function __is_login_url( string $url ) : bool {
  * @param string $url The URL to test.
  * @return string The normalized URL.
  */
-function __normalize_wp_url( string $url ) : string {
-	$scheme_end_pos = strpos( $url, '://' );
+function __normalize_wp_url( string $url ): string {
+    $scheme = parse_url( $url, PHP_URL_SCHEME );
+    $scheme_with_separator = $scheme ? $scheme . '://' : '';
 
-	// Extract the scheme from the URL.
-	if ( $scheme_end_pos !== false ) {
-		$scheme = substr( $url, 0, $scheme_end_pos + 3 );
-		$remaining_url = substr( $url, $scheme_end_pos + 3 );
-	} else {
-		$scheme = '';
-		$remaining_url = $url;
-	}
+    // Remove the scheme from the URL if it exists.
+    $remaining_url = $scheme ? substr( $url, strlen($scheme_with_separator ) ) : $url;
 
-	// Normalize the URL to remove any double slashes.
-	$url = str_replace( '//', '/', $remaining_url );
-	return $scheme . $url;
+    // Normalize the remaining URL to remove any double slashes.
+    $normalized_url = str_replace( '//', '/', $remaining_url );
+
+    // Reconstruct and return the full normalized URL.
+    return $scheme_with_separator . $normalized_url;
 }
