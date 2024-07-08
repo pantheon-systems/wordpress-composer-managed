@@ -143,7 +143,7 @@ add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_url
  * @param null|string $endpoint The GraphQL endpoint.
  * @return null|string The filtered GraphQL endpoint.
  */
-add_filter( 'graphql_endpoint', function( $endpoint ) {
+function ensure_graphql_url_prefix( $endpoint ) : null|string {
     $desired_endpoint = '/wp/graphql';
 
     if ( ! $endpoint ) {
@@ -155,7 +155,8 @@ add_filter( 'graphql_endpoint', function( $endpoint ) {
     }
 
     return $endpoint;
-}, 9 );
+}
+add_filter( 'graphql_endpoint', __NAMESPACE__ . '\\ensure_graphql_url_prefix',  9 );
 
 /**
  * Check the URL to see if it's either an admin or wp-login URL.
