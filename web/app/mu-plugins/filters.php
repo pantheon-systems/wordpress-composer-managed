@@ -137,6 +137,27 @@ add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_url
 add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 
 /**
+ * Ensure the /wp prefix is retained in the WPGraphQL endpoint.
+ *
+ * @since 1.1.0
+ * @param null|string $endpoint The GraphQL endpoint.
+ * @return null|string The filtered GraphQL endpoint.
+ */
+add_filter( 'graphql_endpoint', function( $endpoint ) {
+    $desired_endpoint = '/wp/graphql';
+
+    if ( ! $endpoint ) {
+        return $desired_endpoint;
+    }
+
+    if ( $endpoint && strpos( $endpoint, '/wp' ) === false ) {
+        $endpoint = "/wp/$endpoint";
+    }
+
+    return $endpoint;
+}, 9 );
+
+/**
  * Check the URL to see if it's either an admin or wp-login URL.
  *
  * Validates that the URL is actually a URL before checking.
@@ -157,11 +178,11 @@ function __is_login_url( string $url ) : bool {
 	}
 
 	// Check if the URL is a login or admin page
-	if (strpos($url, 'wp-login') !== false || strpos($url, 'wp-admin') !== false) {
+	if ( strpos( $url, 'wp-login' ) !== false || strpos($url, 'wp-admin' ) !== false) {
 		return true;
 	}
 
-	return false
+	return false;
 }
 
 /**
@@ -172,7 +193,7 @@ function __is_login_url( string $url ) : bool {
  * @return string The normalized URL.
  */
 function __normalize_wp_url( string $url ): string {
-	$scheme = parse_url( $url );
+	$parts = parse_url( $url );
 
 	// Normalize the URL to remove any double slashes.
 	if ( isset( $parts['path'] ) ) {
@@ -192,9 +213,9 @@ function __normalize_wp_url( string $url ): string {
  */
 function __rebuild_url_from_parts( array $parts ) : string {
 	return trailingslashit(
-		isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' .
-		isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' .
-		isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' .
-		isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : ''
+		( isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' ) .
+		( isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' ) .
+		( isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' ) .
+		( isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : '' )
 	);
 }
