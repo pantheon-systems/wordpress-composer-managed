@@ -137,26 +137,20 @@ add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_url
 add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 
 /**
- * Ensure the /wp prefix is retained in the WPGraphQL endpoint.
+ * Prepopulate GraphQL endpoint URL with default value if unset.
+ * This will ensure that the URL is not changed from /wp/graphql to /graphql by our other filtering unless that's what the user wants.
  *
  * @since 1.1.0
- * @param null|string $endpoint The GraphQL endpoint.
- * @return null|string The filtered GraphQL endpoint.
  */
-function ensure_graphql_url_prefix( $endpoint ) : null|string {
-    $desired_endpoint = '/wp/graphql';
-
-    if ( ! $endpoint ) {
-        return $desired_endpoint;
+function prepopulate_graphql_endpoint_url() {
+    $options = get_option( 'graphql_general_settings' );
+    if ( ! $options ) {
+        $options = [];
+        $options['graphql_endpoint'] = '/wp/graphql';
+        update_option( 'graphql_general_settings', $options );
     }
-
-    if ( $endpoint && strpos( $endpoint, '/wp' ) === false ) {
-        $endpoint = "/wp/$endpoint";
-    }
-
-    return $endpoint;
 }
-add_filter( 'graphql_endpoint', __NAMESPACE__ . '\\ensure_graphql_url_prefix',  9 );
+add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
 
 /**
  * Check the URL to see if it's either an admin or wp-login URL.
