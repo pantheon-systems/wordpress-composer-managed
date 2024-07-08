@@ -172,15 +172,19 @@ function __is_login_url( string $url ) : bool {
  * @return string The normalized URL.
  */
 function __normalize_wp_url( string $url ): string {
-    $scheme = parse_url( $url, PHP_URL_SCHEME );
-    $scheme_with_separator = $scheme ? $scheme . '://' : '';
 
-    // Remove the scheme from the URL if it exists.
-    $remaining_url = $scheme ? substr( $url, strlen($scheme_with_separator ) ) : $url;
-
-    // Normalize the remaining URL to remove any double slashes.
-    $normalized_url = str_replace( '//', '/', $remaining_url );
-
-    // Reconstruct and return the full normalized URL.
-    return $scheme_with_separator . $normalized_url;
+/**
+ * Rebuild parsed URL from parts.
+ *
+ * @since 1.1.0
+ * @param array $parts URL parts from parse_url.
+ * @return string Re-parsed URL.
+ */
+function __rebuild_url_from_parts( array $parts ) : string {
+	return trailingslashit(
+		isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' .
+		isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' .
+		isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' .
+		isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : ''
+	);
 }
