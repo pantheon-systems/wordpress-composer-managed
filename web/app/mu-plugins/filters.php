@@ -172,6 +172,16 @@ function __is_login_url( string $url ) : bool {
  * @return string The normalized URL.
  */
 function __normalize_wp_url( string $url ): string {
+	$scheme = parse_url( $url );
+
+	// Normalize the URL to remove any double slashes.
+	if ( isset( $parts['path'] ) ) {
+		$parts['path'] = preg_replace( '#/+#', '/', $parts['path'] );
+	}
+
+	// Rebuild and return the full normalized URL.
+	return __rebuild_url_from_parts( $parts );
+}
 
 /**
  * Rebuild parsed URL from parts.
