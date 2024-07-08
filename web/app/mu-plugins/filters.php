@@ -215,6 +215,7 @@ function __normalize_wp_url( string $url ): string {
 function __rebuild_url_from_parts( array $parts ) : string {
 	return trailingslashit(
 		( isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' ) .
+        ( isset( $parts['host'] ) ? "{$parts['host']}" : '' ) .
 		( isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' ) .
 		( isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' ) .
 		( isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : '' )
