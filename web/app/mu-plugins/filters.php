@@ -97,6 +97,25 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 }
 
 /**
+ * Prepopulate GraphQL endpoint URL with default value if unset.
+ * This will ensure that the URL is not changed from /wp/graphql to /graphql by our other filtering unless that's what the user wants.
+ *
+ * @since 1.1.0
+ */
+function prepopulate_graphql_endpoint_url() {
+	$options = get_option( 'graphql_general_settings' );
+	$site_path = site_url();
+
+	if ( ! $options ) {
+		$endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
+		$options = [];
+		$options['graphql_endpoint'] = $endpoint;
+		update_option( 'graphql_general_settings', $options );
+	}
+}
+add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
+
+/**
  * Drop the /wp, if it exists, from URLs on the main site (single site or multisite).
  *
  * is_main_site will return true if the site is not multisite.
@@ -135,22 +154,6 @@ function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
 }
 add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
-
-/**
- * Prepopulate GraphQL endpoint URL with default value if unset.
- * This will ensure that the URL is not changed from /wp/graphql to /graphql by our other filtering unless that's what the user wants.
- *
- * @since 1.1.0
- */
-function prepopulate_graphql_endpoint_url() {
-    $options = get_option( 'graphql_general_settings' );
-    if ( ! $options ) {
-        $options = [];
-        $options['graphql_endpoint'] = '/wp/graphql';
-        update_option( 'graphql_general_settings', $options );
-    }
-}
-add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
 
 /**
  * Check the URL to see if it's either an admin or wp-login URL.
