@@ -20,6 +20,20 @@ test("Hello World post is accessible", async ({ page }) => {
   const h2Element = await page.locator('h2');
   await expect(h2Element).toHaveText(exampleArticle);
 });
+
+test("validate core resource URLs", async ({ page }) => {
+  await page.goto(siteUrl);
+
+  const coreResources = [
+    'wp-includes/js/dist/interactivity.min.js',
+    'wp-includes/css/dist/editor.min.css',
+  ];
+
+  for ( const resource of coreResources ) {
+    const resourceUrl = `${siteUrl}/wp/${resource}`;
+    const element = await page.locator(`link[href="${resourceUrl}], script[src="${resourceUrl}"]`);
+    await expect(element).toBeVisible();
+  }
 });
 
 test("graphql is able to access hello world post", async ({ request }) => {
