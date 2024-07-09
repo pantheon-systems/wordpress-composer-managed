@@ -54,7 +54,7 @@ jobs:
             terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
           fi
 
-      - name: Clone the site and copy PR updates
+      - name: Clone the site locally and copy PR updates
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -68,8 +68,8 @@ jobs:
           cd ~/pantheon-local-copies/wpcm-playwright-tests
           rsync -a --exclude='.git' ${{ github.workspace }}/ .
           git add -A
-          git commit -m "Update to latest commit: ${COMMIT_MSG}"
-          git push origin master
+          git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
+          git push origin master || true
 
       - name: Status Check
         run: terminus wp wpcm-playwright-tests.dev -- cli info
