@@ -52,11 +52,13 @@ jobs:
             terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
           fi
 
-      - name: Clone the site and pull down updates
+      - name: Clone the site and copy PR updates
         run: |
+          git config --global user.email "cms-platform+sage-testing@pantheon.io"
+          git config --global user.name "Pantheon WPCM Bot 🤖"
           terminus local:clone wpcm-playwright-tests
           cd ~/pantheon-local-copies/wpcm-playwright-tests
-          rsync -a --exclude='.git' ${{ github.workspace }} .
+          rsync -a --exclude='.git' ${{ github.workspace }}/ .
           git add -A
           git commit -m "Update to latest"
           git push origin master
