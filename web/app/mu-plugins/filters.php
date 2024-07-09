@@ -125,6 +125,15 @@ add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url'
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( string $url ) : string {
+	if ( doing_action( 'graphql_init' ) ) {
+		return $url;
+	}
+
+	// Explicit handling for /wp/graphql
+	if ( strpos( $url, '/graphql' ) !== false ) {
+		return $url;
+	}
+
 	// If this is the main site, drop the /wp.
 	if ( is_main_site() && ! __is_login_url( $url ) ) {
 		$url = str_replace( '/wp/', '/', $url );
@@ -191,6 +200,7 @@ function __is_login_url( string $url ) : bool {
  * @return string The normalized URL.
  */
 function __normalize_wp_url( string $url ): string {
+	// Parse the URL into components.
 	$parts = parse_url( $url );
 
 	// Normalize the URL to remove any double slashes.
