@@ -55,6 +55,8 @@ jobs:
           fi
 
       - name: Clone the site and copy PR updates
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.email "cms-platform+sage-testing@pantheon.io"
           git config --global user.name "Pantheon WPCM Bot 🤖"
