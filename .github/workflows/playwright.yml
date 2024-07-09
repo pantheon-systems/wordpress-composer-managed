@@ -1,0 +1,76 @@
+name: WordPress (Composer Managed) Playwright Tests
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+    contents: write
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Composer dependencies
+        run: composer update --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Get latest Terminus release
+        uses: pantheon-systems/terminus-github-actions@v1
+        with:
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
+      - name: Validate Pantheon Host Key
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - name: Log into Terminus
+        run: |
+          terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+
+      - name: Create Site
+        run: |
+          terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+
+      - name: Clone the site and pull down updates
+        run: |
+          terminus local:clone wpcm-playwright-tests
+          cd ~/pantheon-local-copies/wpcm-playwright-tests
+          rsync -a --exclude='.git' ${{ github.workspace }} .
+          git add -A
+          git commit -m "Update to latest"
+          git push origin master
+
+      - name: Status Check
+        run: terminus wp wpcm-playwright-tests.dev -- cli info
+
+      - name: Install WordPress
+        run: terminus wp wpcm-playwright-tests.dev -- core install --title='WPCM Playwright Tests' --admin_user=wpcm --admin_email=test@dev.null
+
+      - name: Install WP GraphQL
+        run: |
+          terminus connection:set wpcm-playwright-tests.dev sftp
+          terminus wp wpcm-playwright-tests.dev -- plugin install --activate wp-graphql
+
+      - name: Run Playwright Tests
+        run: npm run test .github/tests/wpcm.spec.ts
+
+      - name: Delete Site
+        if: success()
+        run: terminus site:delete wpcm-playwright-tests -y

@@ -1,0 +1,12 @@
+{
+  "name": "@pantheon-systems/wordpress-composer-managed",
+  "version": "1.31.0",
+  "description": "Automated testing for WordPress (Composer Managed).",
+  "scripts": {
+    "test": "playwright test --trace on",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.28.0"
+  }
+}
