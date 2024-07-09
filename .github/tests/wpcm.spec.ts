@@ -17,7 +17,9 @@ test("WP REST API is accessible", async ({ request }) => {
 
 test("Hello World post is accessible", async ({ page }) => {
   await page.goto(`${siteUrl}/hello-world`);
-  await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
+  const h2Element = await page.locator('h2');
+  await expect(h2Element).toHaveText(exampleArticle);
+});
 });
 
 test("graphql is able to access hello world post", async ({ request }) => {
