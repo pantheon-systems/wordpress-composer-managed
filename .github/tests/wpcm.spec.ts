@@ -22,8 +22,6 @@ test("Hello World post is accessible", async ({ page }) => {
 });
 
 test("validate core resource URLs", async ({ request }) => {
-  await page.goto(siteUrl);
-
   const coreResources = [
     'wp-includes/js/dist/interactivity.min.js',
     'wp-includes/css/dist/editor.min.css',
