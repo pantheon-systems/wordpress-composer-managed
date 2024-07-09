@@ -62,7 +62,7 @@ jobs:
           git config --global user.name "Pantheon WPCM Bot 🤖"
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           echo "Pull Request Number: ${PR_NUMBER}"
-          COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1].messageHeadline')
+          COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "Commit Message: ${COMMIT_MSG}"
           terminus local:clone wpcm-playwright-tests
           cd ~/pantheon-local-copies/wpcm-playwright-tests
