@@ -71,6 +71,7 @@ jobs:
 
       - name: Install WP GraphQL
         run: |
+          terminus workflow:wait wpcm-playwright-tests.dev
           terminus connection:set wpcm-playwright-tests.dev sftp
           terminus wp wpcm-playwright-tests.dev -- plugin install --activate wp-graphql
 
