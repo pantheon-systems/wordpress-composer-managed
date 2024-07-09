@@ -19,25 +19,26 @@ jobs:
 
       - name: Generate lock files
         run: |
-          composer update --lock
           npm install --package-lock-only
 
       - name: Set up cache for dependencies
         uses: actions/cache@v4
+        id: cache
         with:
           path: |
             ~/.composer/cache
             ./vendor
             ~/.npm
             ./node_modules
-          key: ${{ runner.os }}-deps-${{ hashFiles( '**/composer.lock', '**/package-lock.json' ) }}
+          key: ${{ runner.os }}-deps-${{ hashFiles( '**/composer.json', '**/package-lock.json' ) }}
           restore-keys: ${{ runner.os }}-deps-
 
-
       - name: Install Composer dependencies
+        if: steps.cache.outputs.cache-hit != true
         run: composer update --no-progress --prefer-dist --optimize-autoloader
 
       - name: Install NPM dependencies
+        if: steps.cache.outputs.cache-hit != true
         run: npm ci
 
       - name: Install Playwright Browsers
