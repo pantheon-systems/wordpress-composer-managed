@@ -46,7 +46,11 @@ jobs:
 
       - name: Create Site
         run: |
-          terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+          if terminus site:info wpcm-playwright-tests; then
+            echo "Test site already exists, skipping site creation."
+          else
+            terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+          fi
 
       - name: Clone the site and pull down updates
         run: |
