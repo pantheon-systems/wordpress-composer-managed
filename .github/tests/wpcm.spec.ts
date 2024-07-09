@@ -17,7 +17,7 @@ test("WP REST API is accessible", async ({ request }) => {
 
 test("Hello World post is accessible", async ({ page }) => {
   await page.goto(`${siteUrl}/hello-world/'`);
-  await expect(page).toHaveTitle(`${exampleArticle} - ${siteTitle}`);
+  await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
   await expect(page).toHaveText('Welcome to WordPress');
 });
 
