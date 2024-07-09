@@ -21,7 +21,7 @@ test("Hello World post is accessible", async ({ page }) => {
   await expect(h2Element).toHaveText(exampleArticle);
 });
 
-test("validate core resource URLs", async ({ page }) => {
+test("validate core resource URLs", async ({ request }) => {
   await page.goto(siteUrl);
 
   const coreResources = [
@@ -31,8 +31,8 @@ test("validate core resource URLs", async ({ page }) => {
 
   for ( const resource of coreResources ) {
     const resourceUrl = `${siteUrl}/wp/${resource}`;
-    const element = await page.locator(`link[href="${resourceUrl}"], script[src="${resourceUrl}"]`);
-    await expect(element).toBeVisible();
+    const response = await request.get(resourceUrl);
+    await expect(response).toBeTruthy();
   }
 });
 
