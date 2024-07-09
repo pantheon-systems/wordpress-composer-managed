@@ -18,7 +18,9 @@ test("WP REST API is accessible", async ({ request }) => {
 test("Hello World post is accessible", async ({ page }) => {
   await page.goto(`${siteUrl}/hello-world/'`);
   await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
-  await expect(page).toHaveText('Welcome to WordPress');
+  // Locate the element containing the desired text
+  const welcomeText = page.locator('text=Welcome to WordPress');
+  await expect(welcomeText).toHaveText('Welcome to WordPress');
 });
 
 test("validate core resource URLs", async ({ request }) => {
