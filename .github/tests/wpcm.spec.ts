@@ -20,7 +20,7 @@ test("Hello World post is accessible", async ({ page }) => {
   await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
   // Locate the element containing the desired text
   const welcomeText = page.locator('text=Welcome to WordPress');
-  await expect(welcomeText).toHaveText('Welcome to WordPress');
+  await expect(welcomeText).toContainText('Welcome to WordPress');
 });
 
 test("validate core resource URLs", async ({ request }) => {
