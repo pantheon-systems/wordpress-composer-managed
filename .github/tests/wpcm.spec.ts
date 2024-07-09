@@ -31,7 +31,7 @@ test("validate core resource URLs", async ({ page }) => {
 
   for ( const resource of coreResources ) {
     const resourceUrl = `${siteUrl}/wp/${resource}`;
-    const element = await page.locator(`link[href="${resourceUrl}], script[src="${resourceUrl}"]`);
+    const element = await page.locator(`link[href="${resourceUrl}"], script[src="${resourceUrl}"]`);
     await expect(element).toBeVisible();
   }
 });
