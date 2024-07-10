@@ -67,15 +67,15 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 			}
 		}
 
-        /**
-         * Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli.
-         * We make an explicit exception here for multisite because there are cases where multisite does not work properly when WP_Cron is disabled.
-         * We only define DISABLE_WP_CRON if it's not already defined, which means you can override it in the application.php (though we don't recommend it).
-         */
-        $network = isset( $_ENV["FRAMEWORK"] ) && $_ENV["FRAMEWORK"] === 'wordpress_network';
-        if ( ! defined( 'DISABLE_WP_CRON' ) && ! env( 'DISABLE_WP_CRON' ) && $network === false ) {
-            Config::define( 'DISABLE_WP_CRON', true );
-        }
+		/**
+		 * Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli.
+		 * We make an explicit exception here for multisite because there are cases where multisite does not work properly when WP_Cron is disabled.
+		 * We only define DISABLE_WP_CRON if it's not already defined, which means you can override it in the application.php (though we don't recommend it).
+		 */
+		$network = isset( $_ENV["FRAMEWORK"] ) && $_ENV["FRAMEWORK"] === 'wordpress_network';
+		if ( ! defined( 'DISABLE_WP_CRON' ) && ! env( 'DISABLE_WP_CRON' ) && $network === false ) {
+			Config::define( 'DISABLE_WP_CRON', true );
+		}
 	}
 
 	// Define PANTHEON_HOSTNAME.
