@@ -97,6 +97,28 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 }
 
 /**
+ * Prepopulate GraphQL endpoint URL with default value if unset.
+ * This will ensure that the URL is not changed from /wp/graphql to /graphql by our other filtering unless that's what the user wants.
+ *
+ * @since 1.1.0
+ */
+function prepopulate_graphql_endpoint_url() {
+	$options = get_option( 'graphql_general_settings' );
+
+    // Bail early if options have already been set.
+    if ( $options ) {
+        return;
+    }
+
+    $options = [];
+	$site_path = site_url();
+    $endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
+    $options['graphql_endpoint'] = $endpoint;
+    update_option( 'graphql_general_settings', $options );
+}
+add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
+
+/**
  * Drop the /wp, if it exists, from URLs on the main site (single site or multisite).
  *
  * is_main_site will return true if the site is not multisite.
@@ -106,6 +128,15 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( string $url ) : string {
+	if ( doing_action( 'graphql_init' ) ) {
+		return $url;
+	}
+
+	// Explicit handling for /wp/graphql
+	if ( strpos( $url, '/graphql' ) !== false ) {
+		return $url;
+	}
+
 	// If this is the main site, drop the /wp.
 	if ( is_main_site() && ! __is_login_url( $url ) ) {
 		$url = str_replace( '/wp/', '/', $url );
@@ -157,11 +188,11 @@ function __is_login_url( string $url ) : bool {
 	}
 
 	// Check if the URL is a login or admin page
-	if (strpos($url, 'wp-login') !== false || strpos($url, 'wp-admin') !== false) {
+	if ( strpos( $url, 'wp-login' ) !== false || strpos($url, 'wp-admin' ) !== false) {
 		return true;
 	}
 
-	return false
+	return false;
 }
 
 /**
@@ -172,15 +203,31 @@ function __is_login_url( string $url ) : bool {
  * @return string The normalized URL.
  */
 function __normalize_wp_url( string $url ): string {
-    $scheme = parse_url( $url, PHP_URL_SCHEME );
-    $scheme_with_separator = $scheme ? $scheme . '://' : '';
+	// Parse the URL into components.
+	$parts = parse_url( $url );
 
-    // Remove the scheme from the URL if it exists.
-    $remaining_url = $scheme ? substr( $url, strlen($scheme_with_separator ) ) : $url;
+	// Normalize the URL to remove any double slashes.
+	if ( isset( $parts['path'] ) ) {
+		$parts['path'] = preg_replace( '#/+#', '/', $parts['path'] );
+	}
 
-    // Normalize the remaining URL to remove any double slashes.
-    $normalized_url = str_replace( '//', '/', $remaining_url );
+	// Rebuild and return the full normalized URL.
+	return __rebuild_url_from_parts( $parts );
+}
 
-    // Reconstruct and return the full normalized URL.
-    return $scheme_with_separator . $normalized_url;
+/**
+ * Rebuild parsed URL from parts.
+ *
+ * @since 1.1.0
+ * @param array $parts URL parts from parse_url.
+ * @return string Re-parsed URL.
+ */
+function __rebuild_url_from_parts( array $parts ) : string {
+	return trailingslashit(
+		( isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' ) .
+        ( isset( $parts['host'] ) ? "{$parts['host']}" : '' ) .
+		( isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' ) .
+		( isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' ) .
+		( isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : '' )
+	);
 }
