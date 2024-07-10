@@ -19,8 +19,12 @@ defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
 defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
 defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
 
+// Pantheon-specific settings.
 if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+	// These settings do not apply when using Lando local.
 	if ( ! isset( $_ENV['LANDO'] ) ) {
+		// Define appropriate location for default tmp directory on Pantheon.
+		Config::define( 'WP_TEMP_DIR', sys_get_temp_dir() );
 		// We can use PANTHEON_SITE_NAME here because it's safe to assume we're on a Pantheon environment if PANTHEON_ENVIRONMENT is set.
 		$sitename = $_ENV['PANTHEON_SITE_NAME'];
 		$baseurl = $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $sitename . '.pantheonsite.io';
