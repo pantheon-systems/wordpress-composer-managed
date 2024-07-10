@@ -25,6 +25,22 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 	if ( ! isset( $_ENV['LANDO'] ) ) {
 		// Define appropriate location for default tmp directory on Pantheon.
 		Config::define( 'WP_TEMP_DIR', sys_get_temp_dir() );
+
+		// Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment
+		if ( getenv( 'WP_ENVIRONMENT_TYPE' ) === false ) {
+			switch ( $_ENV['PANTHEON_ENVIRONMENT'] ) {
+				case 'live':
+					putenv( 'WP_ENVIRONMENT_TYPE=production' );
+					break;
+				case 'test':
+					putenv( 'WP_ENVIRONMENT_TYPE=staging' );
+					break;
+				default:
+					putenv( 'WP_ENVIRONMENT_TYPE=development' );
+					break;
+			}
+		}
+
 		// We can use PANTHEON_SITE_NAME here because it's safe to assume we're on a Pantheon environment if PANTHEON_ENVIRONMENT is set.
 		$sitename = $_ENV['PANTHEON_SITE_NAME'];
 		$baseurl = $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $sitename . '.pantheonsite.io';
