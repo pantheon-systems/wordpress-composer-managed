@@ -19,8 +19,28 @@ defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
 defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
 defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
 
+// Pantheon-specific settings.
 if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+	// These settings do not apply when using Lando local.
 	if ( ! isset( $_ENV['LANDO'] ) ) {
+		// Define appropriate location for default tmp directory on Pantheon.
+		Config::define( 'WP_TEMP_DIR', sys_get_temp_dir() );
+
+		// Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment.
+		if ( getenv( 'WP_ENVIRONMENT_TYPE' ) === false ) {
+			switch ( $_ENV['PANTHEON_ENVIRONMENT'] ) {
+				case 'live':
+					putenv( 'WP_ENVIRONMENT_TYPE=production' );
+					break;
+				case 'test':
+					putenv( 'WP_ENVIRONMENT_TYPE=staging' );
+					break;
+				default:
+					putenv( 'WP_ENVIRONMENT_TYPE=development' );
+					break;
+			}
+		}
+
 		// We can use PANTHEON_SITE_NAME here because it's safe to assume we're on a Pantheon environment if PANTHEON_ENVIRONMENT is set.
 		$sitename = $_ENV['PANTHEON_SITE_NAME'];
 		$baseurl = $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $sitename . '.pantheonsite.io';
@@ -46,8 +66,19 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 				putenv( 'WP_SITEURL=' . $homeurl . '/wp' );
 			}
 		}
+
+		/**
+		 * Disable wp-cron.php from running on every page load and rely on Pantheon to run cron via wp-cli.
+		 * We make an explicit exception here for multisite because there are cases where multisite does not work properly when WP_Cron is disabled.
+		 * We only define DISABLE_WP_CRON if it's not already defined, which means you can override it in the application.php (though we don't recommend it).
+		 */
+		$network = isset( $_ENV['FRAMEWORK'] ) && $_ENV['FRAMEWORK'] === 'wordpress_network';
+		if ( ! defined( 'DISABLE_WP_CRON' ) && ! env( 'DISABLE_WP_CRON' ) && $network === false ) {
+			Config::define( 'DISABLE_WP_CRON', true );
+		}
 	}
 
+	// Define PANTHEON_HOSTNAME.
 	if ( ! defined( 'PANTHEON_HOSTNAME' ) ) {
 		$site_name = $_ENV['PANTHEON_SITE_NAME'];
 		$hostname = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : $_ENV['PANTHEON_ENVIRONMENT'] . "-{$site_name}.pantheonsite.io";

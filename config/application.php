@@ -98,7 +98,6 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && ! isset( $_ENV['LANDO'] ) ) {
 	Config::define( 'WP_HOME', env( 'WP_HOME' ) );
 	Config::define( 'WP_SITEURL', env( 'WP_SITEURL' ) );
 	Config::define( 'DB_HOST', env( 'DB_HOST' ) ?: 'localhost' );
-	Config::define( 'DISABLE_WP_CRON', env( 'DISABLE_WP_CRON' ) ?: false );
 }
 
 /**
