@@ -1,6 +1,7 @@
 # Composer-enabled WordPress template
 
 [![Actively Maintained](https://img.shields.io/badge/Pantheon-Actively_Maintained-yellow?logo=pantheon&color=FFDC28)](https://pantheon.io/docs/oss-support-levels#actively-maintained-support)
+[![GitHub Release](https://img.shields.io/github/v/release/pantheon-systems/wordpress-composer-managed)](https://github.com/pantheon-upstreams/wordpress-composer-managed)
 
 This is Pantheon's recommended starting point for forking new [WordPress](https://wordpress.org) upstreams that work with the Platform's Integrated Composer build process.
 
