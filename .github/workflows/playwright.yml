@@ -77,7 +77,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.email "cms-platform+sage-testing@pantheon.io"
-          git config --global user.name "Pantheon WPCM Bot 🤖"
+          git config --global user.name "Pantheon WPCM Bot"
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           echo "Pull Request Number: ${PR_NUMBER}"
           COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
