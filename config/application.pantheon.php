@@ -26,7 +26,7 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 		// Define appropriate location for default tmp directory on Pantheon.
 		Config::define( 'WP_TEMP_DIR', sys_get_temp_dir() );
 
-		// Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment
+		// Set WP_ENVIRONMENT_TYPE according to the Pantheon Environment.
 		if ( getenv( 'WP_ENVIRONMENT_TYPE' ) === false ) {
 			switch ( $_ENV['PANTHEON_ENVIRONMENT'] ) {
 				case 'live':
@@ -72,7 +72,7 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 		 * We make an explicit exception here for multisite because there are cases where multisite does not work properly when WP_Cron is disabled.
 		 * We only define DISABLE_WP_CRON if it's not already defined, which means you can override it in the application.php (though we don't recommend it).
 		 */
-		$network = isset( $_ENV["FRAMEWORK"] ) && $_ENV["FRAMEWORK"] === 'wordpress_network';
+		$network = isset( $_ENV['FRAMEWORK'] ) && $_ENV['FRAMEWORK'] === 'wordpress_network';
 		if ( ! defined( 'DISABLE_WP_CRON' ) && ! env( 'DISABLE_WP_CRON' ) && $network === false ) {
 			Config::define( 'DISABLE_WP_CRON', true );
 		}
