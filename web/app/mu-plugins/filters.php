@@ -104,14 +104,17 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
  */
 function prepopulate_graphql_endpoint_url() {
 	$options = get_option( 'graphql_general_settings' );
-	$site_path = site_url();
 
-	if ( ! $options ) {
-		$endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
-		$options = [];
-		$options['graphql_endpoint'] = $endpoint;
-		update_option( 'graphql_general_settings', $options );
-	}
+    // Bail early if options have already been set.
+    if ( $options ) {
+        return;
+    }
+
+    $options = [];
+	$site_path = site_url();
+    $endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
+    $options['graphql_endpoint'] = $endpoint;
+    update_option( 'graphql_general_settings', $options );
 }
 add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
 
