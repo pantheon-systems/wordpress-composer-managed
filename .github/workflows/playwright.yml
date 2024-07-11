@@ -23,4 +23,11 @@ jobs:
         with:
           site_id: wpcm-playwright-tests
           site_name: WordPress (Composer Managed) Single Site Test
+          site_url: https://dev-wpcm-playwright-tests.pantheonsite.io
           type: single
+          os: ${{ runner.os }}
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          terminus_token: ${{ secrets.TERMINUS_TOKEN }}
+          github_token: ${{ github.token }}
+          pr: ${{ github.event.pull_request.number }}
+          workspace: ${{ github.workspace }}

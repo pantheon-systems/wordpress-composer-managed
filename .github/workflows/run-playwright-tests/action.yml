@@ -11,158 +11,174 @@ on:
       type:
         required: true
         type: string
+      site_url:
+        required: true
+        type: string
+      os:
+        required: false
+        type: string
+      ssh_key:
+        required: true
+        type: string
+      terminus_token:
+        required: true
+        type: string
+      github_token:
+        required: true
+        type: string
+      pr:
+        required: false
+        type: string
+      workspace:
+        required: true
+        type: string
 
-jobs:
-  common:
-    runs-on: ubuntu-latest
-    env:
-      SITE_ID: ${{ inputs.site_id }}
-      SITE_URL: https://dev-${{ inputs.site_id }}.pantheonsite.io
-      SITE_NAME: ${{ inputs.site_name }}
 
-    steps:
-      - name: Generate lock files
-        run: |
-          npm install --package-lock-only
+runs:
+  using: composite
+  steps:
+    - name: Generate lock files
+      run: |
+        npm install --package-lock-only
 
-      - name: Set up cache for dependencies
-        uses: actions/cache@v4
-        id: cache
-        with:
-          path: |
-            ~/.composer/cache
-            ./vendor
-            ~/.npm
-            ./node_modules
-          key: ${{ runner.os }}-deps-${{ hashFiles( '**/composer.json', '**/package-lock.json' ) }}
-          restore-keys: ${{ runner.os }}-deps-
+    - name: Set up cache for dependencies
+      uses: actions/cache@v4
+      id: cache
+      with:
+        path: |
+          ~/.composer/cache
+          ./vendor
+          ~/.npm
+          ./node_modules
+        key: ${{ inputs.os }}-deps-${{ hashFiles( '**/composer.json', '**/package-lock.json' ) }}
+        restore-keys: ${{ inputs.os }}-deps-
 
-      - name: Install Composer dependencies
-        if: steps.cache.outputs.cache-hit != true
-        run: composer update --no-progress --prefer-dist --optimize-autoloader
+    - name: Install Composer dependencies
+      if: steps.cache.outputs.cache-hit != true
+      run: composer update --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Install NPM dependencies
-        if: steps.cache.outputs.cache-hit != true
-        run: npm ci
+    - name: Install NPM dependencies
+      if: steps.cache.outputs.cache-hit != true
+      run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
 
-      - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Install SSH keys
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ inputs.ssh_key }}
 
-      - name: Get latest Terminus release
-        uses: pantheon-systems/terminus-github-actions@v1
-        with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
-      - name: Validate Pantheon Host Key
-        run: |
-          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Log into Terminus
-        run: |
-          terminus auth:login --machine-token=${{ secrets.TERMINUS_TOKEN }}
+    - name: Get latest Terminus release
+      uses: pantheon-systems/terminus-github-actions@v1
+      with:
+        pantheon-machine-token: ${{ inputs.terminus_token }}
+    - name: Validate Pantheon Host Key
+      run: |
+        echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+        echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+        echo "StrictHostKeyChecking no" >> ~/.ssh/config
+    - name: Log into Terminus
+      run: |
+        terminus auth:login --machine-token=${{ inputs.terminus_token }}
 
-      - name: Create Site
-        run: |
-          if terminus site:info ${{ env.SITE_ID }}; then
-            echo "Test site already exists, skipping site creation."
-            # If the site exists already, we should switch it to git mode.
-            terminus connection:set ${{ env.SITE_ID }}.dev git -y
-          else
-            terminus site:create ${{ env.SITE_ID }} "${{ env.SITE_NAME }}" 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
-          fi
+    - name: Create Site
+      run: |
+        if terminus site:info ${{ inputs.site_id }}; then
+          echo "Test site already exists, skipping site creation."
+          # If the site exists already, we should switch it to git mode.
+          terminus connection:set ${{ inputs.site_id }}.dev git -y
+        else
+          terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+        fi
 
-      - name: Clone the site locally and copy PR updates
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          git config --global user.email "cms-platform+sage-testing@pantheon.io"
-          git config --global user.name "Pantheon WPCM Bot"
-          PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
-          echo "Pull Request Number: ${PR_NUMBER}"
-          COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-          echo "Commit Message: ${COMMIT_MSG}"
-          terminus local:clone ${{ env.SITE_ID }}
-          cd ~/pantheon-local-copies/${{ env.SITE_ID }}
-          rsync -a --exclude='.git' ${{ github.workspace }}/ .
-          git add -A
-          git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
-          git push origin master || true
+    - name: Clone the site locally and copy PR updates
+      env:
+        GH_TOKEN: ${{ inputs.github_token }}
+      run: |
+        git config --global user.email "cms-platform+sage-testing@pantheon.io"
+        git config --global user.name "Pantheon WPCM Bot"
+        PR_NUMBER=$(echo ${{ inputs.pr }})
+        echo "Pull Request Number: ${PR_NUMBER}"
+        COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+        echo "Commit Message: ${COMMIT_MSG}"
+        terminus local:clone ${{ inputs.site_id }}
+        cd ~/pantheon-local-copies/${{ inputs.site_id }}
+        rsync -a --exclude='.git' ${{ inputs.workspace }}/ .
+        git add -A
+        git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
+        git push origin master || true
 
-      - name: Status Check
-        run: terminus wp ${{ env.SITE_ID }}.dev -- cli info
+    - name: Status Check
+      run: terminus wp ${{ inputs.site_id }}.dev -- cli info
 
-      - name: Install (Single Site) WordPress
-        if: ${{ inputs.type == 'single' }}
-        run: |
-          terminus wp ${{ env.SITE_ID }}.dev -- core install --title="${{ env.SITE_NAME }}" --admin_user=wpcm --admin_email=test@dev.null
-          terminus wp ${{ env.SITE_ID }}.dev -- option update permalink_structure '/%postname%/'
-          terminus wp ${{ env.SITE_ID }}.dev -- rewrite flush
-          terminus wp ${{ env.SITE_ID }}.dev -- cache flush
+    - name: Install (Single Site) WordPress
+      if: ${{ inputs.type == 'single' }}
+      run: |
+        terminus wp ${{ inputs.site_id }}.dev -- core install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null
+        terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
+        terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
+        terminus wp ${{ inputs.site_id }}.dev -- cache flush
 
-      - name: Install (Subdirectory Multisite) WordPress
-        if: ${{ inputs.type == 'subdir' }}
-        run: |
-          terminus wp ${{ env.SITE_ID }}.dev -- core multisite-install --title="${{ env.SITE_NAME }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
-          terminus wp ${{ env.SITE_ID }}.dev -- option update permalink_structure '/%postname%/'
-          terminus wp ${{ env.SITE_ID }}.dev -- rewrite flush
-          terminus wp ${{ env.SITE_ID }}.dev -- cache flush
+    - name: Install (Subdirectory Multisite) WordPress
+      if: ${{ inputs.type == 'subdir' }}
+      run: |
+        terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
+        terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
+        terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
+        terminus wp ${{ inputs.site_id }}.dev -- cache flush
 
-      - name: Install (Subdomain Multisite) WordPress
-        if: ${{ inputs.type == 'subdom' }}
-        run: |
-          terminus wp ${{ env.SITE_ID }}.dev -- core multisite-install --title="${{ env.SITE_NAME }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
-          terminus wp ${{ env.SITE_ID }}.dev -- option update permalink_structure '/%postname%/'
-          terminus wp ${{ env.SITE_ID }}.dev -- rewrite flush
-          terminus wp ${{ env.SITE_ID }}.dev -- cache flush
+    - name: Install (Subdomain Multisite) WordPress
+      if: ${{ inputs.type == 'subdom' }}
+      run: |
+        terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
+        terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
+        terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
+        terminus wp ${{ inputs.site_id }}.dev -- cache flush
 
-      - name: Set up subsite
-        if: ${{ inputs.type == 'subdom' || inputs.type == 'subdir' }}
-        run: |
-          # Set a URL var for the type of multisite.
-          if [ "${{ inputs.type }}" == 'subdom' ]; then
-            URL="foo.dev-${{ env.SITE_ID }}.pantheonsite.io"
-          fi
-          if [ "${{ inputs.type }}" == 'subdir' ]; then
-            URL="${{ env.SITE_URL }}/foo"
-          fi
+    - name: Set up subsite
+      if: ${{ inputs.type == 'subdom' || inputs.type == 'subdir' }}
+      run: |
+        # Set a URL var for the type of multisite.
+        if [ "${{ inputs.type }}" == 'subdom' ]; then
+          URL="foo.dev-${{ inputs.site_id }}.pantheonsite.io"
+        fi
+        if [ "${{ inputs.type }}" == 'subdir' ]; then
+          URL="${{ inputs.site_url }}/foo"
+        fi
 
-          terminus wp ${{ env.SITE_ID }}.dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
-          terminus wp ${{ env.SITE_ID }}.dev -- option update permalink_structure '/%postname%/' --url="$URL"
+        terminus wp ${{ inputs.site_id }}.dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
+        terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/' --url="$URL"
 
-      - name: Install WP GraphQL
-        run: |
-          terminus workflow:wait ${{ env.SITE_ID }}.dev
-          terminus connection:set ${{ env.SITE_ID }}.dev sftp
-          terminus wp ${{ env.SITE_ID }}.dev -- plugin install --activate wp-graphql
-          if [ "${{ inputs.type }}" == 'subdom' ]; then
-            # We're going to assume the foo.dev subdomain already exists.
-            terminus wp ${{ env.SITE_ID }}.dev -- plugin activate wp-graphql --url=foo.dev-${{ env.SITE_ID }}.pantheonsite.io
-          fi
-          if [ "${{ inputs.type }}" == 'subdir' ]; then
-            terminus wp ${{ env.SITE_ID }}.dev -- plugin activate wp-graphql --url=${{ env.SITE_URL }}/foo
-          fi
+    - name: Install WP GraphQL
+      run: |
+        terminus workflow:wait ${{ inputs.site_id }}.dev
+        terminus connection:set ${{ inputs.site_id }}.dev sftp
+        terminus wp ${{ inputs.site_id }}.dev -- plugin install --activate wp-graphql
+        if [ "${{ inputs.type }}" == 'subdom' ]; then
+          # We're going to assume the foo.dev subdomain already exists.
+          terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=foo.dev-${{ inputs.site_id }}.pantheonsite.io
+        fi
+        if [ "${{ inputs.type }}" == 'subdir' ]; then
+          terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=${{ inputs.site_url }}/foo
+        fi
 
-      - name: Run Playwright Tests on WordPress main site
-        run: npm run test .github/tests/wpcm.spec.ts
+    - name: Run Playwright Tests on WordPress main site
+      run: npm run test .github/tests/wpcm.spec.ts
 
-      - name: Run Playwright Tests on WordPress subdomain subsite
-        if: ${{ inputs.type == 'subdom' }}
-        env:
-          SITE_URL: https://foo.dev-${{ env.SITE_ID }}.pantheonsite.io
-        run: npm run test .github/tests/wpcm.spec.ts
+    - name: Run Playwright Tests on WordPress subdomain subsite
+      if: ${{ inputs.type == 'subdom' }}
+      env:
+        SITE_URL: https://foo.dev-${{ inputs.site_id }}.pantheonsite.io
+      run: npm run test .github/tests/wpcm.spec.ts
 
-      - name: Run Playwright tests on WordPress subdirectory subsite
-        if: ${{ inputs.type == 'subdir' }}
-        env:
-          SITE_URL: ${{ env.SITE_URL }}/foo
-        run: npm run test .github/tests/wpcm.spec.ts
+    - name: Run Playwright tests on WordPress subdirectory subsite
+      if: ${{ inputs.type == 'subdir' }}
+      env:
+        SITE_URL: ${{ inputs.site_url }}/foo
+      run: npm run test .github/tests/wpcm.spec.ts
 
-      - name: Delete Site
-        # Don't delete the subdomain multisite because those can't be free sites.
-        if: success() && ${{ inputs.type != 'subdom' }}
-        run: terminus site:delete ${{ env.SITE_ID }} -y
+    - name: Delete Site
+      # Don't delete the subdomain multisite because those can't be free sites.
+      if: success() && ${{ inputs.type != 'subdom' }}
+      run: terminus site:delete ${{ inputs.site_id }} -y
