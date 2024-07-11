@@ -223,6 +223,9 @@ runs:
 
     - name: Run Playwright Tests on WordPress main site
       shell: bash
+      env:
+        SITE_NAME: ${{ inputs.site_name }}
+        SITE_URL: ${{ inputs.site_url }}
       run: |
         echo ""
         echo "${{ env.BLUE }}Running Playwright tests${{ env.RESET }}"
@@ -231,6 +234,7 @@ runs:
     - name: Run Playwright Tests on WordPress subdomain subsite
       if: ${{ inputs.type == 'subdom' }}
       env:
+        SITE_NAME: ${{ inputs.site_name }}
         SITE_URL: https://foo.dev-${{ inputs.site_id }}.pantheonsite.io
       shell: bash
       run: |
@@ -241,6 +245,7 @@ runs:
     - name: Run Playwright tests on WordPress subdirectory subsite
       if: ${{ inputs.type == 'subdir' }}
       env:
+        SITE_NAME: ${{ inputs.site_name }}
         SITE_URL: ${{ inputs.site_url }}/foo
       shell: bash
       run: |
