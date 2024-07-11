@@ -228,7 +228,7 @@ runs:
         SITE_URL: ${{ inputs.site_url }}
       run: |
         echo ""
-        echo "${{ env.BLUE }}Running Playwright tests${{ env.RESET }}"
+        echo -e "${{ env.BLUE }}Running Playwright tests${{ env.RESET }}"
         npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright Tests on WordPress subdomain subsite
@@ -239,7 +239,7 @@ runs:
       shell: bash
       run: |
         echo ""
-        echo "${{ env.BLUE }}Running Playwright tests on WordPress subdomain subsite${{ env.RESET }}"
+        echo -e "${{ env.BLUE }}Running Playwright tests on WordPress subdomain subsite${{ env.RESET }}"
         npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright tests on WordPress subdirectory subsite
@@ -250,7 +250,7 @@ runs:
       shell: bash
       run: |
         echo ""
-        echo "${{ env.BLUE }}Running Playwright tests on WordPress subdirectory subsite${{ env.RESET }}"
+        echo -e "${{ env.BLUE }}Running Playwright tests on WordPress subdirectory subsite${{ env.RESET }}"
         npm run test .github/tests/wpcm.spec.ts
 
     - name: Delete Site
@@ -258,5 +258,5 @@ runs:
       if: success() && ${{ inputs.type != 'subdom' }}
       shell: bash
       run: |
-        echo "${{ env.RED }}Deleting ${{ inputs.site_id }}${{ env.RESET }}"
+        echo -e "${{ env.RED }}Deleting ${{ inputs.site_id }}${{ env.RESET }}"
         terminus site:delete ${{ inputs.site_id }} -y
