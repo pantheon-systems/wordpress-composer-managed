@@ -177,8 +177,17 @@ runs:
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
         terminus wp ${{ inputs.site_id }}.dev -- cache flush
-# todo: add step here to copy new application.php for multisites. these should be in the fixtures dir and copied to overwrite the existing application.php. the only difference should be the multisite config
-# todo: create fixture site for subdomain multisite tests
+
+    - name: Copy multisite config file
+      if: ${{ inputs.type != 'single' }}
+      shell: bash
+      run: |
+        echo ""
+        echo -e "${{ env.YELLOW }}Copying multisite application.php${{ env.RESET }}"
+        rm ${{ inputs.workspace }}/config/application.php
+        cp ${{ inputs.workspace }}/.github/fixtures/config/application.${{ inputs.type }}.php ~/pantheon-local-copies/${{ inputs.site_id }}/config/
+
+    # todo: create fixture site for subdomain multisite tests
     - name: Install (Subdirectory Multisite) WordPress
       if: ${{ inputs.type == 'subdir' }}
       shell: bash
