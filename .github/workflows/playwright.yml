@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run Single Site Tests
-        uses: ./.github/workflows/run-playwright-tests
+        uses: ./.github/workflows/run-playwright-tests/action.yml
         with:
           site_id: wpcm-playwright-tests
           site_name: WordPress (Composer Managed) Single Site Test
@@ -31,6 +31,7 @@ jobs:
           github_token: ${{ github.token }}
           pr: ${{ github.event.pull_request.number }}
           workspace: ${{ github.workspace }}
+
   playwright-subdir:
     name: Subdirectory multisite
     runs-on: ubuntu-latest
