@@ -121,7 +121,7 @@ Config::define( 'DOMAIN_CURRENT_SITE', defined( 'PANTHEON_HOSTNAME' ) ? PANTHEON
 Config::define( 'PATH_CURRENT_SITE', '/' );
 Config::define( 'SITE_ID_CURRENT_SITE', 1 );
 Config::define( 'BLOG_ID_CURRENT_SITE', 1 );
-Config::define('WP_ALLOW_MULTISITE', env('WP_ALLOW_MULTISITE') ?: true);
+Config::define( 'WP_ALLOW_MULTISITE', env( 'WP_ALLOW_MULTISITE' ) ?: true );
 
 /**
  * Custom Settings
@@ -138,15 +138,15 @@ Config::define( 'WP_POST_REVISIONS', env( 'WP_POST_REVISIONS' ) ?? true );
  * Debugging Settings
  */
 if ( $_ENV['PANTHEON_ENVIRONMENT'] === 'dev' || isset( $_ENV['LANDO'] ) ) {
-    Config::define( 'WP_DEBUG_DISPLAY', true );
-    Config::define( 'WP_DEBUG_LOG', true );
-    Config::define( 'SCRIPT_DEBUG', true );
-    ini_set( 'display_errors', '1' );
+	Config::define( 'WP_DEBUG_DISPLAY', true );
+	Config::define( 'WP_DEBUG_LOG', true );
+	Config::define( 'SCRIPT_DEBUG', true );
+	ini_set( 'display_errors', '1' );
 } else {
-    Config::define( 'WP_DEBUG_DISPLAY', false );
-    Config::define( 'WP_DEBUG_LOG', false );
-    Config::define( 'SCRIPT_DEBUG', false );
-    ini_set( 'display_errors', '0' );
+	Config::define( 'WP_DEBUG_DISPLAY', false );
+	Config::define( 'WP_DEBUG_LOG', false );
+	Config::define( 'SCRIPT_DEBUG', false );
+	ini_set( 'display_errors', '0' );
 }
 
 /**
