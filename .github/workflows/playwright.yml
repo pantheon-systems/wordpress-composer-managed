@@ -11,8 +11,11 @@ permissions:
     contents: write
 
 jobs:
-  playwright:
+  playwright-single:
+    name: WordPress (Composer Managed) single site
     runs-on: ubuntu-latest
+    env:
+      SITE_ID: wpcm-playwright-tests
 
     steps:
       - uses: actions/checkout@v4
@@ -64,12 +67,12 @@ jobs:
 
       - name: Create Site
         run: |
-          if terminus site:info wpcm-playwright-tests; then
+          if terminus site:info ${{ env.SITE_ID }}; then
             echo "Test site already exists, skipping site creation."
             # If the site exists already, we should switch it to git mode.
-            terminus connection:set wpcm-playwright-tests.dev git -y
+            terminus connection:set ${{ env.SITE_ID }}.dev git -y
           else
-            terminus site:create wpcm-playwright-tests 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+            terminus site:create ${{ env.SITE_ID }} 'WordPress (Composer Managed) Playwright Test Site' 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
           fi
 
       - name: Clone the site locally and copy PR updates
@@ -82,32 +85,34 @@ jobs:
           echo "Pull Request Number: ${PR_NUMBER}"
           COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "Commit Message: ${COMMIT_MSG}"
-          terminus local:clone wpcm-playwright-tests
-          cd ~/pantheon-local-copies/wpcm-playwright-tests
+          terminus local:clone ${{ env.SITE_ID }}
+          cd ~/pantheon-local-copies/${{ env.SITE_ID }}
           rsync -a --exclude='.git' ${{ github.workspace }}/ .
           git add -A
           git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
           git push origin master || true
 
       - name: Status Check
-        run: terminus wp wpcm-playwright-tests.dev -- cli info
+        run: terminus wp ${{ env.SITE_ID }}.dev -- cli info
 
       - name: Install WordPress
         run: |
-          terminus wp wpcm-playwright-tests.dev -- core install --title='WPCM Playwright Tests' --admin_user=wpcm --admin_email=test@dev.null
-          terminus wp wpcm-playwright-tests.dev -- option update permalink_structure '/%postname%/'
-          terminus wp wpcm-playwright-tests.dev -- rewrite flush
-          terminus wp wpcm-playwright-tests.dev -- cache flush
+          terminus wp ${{ env.SITE_ID }}.dev -- core install --title='WPCM Playwright Tests' --admin_user=wpcm --admin_email=test@dev.null
+          terminus wp ${{ env.SITE_ID }}.dev -- option update permalink_structure '/%postname%/'
+          terminus wp ${{ env.SITE_ID }}.dev -- rewrite flush
+          terminus wp ${{ env.SITE_ID }}.dev -- cache flush
 
       - name: Install WP GraphQL
         run: |
-          terminus workflow:wait wpcm-playwright-tests.dev
-          terminus connection:set wpcm-playwright-tests.dev sftp
-          terminus wp wpcm-playwright-tests.dev -- plugin install --activate wp-graphql
+          terminus workflow:wait ${{ env.SITE_ID }}.dev
+          terminus connection:set ${{ env.SITE_ID }}.dev sftp
+          terminus wp ${{ env.SITE_ID }}.dev -- plugin install --activate wp-graphql
 
       - name: Run Playwright Tests
+        env:
+          SITE_URL: https://dev-${{ env.SITE_ID }}.pantheonsite.io
         run: npm run test .github/tests/wpcm.spec.ts
 
       - name: Delete Site
         if: success()
-        run: terminus site:delete wpcm-playwright-tests -y
+        run: terminus site:delete ${{ env.SITE_ID }} -y
