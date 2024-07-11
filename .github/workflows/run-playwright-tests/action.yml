@@ -252,4 +252,6 @@ runs:
       # Don't delete the subdomain multisite because those can't be free sites.
       if: success() && ${{ inputs.type != 'subdom' }}
       shell: bash
-      run: terminus site:delete ${{ inputs.site_id }} -y
+      run: |
+        echo "${{ env.RED }}Deleting ${{ inputs.site_id }}${{ env.RESET }}"
+        terminus site:delete ${{ inputs.site_id }} -y
