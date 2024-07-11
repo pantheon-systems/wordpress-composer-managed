@@ -33,7 +33,6 @@ on:
         required: true
         type: string
 
-
 runs:
   using: composite
   steps:
@@ -45,6 +44,19 @@ runs:
         echo "BLUE=\033[1;34m" >> $GITHUB_ENV
         echo "YELLOW=\033[1;33m" >> $GITHUB_ENV
         echo "RESET=\033[0m" >> $GITHUB_ENV
+
+    - name: Set Upstream
+      shell: bash
+      run: |
+        # Set a default value. This probably won't ever get used.
+        UPSTREAM_ID="WordPress (Composer Managed)"
+        if [ ${{ inputs.type }} == 'single' ]; then
+          $UPSTREAM_ID=90a683cd-4e03-4832-9b49-be97ab2a0be4
+        fi
+        if [ ${{ inputs.type }} == 'subdir' || ${{ inputs.type }} == 'subdom' ]; then
+          $UPSTREAM_ID=c784d2e5-2715-47a1-b163-123bba915b9b
+        fi
+        echo "UPSTREAM_ID=${UPSTREAM_ID}" >> $GITHUB_ENV
 
     - name: Generate lock files
       shell: bash
@@ -122,7 +134,7 @@ runs:
           # If the site exists already, we should switch it to git mode.
           stdbuf -oL -eL terminus connection:set ${{ inputs.site_id }}.dev git -y
         else
-        stdbuf -oL -eL terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+        stdbuf -oL -eL terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" ${{ env.UPSTREAM_ID }} --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
         fi
 
     - name: Clone the site locally and copy PR updates
@@ -165,7 +177,8 @@ runs:
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
         terminus wp ${{ inputs.site_id }}.dev -- cache flush
-
+# todo: add step here to copy new application.php for multisites. these should be in the fixtures dir and copied to overwrite the existing application.php. the only difference should be the multisite config
+# todo: create fixture site for subdomain multisite tests
     - name: Install (Subdirectory Multisite) WordPress
       if: ${{ inputs.type == 'subdir' }}
       shell: bash
