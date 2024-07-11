@@ -1,4 +1,4 @@
-name: WordPress (Composer Managed) Playwright Tests
+name: WordPress Composer Playwright Tests
 on:
   pull_request:
     types:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   playwright-single:
-    name: WordPress (Composer Managed) single site
+    name: Single site
     runs-on: ubuntu-latest
 
     steps:
@@ -25,6 +25,26 @@ jobs:
           site_name: WordPress (Composer Managed) Single Site Test
           site_url: https://dev-wpcm-playwright-tests.pantheonsite.io
           type: single
+          os: ${{ runner.os }}
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          terminus_token: ${{ secrets.TERMINUS_TOKEN }}
+          github_token: ${{ github.token }}
+          pr: ${{ github.event.pull_request.number }}
+          workspace: ${{ github.workspace }}
+  playwright-subdir:
+    name: Subdirectory multisite
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Subdirectory Multisite Tests
+        uses: ./.github/workflows/run-playwright-tests
+        with:
+          site_id: wpcm-subdir-playwright-tests
+          site_name: WordPress (Composer Managed) Subdirectory Multisite Test
+          site_url: https://dev-wpcm-playwright-tests.pantheonsite.io
+          type: subdir
           os: ${{ runner.os }}
           ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
           terminus_token: ${{ secrets.TERMINUS_TOKEN }}
