@@ -38,6 +38,7 @@ runs:
   using: composite
   steps:
     - name: Generate lock files
+      shell: bash
       run: |
         npm install --package-lock-only
 
@@ -55,13 +56,16 @@ runs:
 
     - name: Install Composer dependencies
       if: steps.cache.outputs.cache-hit != true
+      shell: bash
       run: composer update --no-progress --prefer-dist --optimize-autoloader
 
     - name: Install NPM dependencies
       if: steps.cache.outputs.cache-hit != true
+      shell: bash
       run: npm ci
 
     - name: Install Playwright Browsers
+      shell: bash
       run: npx playwright install --with-deps
 
     - name: Install SSH keys
@@ -74,15 +78,19 @@ runs:
       with:
         pantheon-machine-token: ${{ inputs.terminus_token }}
     - name: Validate Pantheon Host Key
+      shell: bash
       run: |
         echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
         echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
         echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
     - name: Log into Terminus
+      shell: bash
       run: |
         terminus auth:login --machine-token=${{ inputs.terminus_token }}
 
     - name: Create Site
+      shell: bash
       run: |
         if terminus site:info ${{ inputs.site_id }}; then
           echo "Test site already exists, skipping site creation."
@@ -95,6 +103,7 @@ runs:
     - name: Clone the site locally and copy PR updates
       env:
         GH_TOKEN: ${{ inputs.github_token }}
+      shell: bash
       run: |
         git config --global user.email "cms-platform+sage-testing@pantheon.io"
         git config --global user.name "Pantheon WPCM Bot"
@@ -110,10 +119,12 @@ runs:
         git push origin master || true
 
     - name: Status Check
+      shell: bash
       run: terminus wp ${{ inputs.site_id }}.dev -- cli info
 
     - name: Install (Single Site) WordPress
       if: ${{ inputs.type == 'single' }}
+      shell: bash
       run: |
         terminus wp ${{ inputs.site_id }}.dev -- core install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
@@ -122,6 +133,7 @@ runs:
 
     - name: Install (Subdirectory Multisite) WordPress
       if: ${{ inputs.type == 'subdir' }}
+      shell: bash
       run: |
         terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
@@ -130,6 +142,7 @@ runs:
 
     - name: Install (Subdomain Multisite) WordPress
       if: ${{ inputs.type == 'subdom' }}
+      shell: bash
       run: |
         terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
@@ -138,6 +151,7 @@ runs:
 
     - name: Set up subsite
       if: ${{ inputs.type == 'subdom' || inputs.type == 'subdir' }}
+      shell: bash
       run: |
         # Set a URL var for the type of multisite.
         if [ "${{ inputs.type }}" == 'subdom' ]; then
@@ -151,6 +165,7 @@ runs:
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/' --url="$URL"
 
     - name: Install WP GraphQL
+      shell: bash
       run: |
         terminus workflow:wait ${{ inputs.site_id }}.dev
         terminus connection:set ${{ inputs.site_id }}.dev sftp
@@ -164,21 +179,25 @@ runs:
         fi
 
     - name: Run Playwright Tests on WordPress main site
+      shell: bash
       run: npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright Tests on WordPress subdomain subsite
       if: ${{ inputs.type == 'subdom' }}
       env:
         SITE_URL: https://foo.dev-${{ inputs.site_id }}.pantheonsite.io
+      shell: bash
       run: npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright tests on WordPress subdirectory subsite
       if: ${{ inputs.type == 'subdir' }}
       env:
         SITE_URL: ${{ inputs.site_url }}/foo
+      shell: bash
       run: npm run test .github/tests/wpcm.spec.ts
 
     - name: Delete Site
       # Don't delete the subdomain multisite because those can't be free sites.
       if: success() && ${{ inputs.type != 'subdom' }}
+      shell: bash
       run: terminus site:delete ${{ inputs.site_id }} -y
