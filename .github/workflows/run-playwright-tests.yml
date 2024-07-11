@@ -21,8 +21,6 @@ jobs:
       SITE_NAME: ${{ inputs.site_name }}
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Generate lock files
         run: |
           npm install --package-lock-only
