@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const exampleArticle = "Hello world!";
-const siteTitle = "WPCM Playwright Tests";
+const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
 const siteUrl = process.env.SITE_URL || "https://dev-wpcm-playwright-tests.pantheonsite.io";
 
 test("homepage loads and contains example content", async ({ page }) => {
