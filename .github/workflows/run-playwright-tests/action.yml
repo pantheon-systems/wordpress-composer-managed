@@ -71,7 +71,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install Composer dependencies${{ env.RESET }}"
-        composer update --no-progress --prefer-dist --optimize-autoloader
+        stdbuf -oL -eL composer update --no-progress --prefer-dist --optimize-autoloader
 
     - name: Install NPM dependencies
       if: steps.cache.outputs.cache-hit != true
@@ -79,13 +79,13 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install NPM dependencies${{ env.RESET }}"
-        npm ci
+        stdbuf -oL -eL npm ci
 
     - name: Install Playwright Browsers
       shell: bash
       run: |
         echo -e "${{ env.YELLOW }}Install Playwright Browsers${{ env.RESET }}"
-        npx playwright install --with-deps
+        stdbuf -oL -eL npx playwright install --with-deps
 
     - name: Install SSH keys
       uses: webfactory/ssh-agent@v0.9.0
@@ -120,9 +120,9 @@ runs:
         if terminus site:info ${{ inputs.site_id }}; then
           echo "Test site already exists, skipping site creation."
           # If the site exists already, we should switch it to git mode.
-          terminus connection:set ${{ inputs.site_id }}.dev git -y
+          stdbuf -oL -eL terminus connection:set ${{ inputs.site_id }}.dev git -y
         else
-          terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+        stdbuf -oL -eL terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" 'WordPress (Composer Managed)' --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
         fi
 
     - name: Clone the site locally and copy PR updates
@@ -140,20 +140,20 @@ runs:
         COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
         echo "Commit Message: ${COMMIT_MSG}"
         echo -e "${{ env.YELLOW }}Cloning the site${{ env.RESET }}"
-        terminus local:clone ${{ inputs.site_id }}
+        stdbuf -oL -eL terminus local:clone ${{ inputs.site_id }}
         cd ~/pantheon-local-copies/${{ inputs.site_id }}
         echo -e "${{ env.YELLOW }}Copying latest changes and committing to the site.${{ env.RESET }}"
         rsync -a --exclude='.git' ${{ inputs.workspace }}/ .
         git add -A
-        git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
-        git push origin master || true
+        stdbuf -oL -eL git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
+        stdbuf -oL -eL git push origin master || true
 
     - name: Status Check
       shell: bash
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Checking WordPress install status${{ env.RESET }}"
-        terminus wp ${{ inputs.site_id }}.dev -- cli info
+        stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- cli info
 
     - name: Install (Single Site) WordPress
       if: ${{ inputs.type == 'single' }}
@@ -161,7 +161,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Single Site) WordPress${{ env.RESET }}"
-        terminus wp ${{ inputs.site_id }}.dev -- core install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null
+        stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
         terminus wp ${{ inputs.site_id }}.dev -- cache flush
@@ -172,7 +172,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Subdirectory Multisite) WordPress${{ env.RESET }}"
-        terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
+        stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
         terminus wp ${{ inputs.site_id }}.dev -- cache flush
@@ -183,7 +183,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Subdomain Multisite) WordPress${{ env.RESET }}"
-        terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
+        stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
         terminus wp ${{ inputs.site_id }}.dev -- cache flush
@@ -202,23 +202,23 @@ runs:
           URL="${{ inputs.site_url }}/foo"
         fi
 
-        terminus wp ${{ inputs.site_id }}.dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
+        stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/' --url="$URL"
 
     - name: Install WP GraphQL
       shell: bash
       run: |
-        terminus workflow:wait ${{ inputs.site_id }}.dev
+        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
         terminus connection:set ${{ inputs.site_id }}.dev sftp
         echo ""
         echo -e "${{ env.YELLOW }}Install WP GraphQL${{ env.RESET }}"
         terminus wp ${{ inputs.site_id }}.dev -- plugin install --activate wp-graphql
         if [ "${{ inputs.type }}" == 'subdom' ]; then
           # We're going to assume the foo.dev subdomain already exists.
-          terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=foo.dev-${{ inputs.site_id }}.pantheonsite.io
+          stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=foo.dev-${{ inputs.site_id }}.pantheonsite.io
         fi
         if [ "${{ inputs.type }}" == 'subdir' ]; then
-          terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=${{ inputs.site_url }}/foo
+          stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- plugin activate wp-graphql --url=${{ inputs.site_url }}/foo
         fi
 
     - name: Run Playwright Tests on WordPress main site
@@ -229,7 +229,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.BLUE }}Running Playwright tests${{ env.RESET }}"
-        npm run test .github/tests/wpcm.spec.ts
+        stdbuf -oL -eL npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright Tests on WordPress subdomain subsite
       if: ${{ inputs.type == 'subdom' }}
@@ -240,7 +240,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.BLUE }}Running Playwright tests on WordPress subdomain subsite${{ env.RESET }}"
-        npm run test .github/tests/wpcm.spec.ts
+        stdbuf -oL -eL npm run test .github/tests/wpcm.spec.ts
 
     - name: Run Playwright tests on WordPress subdirectory subsite
       if: ${{ inputs.type == 'subdir' }}
@@ -251,7 +251,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.BLUE }}Running Playwright tests on WordPress subdirectory subsite${{ env.RESET }}"
-        npm run test .github/tests/wpcm.spec.ts
+        stdbuf -oL -eL npm run test .github/tests/wpcm.spec.ts
 
     - name: Delete Site
       # Don't delete the subdomain multisite because those can't be free sites.
@@ -259,4 +259,4 @@ runs:
       shell: bash
       run: |
         echo -e "${{ env.RED }}Deleting ${{ inputs.site_id }}${{ env.RESET }}"
-        terminus site:delete ${{ inputs.site_id }} -y
+        stdbuf -oL -eL terminus site:delete ${{ inputs.site_id }} -y
