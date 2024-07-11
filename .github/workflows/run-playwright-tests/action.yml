@@ -48,7 +48,6 @@ runs:
     - name: Set Upstream
       shell: bash
       run: |
-        # Set a default value. This probably won't ever get used.
         UPSTREAM_ID="90a683cd-4e03-4832-9b49-be97ab2a0be4"
         if [ ${{ inputs.type }} != 'single' ]; then
           $UPSTREAM_ID="c784d2e5-2715-47a1-b163-123bba915b9b"
