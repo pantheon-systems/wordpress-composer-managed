@@ -28,6 +28,15 @@ jobs:
           echo "$COMMIT_MSG"
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
+      - name: Install dependencies
+        run: |
+          echo "Install Composer dependencies"
+          composer update --no-progress --prefer-dist --optimize-autoloader
+          echo "Install NPM dependencies"
+          npm install
+          echo "Install Playwright Browsers"
+          npx playwright install --with-deps
+
       - name: Install SSH keys
         uses: webfactory/ssh-agent@v0.9.0
         with:
