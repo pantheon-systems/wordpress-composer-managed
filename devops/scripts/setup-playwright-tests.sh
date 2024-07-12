@@ -75,6 +75,32 @@ copy_pr_updates() {
   terminus workflow:wait "${site_id}".dev
 }
 
+install_wp() {
+  terminus wp "${site_id}".dev -- db reset
+  echo ""
+  # Single site.
+  if [ "${type}" == 'single' ]; then
+    echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
+    terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
+  fi
+
+  # Subdirectory multisite.
+  if [ "${type}" == 'subdir' ]; then
+    echo -e "${YELLOW}Install (Subdirectory Multisite) WordPress${RESET}"
+    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false --url="${site_url}"
+  fi
+
+  # Subdomain multisite.
+  if [ "${type}" == 'subdom' ]; then
+    echo -e "${YELLOW}Install (Subdomain Multisite) WordPress${RESET}"
+    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true --url="${site_url}"
+  fi
+
+  terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
+  terminus wp "${site_id}".dev -- rewrite flush
+  terminus wp "${site_id}".dev -- cache flush
+}
+
 status_check() {
   echo ""
   echo -e "${YELLOW}Checking WordPress install status${RESET}"
@@ -102,32 +128,6 @@ status_check() {
       fi
     fi
   fi
-}
-
-install_wp() {
-  terminus wp "${site_id}".dev -- db reset
-  echo ""
-  # Single site.
-  if [ "${type}" == 'single' ]; then
-    echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
-  fi
-
-  # Subdirectory multisite.
-  if [ "${type}" == 'subdir' ]; then
-    echo -e "${YELLOW}Install (Subdirectory Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
-  fi
-
-  # Subdomain multisite.
-  if [ "${type}" == 'subdom' ]; then
-    echo -e "${YELLOW}Install (Subdomain Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
-  fi
-
-  terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
-  terminus wp "${site_id}".dev -- rewrite flush
-  terminus wp "${site_id}".dev -- cache flush
 }
 
 set_up_subsite() {
@@ -178,8 +178,8 @@ create_site
 clone_site
 copy_multisite_config
 copy_pr_updates
-status_check
 install_wp
+status_check
 set_up_subsite
 install_wp_graphql
 echo "${GREEN}Done${RESET} ✨"
