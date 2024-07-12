@@ -20,9 +20,9 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 # Set upstream ID.
-UPSTREAM_ID="90a683cd-4e03-4832-9b49-be97ab2a0be4"
+UPSTREAM_NAME="WordPress (Composer Managed)"
 if [ "${type}" != 'single' ]; then
-  UPSTREAM_ID="c784d2e5-2715-47a1-b163-123bba915b9b"
+  UPSTREAM_NAME="WordPress (Composer Managed) Multisite"
 fi
 
 log_into_terminus() {
@@ -39,7 +39,7 @@ create_site() {
     # If the site exists already, we should switch it to git mode.
     terminus connection:set "${site_id}".dev git -y
   else
-    terminus site:create "${site_id}" "${site_name}" ${UPSTREAM_ID} --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
+    terminus site:create "${site_id}" "${site_name}" "${UPSTREAM_NAME}" --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
   fi
 }
 
