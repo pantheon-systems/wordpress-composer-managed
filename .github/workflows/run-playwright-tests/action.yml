@@ -263,7 +263,7 @@ runs:
     - name: Install WP GraphQL
       shell: bash
       run: |
-        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
+        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev --max=10
         terminus connection:set ${{ inputs.site_id }}.dev sftp
         echo ""
         echo -e "${{ env.YELLOW }}Install WP GraphQL${{ env.RESET }}"
