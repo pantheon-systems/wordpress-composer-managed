@@ -123,9 +123,9 @@ runs:
     - name: Display art
       shell: bash
       run: |
-        echo ${{ env.BLUE }}
+        echo -e "${{ env.BLUE }}"
         terminus art wordpress
-        echo ${{ env.RESET }}
+        echo -e "${{ env.RESET }}"
 
     - name: Create Site
       shell: bash
