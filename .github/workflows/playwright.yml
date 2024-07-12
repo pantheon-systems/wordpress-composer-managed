@@ -46,6 +46,11 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
 
+      - name: Delete Site
+        if: success()
+        shell: bash
+        run: terminus site:delete wpcm-playwright-tests -y
+
   playwright-subdir:
     name: Subdirectory multisite
     runs-on: ubuntu-latest
@@ -80,3 +85,8 @@ jobs:
           COMMIT_MSG: $(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
+
+      - name: Delete Site
+        if: success()
+        shell: bash
+        run: terminus site:delete wpcm-subdir-playwright-tests -y
