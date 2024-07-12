@@ -4,15 +4,13 @@ set -e
 # This script handles setting up the environments necessary for running Playwright tests on different WordPress (Composer Managed) environments.
 
 # Get variables from environment.
-site_id=${SITE_ID}
-site_name=${SITE_NAME}
-site_url=${SITE_URL}
-type=${TYPE}
-ssh_key=${SSH_KEY}
-terminus_token=${TERMINUS_TOKEN}
-github_token=${GITHUB_TOKEN}
-commit_msg=${COMMIT_MSG}
-workspace=${WORKSPACE}
+site_id=${SITE_ID:-""}
+site_name=${SITE_NAME:-""}
+site_url=${SITE_URL:-""}
+type=${TYPE:-""}
+terminus_token=${TERMINUS_TOKEN:-""}
+commit_msg=${COMMIT_MSG:-""}
+workspace=${WORKSPACE:-""}
 
 # Set some colors.
 RED="\033[1;31m"
@@ -26,21 +24,6 @@ UPSTREAM_ID="90a683cd-4e03-4832-9b49-be97ab2a0be4"
 if [ "${type}" != 'single' ]; then
   UPSTREAM_ID="c784d2e5-2715-47a1-b163-123bba915b9b"
 fi
-
-# Run the the steps
-cd "${workspace}"
-install_deps
-log_into_terminus
-create_site
-clone_site
-copy_multisite_config
-copy_pr_updates
-status_check
-install_wp
-set_up_subsite
-install_wp_graphql
-run_playwright
-echo "Done ✨"
 
 install_deps() {
   echo ""
@@ -221,3 +204,18 @@ run_playwright() {
     npm run test .github/tests/wpcm.spec.ts
   fi
 }
+
+# Run the the steps
+cd "${workspace}"
+install_deps
+log_into_terminus
+create_site
+clone_site
+copy_multisite_config
+copy_pr_updates
+status_check
+install_wp
+set_up_subsite
+install_wp_graphql
+run_playwright
+echo "${GREEN}Done${RESET} ✨"
