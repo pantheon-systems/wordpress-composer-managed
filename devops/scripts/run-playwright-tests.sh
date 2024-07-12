@@ -65,18 +65,16 @@ clone_site() {
 }
 
 copy_multisite_config() {
-  if [ "${type}" == 'single' ]; then
-    exit;
+  if [ "${type}" != 'single' ]; then
+    echo ""
+    echo -e "${YELLOW}Copying multisite application.php${RESET}"
+    rm "${workspace}"/config/application.php
+    cp "${workspace}"/.github/fixtures/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/
+    mv ~/pantheon-local-copies/"${site_id}"/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/application.php
+    cd ~/pantheon-local-copies/"${site_id}"
+    git add ~/pantheon-local-copies/"${site_id}"/config/application.php
+    git commit -m "Set up ${type} multisite config" || true
   fi
-
-  echo ""
-  echo -e "${YELLOW}Copying multisite application.php${RESET}"
-  rm "${workspace}"/config/application.php
-  cp "${workspace}"/.github/fixtures/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/
-  mv ~/pantheon-local-copies/"${site_id}"/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/application.php
-  cd ~/pantheon-local-copies/"${site_id}"
-  git add ~/pantheon-local-copies/"${site_id}"/config/application.php
-  git commit -m "Set up ${type} multisite config" || true
 }
 
 copy_pr_updates() {
@@ -144,31 +142,29 @@ install_wp() {
 }
 
 set_up_subsite() {
-  if [ "${type}" == 'single' ]; then
-    exit
-  fi
+  if [ "${type}" != 'single' ]; then
+    echo ""
+    echo -e "${YELLOW}Set up subsite${RESET}"
+    # Set a URL var for the type of multisite.
+    if [ "${type}" == 'subdom' ]; then
+      URL="foo.dev-${site_id}.pantheonsite.io"
+    fi
+    if [ "${type}" == 'subdir' ]; then
+      URL="${site_url}/foo"
+    fi
 
-  echo ""
-  echo -e "${YELLOW}Set up subsite${RESET}"
-  # Set a URL var for the type of multisite.
-  if [ "${type}" == 'subdom' ]; then
-    URL="foo.dev-${site_id}.pantheonsite.io"
-  fi
-  if [ "${type}" == 'subdir' ]; then
-    URL="${site_url}/foo"
-  fi
+    # Check if the sub-site already exists.
+    EXISTING_SITE=$(terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo")
 
-  # Check if the sub-site already exists.
-  EXISTING_SITE=$(terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo")
-
-  if [ -z "$EXISTING_SITE" ]; then
-    # Create the sub-site only if it does not already exist.
-    terminus wp "${site_id}".dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
+    if [ -z "$EXISTING_SITE" ]; then
+      # Create the sub-site only if it does not already exist.
+      terminus wp "${site_id}".dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
+      terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
+    else
+      echo -e "${YELLOW}Sub-site already exists at $URL. Skipping creation.${RESET}"
+    fi
     terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
-  else
-    echo -e "${YELLOW}Sub-site already exists at $URL. Skipping creation.${RESET}"
   fi
-  terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
 }
 
 install_wp_graphql() {
