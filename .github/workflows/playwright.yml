@@ -28,6 +28,23 @@ jobs:
           echo "$COMMIT_MSG"
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Validate Pantheon Host Key
+        shell: bash
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Get latest Terminus release
+        uses: pantheon-systems/terminus-github-actions@v1
+        with:
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
+
       - name: Install dependencies
         run: |
           echo "Install Composer dependencies"
@@ -36,23 +53,6 @@ jobs:
           npm install
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
-
-      - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Get latest Terminus release
-        uses: pantheon-systems/terminus-github-actions@v1
-        with:
-          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
-
-      - name: Validate Pantheon Host Key
-        shell: bash
-        run: |
-          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
       - name: Setup Single Site Tests
         env:
@@ -97,6 +97,13 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Validate Pantheon Host Key
+        shell: bash
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
       - name: Get latest Terminus release
         uses: pantheon-systems/terminus-github-actions@v1
