@@ -160,6 +160,7 @@ runs:
       if: ${{ inputs.type != 'single' }}
       shell: bash
       run: |
+        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
         echo ""
         echo -e "${{ env.YELLOW }}Copying multisite application.php${{ env.RESET }}"
         rm ${{ inputs.workspace }}/config/application.php
@@ -168,8 +169,7 @@ runs:
         cd ~/pantheon-local-copies/${{ inputs.site_id }}
         git add ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
         git commit -m "Set up ${{ inputs.type }} multisite config"
-        git push
-        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
+        stdbuf -oL -eL git push origin master || true
 
     - name: Status Check
       shell: bash
