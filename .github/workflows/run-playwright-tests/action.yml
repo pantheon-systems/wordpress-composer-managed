@@ -95,24 +95,11 @@ runs:
         echo -e "${{ env.YELLOW }}Install Playwright Browsers${{ env.RESET }}"
         stdbuf -oL -eL npx playwright install --with-deps
 
-    - name: Install SSH keys
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ inputs.ssh_key }}
 
-    - name: Get latest Terminus release
-      uses: pantheon-systems/terminus-github-actions@v1
-      with:
-        pantheon-machine-token: ${{ inputs.terminus_token }}
 
-    - name: Validate Pantheon Host Key
-      shell: bash
-      run: |
-        echo ""
-        echo -e "${{ env.YELLOW }}Validate Pantheon Host Key${{ env.RESET }}"
-        echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-        echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-        echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+
+
 
     - name: Log into Terminus
       shell: bash
