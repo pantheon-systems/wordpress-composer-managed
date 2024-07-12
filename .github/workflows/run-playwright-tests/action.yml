@@ -258,7 +258,7 @@ runs:
         fi
 
         # Check if the sub-site already exists.
-        EXISTING_SITE=$(terminus wp ${{ inputs.site_id }}.dev -- site list --field=url | grep -w "$URL")
+        EXISTING_SITE=$(terminus wp ${{ inputs.site_id }}.dev -- site list --field=url | grep -w "foo")
 
         if [ -z "$EXISTING_SITE" ]; then
           # Create the sub-site only if it does not already exist.
