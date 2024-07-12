@@ -63,7 +63,7 @@ jobs:
           TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
-        run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
+        run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
       - name: Run Playwright tests
         env:
@@ -128,7 +128,7 @@ jobs:
           TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
-        run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
+        run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
       - name: Run Playwright tests
         env:
