@@ -85,16 +85,18 @@ status_check() {
       exit 1
     fi
 
+    # Check SUBDOMAIN_INSTALL value
+    SUBDOMAIN_INSTALL=$(terminus wp "${site_id}".dev -- config get SUBDOMAIN_INSTALL)
     if [ "${type}" == 'subdir' ]; then
       # SUBDOMAIN_INSTALL should be false.
-      if terminus wp "${site_id}".dev -- config get SUBDOMAIN_INSTALL; then
+      if [ "${SUBDOMAIN_INSTALL}" == "1" ]; then
         echo -e "${RED}Subdirectory configuration not found!"
         exit 1
       fi
     fi
     if [ "${type}" == 'subdom' ]; then
       # SUBDOMAIN_INSTALL should be true.
-      if ! terminus wp "${site_id}".dev -- config get SUBDOMAIN_INSTALL; then
+      if [ "${SUBDOMAIN_INSTALL}" != "1" ]; then
         echo -e "${RED}Subdomain configuration not found!"
         exit 1
       fi
