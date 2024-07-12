@@ -192,6 +192,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Single Site) WordPress${{ env.RESET }}"
+        terminus wp ${{ inputs.site_id }}.dev -- db reset
         stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
@@ -213,6 +214,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Subdirectory Multisite) WordPress${{ env.RESET }}"
+        terminus wp ${{ inputs.site_id }}.dev -- db reset
         stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
@@ -224,6 +226,7 @@ runs:
       run: |
         echo ""
         echo -e "${{ env.YELLOW }}Install (Subdomain Multisite) WordPress${{ env.RESET }}"
+        terminus wp ${{ inputs.site_id }}.dev -- db reset
         stdbuf -oL -eL terminus wp ${{ inputs.site_id }}.dev -- core multisite-install --title="${{ inputs.site_name }}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true
         terminus wp ${{ inputs.site_id }}.dev -- option update permalink_structure '/%postname%/'
         terminus wp ${{ inputs.site_id }}.dev -- rewrite flush
