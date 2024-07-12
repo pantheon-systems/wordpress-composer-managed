@@ -163,7 +163,7 @@ runs:
     - name: Copy PR updates
       shell: bash
       env:
-        GH_TOKEN: ${{ input.github_token }}
+        GH_TOKEN: ${{ inputs.github_token }}
       run: |
         PR_NUMBER=$(echo ${{ inputs.pr }})
         echo "Pull Request Number: ${PR_NUMBER}"
