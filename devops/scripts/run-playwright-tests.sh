@@ -69,10 +69,10 @@ copy_multisite_config() {
     echo ""
     echo -e "${YELLOW}Copying multisite application.php${RESET}"
     rm "${workspace}"/config/application.php
-    cp "${workspace}"/.github/fixtures/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/
-    mv ~/pantheon-local-copies/"${site_id}"/config/application."${type}".php ~/pantheon-local-copies/"${site_id}"/config/application.php
+    cp "${workspace}/.github/fixtures/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/"
+    mv "${HOME}/pantheon-local-copies/${site_id}/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
     cd ~/pantheon-local-copies/"${site_id}"
-    git add ~/pantheon-local-copies/"${site_id}"/config/application.php
+    git add "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
     git commit -m "Set up ${type} multisite config" || true
   fi
 }
