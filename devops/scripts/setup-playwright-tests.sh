@@ -72,6 +72,7 @@ copy_pr_updates() {
   git add -A
   git commit -m "Update to latest commit: ${commit_msg}" || true
   git push origin master || true
+  terminus workflow:wait "${site_id}".dev
 }
 
 status_check() {
@@ -155,7 +156,6 @@ set_up_subsite() {
 }
 
 install_wp_graphql() {
-  terminus workflow:wait "${site_id}".dev
   terminus connection:set "${site_id}".dev sftp
   echo ""
   echo -e "${YELLOW}Install WP GraphQL${RESET}"
