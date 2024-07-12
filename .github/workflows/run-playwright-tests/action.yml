@@ -168,23 +168,23 @@ runs:
             echo -e "${{ env.RED }}Multisite not found!"
             exit 1
           fi
+        fi
 
-          SUBDOMAIN_INSTALL=$(terminus wp ${{ inputs.site_id }}.dev -- config get SUBDOMAIN_INSTALL)
-          if [ ${{ inputs.type }} == 'subdir' ]; then
-            # SUBDOMAIN_INSTALL should be false.
-            if [ $SUBDOMAIN_INSTALL != 0 ]; then
-              echo -e "${{ env.RED }}Subdirectory configuration not found!"
-              exit 1
-            fi
+        SUBDOMAIN_INSTALL=$(terminus wp ${{ inputs.site_id }}.dev -- config get SUBDOMAIN_INSTALL)
+        if [ ${{ inputs.type }} == 'subdir' ]; then
+          # SUBDOMAIN_INSTALL should be false.
+          if [ $SUBDOMAIN_INSTALL != 0 ]; then
+            echo -e "${{ env.RED }}Subdirectory configuration not found!"
+            exit 1
           fi
-          if [ ${{ inputs.type }} == 'subdom' ]; then
-            # SUBDOMAIN_INSTALL should be true.
-            if [ $SUBDOMAIN_INSTALL != 1 ]; then
-              echo -e "${{ env.RED }}Subdomain configuration not found!"
-              exit 1
-            fi
+        fi
+        if [ ${{ inputs.type }} == 'subdom' ]; then
+          # SUBDOMAIN_INSTALL should be true.
+          if [ $SUBDOMAIN_INSTALL != 1 ]; then
+            echo -e "${{ env.RED }}Subdomain configuration not found!"
+            exit 1
           fi
-
+        fi
 
     - name: Install (Single Site) WordPress
       if: ${{ inputs.type == 'single' }}
