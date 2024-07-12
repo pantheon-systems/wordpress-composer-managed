@@ -76,7 +76,7 @@ copy_pr_updates() {
 }
 
 install_wp() {
-  terminus wp "${site_id}".dev -- db reset
+  terminus wp "${site_id}".dev -- db reset --yes
   echo ""
   # Single site.
   if [ "${type}" == 'single' ]; then
