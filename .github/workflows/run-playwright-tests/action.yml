@@ -177,6 +177,7 @@ runs:
         git add ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
         git commit -m "Set up ${{ inputs.type }} multisite config"
         stdbuf -oL -eL git push origin master || true
+        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
 
     - name: Status Check
       shell: bash
