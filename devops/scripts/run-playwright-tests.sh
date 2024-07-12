@@ -43,12 +43,6 @@ create_site() {
   fi
 }
 
-setup_pantheon_host_key() {
-  echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-  echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-  echo "StrictHostKeyChecking no" >> ~/.ssh/config
-}
-
 clone_site() {
   echo ""
   echo -e "${YELLOW}Clone the site locally and copy PR updates${RESET}"
@@ -198,7 +192,6 @@ run_playwright() {
 cd "${workspace}"
 log_into_terminus
 create_site
-setup_pantheon_host_key
 clone_site
 copy_multisite_config
 copy_pr_updates
