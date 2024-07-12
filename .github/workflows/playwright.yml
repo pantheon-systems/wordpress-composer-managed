@@ -18,19 +18,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Single Site Tests
-        uses: ./.github/workflows/run-playwright-tests
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          site_id: wpcm-playwright-tests
-          site_name: WordPress (Composer Managed) Single Site Test
-          site_url: https://dev-wpcm-playwright-tests.pantheonsite.io
-          type: single
-          os: ${{ runner.os }}
-          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          terminus_token: ${{ secrets.TERMINUS_TOKEN }}
-          github_token: ${{ github.token }}
-          pr: ${{ github.event.pull_request.number }}
-          workspace: ${{ github.workspace }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Get latest Terminus release
+        uses: pantheon-systems/terminus-github-actions@v1
+        with:
+          pantheon-machine-token: ${{ inputs.terminus_token }}
+
+      - name: Validate Pantheon Host Key
+        shell: bash
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Run Single Site Tests
+        env:
+          SITE_ID: wpcm-playwright-tests
+          SITE_NAME: WordPress (Composer Managed) Single Site Test
+          SITE_URL: https://dev-wpcm-playwright-tests.pantheonsite.io
+          TYPE: single
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+          COMMIT_MSG: $(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+          WORKSPACE: ${{ github.workspace }}
+        run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
 
   playwright-subdir:
     name: Subdirectory multisite
@@ -39,16 +53,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Subdirectory Multisite Tests
-        uses: ./.github/workflows/run-playwright-tests
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          site_id: wpcm-subdir-playwright-tests
-          site_name: WordPress (Composer Managed) Subdirectory Multisite Test
-          site_url: https://dev-wpcm-subdir-playwright-tests.pantheonsite.io
-          type: subdir
-          os: ${{ runner.os }}
-          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          terminus_token: ${{ secrets.TERMINUS_TOKEN }}
-          github_token: ${{ github.token }}
-          pr: ${{ github.event.pull_request.number }}
-          workspace: ${{ github.workspace }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Validate Pantheon Host Key
+        shell: bash
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Get latest Terminus release
+        uses: pantheon-systems/terminus-github-actions@v1
+        with:
+          pantheon-machine-token: ${{ inputs.terminus_token }}
+
+      - name: Run Subdirectory Multisite Tests
+        env:
+          SITE_ID: wpcm-subdir-playwright-tests
+          SITE_NAME: WordPress (Composer Managed) Subdirectory Multisite Test
+          SITE_URL: https://dev-wpcm-subdir-playwright-tests.pantheonsite.io
+          TYPE: subdir
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+          COMMIT_MSG: $(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+          WORKSPACE: ${{ github.workspace }}
+        run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
