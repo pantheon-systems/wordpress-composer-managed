@@ -158,7 +158,7 @@ runs:
         mv ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.${{ inputs.type }}.php ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
         cd ~/pantheon-local-copies/${{ inputs.site_id }}
         git add ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
-        git commit -m "Set up ${{ inputs.type }} multisite config"
+        git commit -m "Set up ${{ inputs.type }} multisite config" || true
 
     - name: Copy PR updates
       shell: bash
