@@ -133,11 +133,11 @@ jobs:
       - name: Run Playwright tests
         env:
           SITE_NAME: WordPress (Composer Managed) Single Site Test
-          SITE_URL: https://dev-wpcm-playwright-tests.pantheonsite.io
+          SITE_URL: https://dev-wpcm-subdir-playwright-tests.pantheonsite.io
         run: |
           npm run test .github/tests/wpcm.spec.ts
 
-          SITE_URL=https://dev-wpcm-playwright-tests.pantheonsite.io/foo
+          SITE_URL=https://dev-wpcm-subdir-playwright-tests.pantheonsite.io/foo
           echo "Running Playwright tests on WordPress subdirectory subsite"
             npm run test .github/tests/wpcm.spec.ts
 
