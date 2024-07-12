@@ -120,6 +120,13 @@ runs:
         echo -e "${{ env.YELLOW }}Log into Terminus${{ env.RESET }}"
         terminus auth:login --machine-token=${{ inputs.terminus_token }}
 
+    - name: Display art
+      shell: bash
+      run: |
+        echo ${{ env.BLUE }}
+        terminus art wordpress
+        echo ${{ env.RESET }}
+
     - name: Create Site
       shell: bash
       run: |
