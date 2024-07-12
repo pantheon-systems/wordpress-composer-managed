@@ -68,7 +68,7 @@ jobs:
       - name: Get latest Terminus release
         uses: pantheon-systems/terminus-github-actions@v1
         with:
-          pantheon-machine-token: ${{ inputs.terminus_token }}
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
 
       - name: Run Subdirectory Multisite Tests
         env:
