@@ -164,6 +164,7 @@ runs:
         echo -e "${{ env.YELLOW }}Copying multisite application.php${{ env.RESET }}"
         rm ${{ inputs.workspace }}/config/application.php
         cp ${{ inputs.workspace }}/.github/fixtures/config/application.${{ inputs.type }}.php ~/pantheon-local-copies/${{ inputs.site_id }}/config/
+        cd ~/pantheon-local-copies/${{ inputs.site_id }}
         git add ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
         git commit -m "Set up multisite config"
         git push
