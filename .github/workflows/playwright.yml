@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get last commit message
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
@@ -64,6 +66,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Get last commit message
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
