@@ -21,7 +21,7 @@ jobs:
       - name: Install SSH keys
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Get latest Terminus release
         uses: pantheon-systems/terminus-github-actions@v1
@@ -56,7 +56,7 @@ jobs:
       - name: Install SSH keys
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Validate Pantheon Host Key
         shell: bash
