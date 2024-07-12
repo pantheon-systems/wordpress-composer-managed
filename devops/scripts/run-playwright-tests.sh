@@ -25,18 +25,6 @@ if [ "${type}" != 'single' ]; then
   UPSTREAM_ID="c784d2e5-2715-47a1-b163-123bba915b9b"
 fi
 
-install_deps() {
-  echo ""
-  echo -e "${YELLOW}Install Composer dependencies${RESET}"
-  composer update --no-progress --prefer-dist --optimize-autoloader
-  echo ""
-  echo -e "${YELLOW}Install NPM dependencies${RESET}"
-  npm install
-  echo ""
-  echo -e "${YELLOW}Install Playwright Browsers${RESET}"
-  npx playwright install --with-deps
-}
-
 log_into_terminus() {
   echo -e "${YELLOW}Log into Terminus${RESET}"
   terminus auth:login --machine-token="${terminus_token}"
@@ -53,6 +41,12 @@ create_site() {
   else
     terminus site:create "${site_id}" "${site_name}" ${UPSTREAM_ID} --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
   fi
+}
+
+setup_pantheon_host_key() {
+  echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+  echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+  echo "StrictHostKeyChecking no" >> ~/.ssh/config
 }
 
 clone_site() {
@@ -202,9 +196,9 @@ run_playwright() {
 
 # Run the the steps
 cd "${workspace}"
-install_deps
 log_into_terminus
 create_site
+setup_pantheon_host_key
 clone_site
 copy_multisite_config
 copy_pr_updates

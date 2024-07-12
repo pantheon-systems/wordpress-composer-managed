@@ -63,17 +63,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Validate Pantheon Host Key
-        shell: bash
-        run: |
-          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-
       - name: Get latest Terminus release
         uses: pantheon-systems/terminus-github-actions@v1
         with:
           pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          echo "Install Composer dependencies"
+          composer update --no-progress --prefer-dist --optimize-autoloader
+          echo "Install NPM dependencies"
+          npm install
+          echo "Install Playwright Browsers"
+          npx playwright install --with-deps
 
       - name: Run Subdirectory Multisite Tests
         env:
