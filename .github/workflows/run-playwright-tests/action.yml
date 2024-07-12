@@ -137,9 +137,7 @@ runs:
         stdbuf -oL -eL terminus site:create ${{ inputs.site_id }} "${{ inputs.site_name }}" ${{ env.UPSTREAM_ID }} --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
         fi
 
-    - name: Clone the site locally and copy PR updates
-      env:
-        GH_TOKEN: ${{ inputs.github_token }}
+    - name: Clone the site locally
       shell: bash
       run: |
         echo ""
@@ -147,24 +145,12 @@ runs:
         echo "Setting up some git config..."
         git config --global user.email "cms-platform+sage-testing@pantheon.io"
         git config --global user.name "Pantheon WPCM Bot"
-        PR_NUMBER=$(echo ${{ inputs.pr }})
-        echo "Pull Request Number: ${PR_NUMBER}"
-        COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-        echo "Commit Message: ${COMMIT_MSG}"
-        echo -e "${{ env.YELLOW }}Cloning the site${{ env.RESET }}"
         stdbuf -oL -eL terminus local:clone ${{ inputs.site_id }}
-        cd ~/pantheon-local-copies/${{ inputs.site_id }}
-        echo -e "${{ env.YELLOW }}Copying latest changes and committing to the site.${{ env.RESET }}"
-        rsync -a --exclude='.git' ${{ inputs.workspace }}/ .
-        git add -A
-        stdbuf -oL -eL git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
-        stdbuf -oL -eL git push origin master || true
 
     - name: Copy multisite config file
       if: ${{ inputs.type != 'single' }}
       shell: bash
       run: |
-        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
         echo ""
         echo -e "${{ env.YELLOW }}Copying multisite application.php${{ env.RESET }}"
         rm ${{ inputs.workspace }}/config/application.php
@@ -173,8 +159,20 @@ runs:
         cd ~/pantheon-local-copies/${{ inputs.site_id }}
         git add ~/pantheon-local-copies/${{ inputs.site_id }}/config/application.php
         git commit -m "Set up ${{ inputs.type }} multisite config"
+
+    - name: Copy PR updates
+      shell: bash
+      run: |
+        PR_NUMBER=$(echo ${{ inputs.pr }})
+        echo "Pull Request Number: ${PR_NUMBER}"
+        COMMIT_MSG=$(gh pr view ${PR_NUMBER} --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+        echo "Commit Message: ${COMMIT_MSG}"
+        cd ~/pantheon-local-copies/${{ inputs.site_id }}
+        echo -e "${{ env.YELLOW }}Copying latest changes and committing to the site.${{ env.RESET }}"
+        rsync -a --exclude='.git' ${{ inputs.workspace }}/ .
+        git add -A
+        stdbuf -oL -eL git commit -m "Update to latest commit: ${COMMIT_MSG}" || true
         stdbuf -oL -eL git push origin master || true
-        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
 
     - name: Status Check
       shell: bash
@@ -272,7 +270,7 @@ runs:
     - name: Install WP GraphQL
       shell: bash
       run: |
-        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev --max=10
+        stdbuf -oL -eL terminus workflow:wait ${{ inputs.site_id }}.dev
         terminus connection:set ${{ inputs.site_id }}.dev sftp
         echo ""
         echo -e "${{ env.YELLOW }}Install WP GraphQL${{ env.RESET }}"
