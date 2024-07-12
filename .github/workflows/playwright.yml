@@ -45,7 +45,7 @@ jobs:
           echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
-      - name: Run Single Site Tests
+      - name: Setup Single Site Tests
         env:
           SITE_ID: wpcm-playwright-tests
           SITE_NAME: WordPress (Composer Managed) Single Site Test
@@ -55,6 +55,12 @@ jobs:
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
+
+      - name: Run Playwright tests
+        env:
+          SITE_NAME: WordPress (Composer Managed) Single Site Test
+          SITE_URL: https://dev-wpcm-playwright-tests.pantheonsite.io
+        run: npm run test .github/tests/wpcm.spec.ts
 
       - name: Delete Site
         if: success()
@@ -97,7 +103,7 @@ jobs:
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
 
-      - name: Run Subdirectory Multisite Tests
+      - name: Setup Subdirectory Multisite Tests
         env:
           SITE_ID: wpcm-subdir-playwright-tests
           SITE_NAME: WordPress (Composer Managed) Subdirectory Multisite Test
@@ -107,6 +113,17 @@ jobs:
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/run-playwright-tests.sh
+
+      - name: Run Playwright tests
+        env:
+          SITE_NAME: WordPress (Composer Managed) Single Site Test
+          SITE_URL: https://dev-wpcm-playwright-tests.pantheonsite.io
+        run: |
+          npm run test .github/tests/wpcm.spec.ts
+
+          SITE_URL=https://dev-wpcm-playwright-tests.pantheonsite.io/foo
+          echo "Running Playwright tests on WordPress subdirectory subsite"
+            npm run test .github/tests/wpcm.spec.ts
 
       - name: Delete Site
         if: success()

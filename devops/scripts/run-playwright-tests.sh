@@ -170,24 +170,6 @@ install_wp_graphql() {
   fi
 }
 
-run_playwright() {
-  echo ""
-  echo -e "${BLUE}Running Playwright tests${RESET}"
-  npm run test .github/tests/wpcm.spec.ts
-
-  if [ "${type}" == 'subdir' ]; then
-    SITE_URL="${site_url}/foo"
-    echo -e "${BLUE}Running Playwright tests on WordPress subdirectory subsite${RESET}"
-    npm run test .github/tests/wpcm.spec.ts
-  fi
-
-  if [ "${type}" == 'subdom' ]; then
-    SITE_URL="https://foo.dev-${site_id}.pantheonsite.io"
-    echo -e "${BLUE}Running Playwright tests on WordPress subdomain subsite${RESET}"
-    npm run test .github/tests/wpcm.spec.ts
-  fi
-}
-
 # Run the the steps
 cd "${workspace}"
 log_into_terminus
@@ -199,5 +181,4 @@ status_check
 install_wp
 set_up_subsite
 install_wp_graphql
-run_playwright
 echo "${GREEN}Done${RESET} ✨"
