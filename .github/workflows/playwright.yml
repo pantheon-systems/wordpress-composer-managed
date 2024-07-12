@@ -22,6 +22,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
@@ -70,6 +71,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cd ${{ github.workspace }}/
+          PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
