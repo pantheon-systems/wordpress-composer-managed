@@ -143,7 +143,7 @@ set_up_subsite() {
     fi
 
     # Check if the sub-site already exists.
-    EXISTING_SITE=$(terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo")
+    EXISTING_SITE=$(terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo" || true)
 
     if [ -z "$EXISTING_SITE" ]; then
       # Create the sub-site only if it does not already exist.
