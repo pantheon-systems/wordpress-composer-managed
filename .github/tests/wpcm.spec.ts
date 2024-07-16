@@ -11,7 +11,11 @@ test("homepage loads and contains example content", async ({ page }) => {
 });
 
 test("WP REST API is accessible", async ({ request }) => {
-  const apiRoot = await request.get(`${siteUrl}/wp-json`);
+  let apiRoot = await request.get(`${siteUrl}/wp-json`);
+  // If the api endpoint isn't /wp-json, it should be /wp/wp-json. This will probably be the case for main sites on subdirectory multisites.
+  if (!apiRoot.ok()) {
+    apiRoot = await request.get(`${siteUrl}/wp/wp-json`);
+  }
   expect(apiRoot.ok()).toBeTruthy();
 });
 
