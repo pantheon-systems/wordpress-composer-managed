@@ -184,8 +184,8 @@ jobs:
       - name: Set up env variables
         run: |
           SITE_NAME="WordPress (Composer Managed) Subdomain Multisite Test"
-          SITE_URL="https://dev-wpcm-subdir-playwright-tests.pantheonsite.io"
-          SUBDOMAIN_URL="https://foo.dev-wpcm-subdir-playwright-tests.pantheonsite.io"
+          SITE_URL="https://dev-wpcm-subdom-playwright-tests.pantheonsite.io"
+          SUBDOMAIN_URL="https://foo.dev-wpcm-subdom-playwright-tests.pantheonsite.io"
           echo "Site name: $SITE_NAME"
           echo "Site url: $SITE_URL"
           echo "Subdomain url: $SUBDOMAIN_URL"
