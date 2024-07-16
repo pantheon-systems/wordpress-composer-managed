@@ -97,6 +97,10 @@ install_wp() {
   fi
 
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
+  # Flush cache on the sub-site if we're in multisite.
+  if [ "${type}" != 'single' ]; then
+    terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="${site_url}"
+  fi
   terminus wp "${site_id}".dev -- rewrite flush
   terminus wp "${site_id}".dev -- cache flush
 }
