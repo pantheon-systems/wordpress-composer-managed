@@ -90,12 +90,12 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 		'template_directory_uri',
 		'site_url',
 		'content_url',
-        'rest_url'
 	];
 	foreach ( $filters as $filter ) {
 		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 	}
 }
+add_filter( 'rest_url', __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 
 /**
  * Prepopulate GraphQL endpoint URL with default value if unset.
@@ -144,7 +144,7 @@ function adjust_main_site_urls( string $url ) : string {
 	}
 
     // Drop the /wp if the URL is the rest endpoint.
-    if ( strpos( $url, '/wp/wp-json' ) !== false ) {
+    if ( strpos( $url, '/wp-json' ) !== false ) {
         $url = str_replace( '/wp/wp-json', '/wp-json', $url );
     }
 
@@ -152,6 +152,8 @@ function adjust_main_site_urls( string $url ) : string {
 }
 add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
+
+
 
 /**
  * Add /wp prefix to all admin and login URLs.
