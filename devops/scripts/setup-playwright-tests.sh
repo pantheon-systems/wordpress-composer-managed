@@ -186,4 +186,4 @@ install_wp
 status_check
 set_up_subsite
 install_wp_graphql
-echo "${GREEN}Done${RESET} ✨"
+echo -e "${GREEN}Done${RESET} ✨"
