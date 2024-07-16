@@ -132,7 +132,7 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          SITE_NAME: WordPress (Composer Managed) Single Site Test
+          SITE_NAME: WordPress (Composer Managed) Subdirectory Multisite Test
           SITE_URL: https://dev-wpcm-subdir-playwright-tests.pantheonsite.io
         run: |
           npm run test .github/tests/wpcm.spec.ts
