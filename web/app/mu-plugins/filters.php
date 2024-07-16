@@ -52,7 +52,7 @@ function fix_core_resource_urls( string $url ) : string {
 	}
 
 	$path = $parsed_url['path'];
-	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
+	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/', 'wp-json' ];
 	$path_modified = false;
 
 	foreach ( $core_paths as $core_path ) {
@@ -89,7 +89,8 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 		'stylesheet_directory_uri',
 		'template_directory_uri',
 		'site_url',
-		'content_url'
+		'content_url',
+        'rest_url'
 	];
 	foreach ( $filters as $filter ) {
 		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
@@ -141,6 +142,11 @@ function adjust_main_site_urls( string $url ) : string {
 	if ( is_main_site() && ! __is_login_url( $url ) ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
+
+    // Drop the /wp if the URL is the rest endpoint.
+    if ( strpos( $url, '/wp/wp-json' ) !== false ) {
+        $url = str_replace( '/wp/wp-json', '/wp-json', $url );
+    }
 
 	return $url;
 }
