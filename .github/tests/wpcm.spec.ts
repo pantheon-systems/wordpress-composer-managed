@@ -49,7 +49,7 @@ test("graphql is able to access hello world post", async ({ request }) => {
     apiRoot = await request.get(`${siteUrl}/graphql`);
   }
 
-  expect(apiRoot.ok().toBeTruthy());
+  expect(apiRoot.ok()).toBeTruthy();
   const query = `
     query {
       posts(where: { search: "${exampleArticle}" }) {
