@@ -62,15 +62,23 @@ function fix_core_resource_urls( string $url ) : string {
 	}
 
 	$path = $parsed_url['path'];
-	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/', 'wp-json' ];
+	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
 	$path_modified = false;
 
 	foreach ( $core_paths as $core_path ) {
 		if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
 			$path = str_replace( $current_site_path . $core_path, $core_path, $path );
 			$path_modified = true;
-			break;
 		}
+
+        if ( str_contains( $path, 'wp' ) ) {
+            $path = str_replace( '/wp/', '/', $path );
+            $path_modified = true;
+        }
+
+        if ( $path_modified ) {
+            break;
+        }
 	}
 
 	// If the path was not modified, return the original URL.
@@ -90,8 +98,7 @@ function fix_core_resource_urls( string $url ) : string {
 }
 
 // Only run the filter on non-main sites in a subdirectory multisite network.
-if ( is_multisite() ) {
-    if ( ! is_subdomain_install() && ! is_main_site() ) {
+if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
         $filters = [
             'script_loader_src',
             'style_loader_src',
@@ -105,8 +112,6 @@ if ( is_multisite() ) {
         foreach ( $filters as $filter ) {
             add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
         }
-    }
-    add_filter( 'rest_url', __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 }
 
 /**
@@ -154,11 +159,6 @@ function adjust_main_site_urls( string $url ) : string {
 	if ( is_main_site() && ! __is_login_url( $url ) ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
-
-    // Drop the /wp if the URL is the rest endpoint.
-    if ( strpos( $url, '/wp-json' ) !== false ) {
-        $url = str_replace( '/wp/wp-json', '/wp-json', $url );
-    }
 
 	return $url;
 }
