@@ -25,8 +25,10 @@ if [ "${type}" != 'single' ]; then
 fi
 
 log_into_terminus() {
-  echo -e "${YELLOW}Log into Terminus${RESET}"
-  terminus auth:login --machine-token="${terminus_token}"
+  if ! terminus whoami; then
+    echo -e "${YELLOW}Log into Terminus${RESET}"
+    terminus auth:login --machine-token="${terminus_token}"
+  fi
   terminus art wordpress
 }
 
