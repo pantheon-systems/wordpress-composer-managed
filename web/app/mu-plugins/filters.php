@@ -40,8 +40,18 @@ add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) 
  * @return string The fixed URL.
  */
 function fix_core_resource_urls( string $url ) : string {
+    global $current_blog;
 	$main_site_url = trailingslashit( network_site_url( '/' ) );
-	$current_site_path = trailingslashit( get_blog_details()->path );
+
+    // Get the current site path. Covers a variety of scenarios since we're using this function on a bunch of different filters.
+    $current_site_path = '/'; // Define a default path.
+    if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
+        $current_site_path = trailingslashit( $current_blog->path );
+    } elseif ( function_exists( 'get_blog_details' ) ) {
+        $current_site_path = trailingslashit( get_blog_details()->path );
+    } else {
+        $current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) );
+    }
 
 	// Parse the URL to get its components.
 	$parsed_url = parse_url( $url );
@@ -80,22 +90,24 @@ function fix_core_resource_urls( string $url ) : string {
 }
 
 // Only run the filter on non-main sites in a subdirectory multisite network.
-if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
-	$filters = [
-		'script_loader_src',
-		'style_loader_src',
-		'plugins_url',
-		'theme_file_uri',
-		'stylesheet_directory_uri',
-		'template_directory_uri',
-		'site_url',
-		'content_url',
-	];
-	foreach ( $filters as $filter ) {
-		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
-	}
+if ( is_multisite() ) {
+    if ( ! is_subdomain_install() && ! is_main_site() ) {
+        $filters = [
+            'script_loader_src',
+            'style_loader_src',
+            'plugins_url',
+            'theme_file_uri',
+            'stylesheet_directory_uri',
+            'template_directory_uri',
+            'site_url',
+            'content_url',
+        ];
+        foreach ( $filters as $filter ) {
+            add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
+        }
+    }
+    add_filter( 'rest_url', __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 }
-add_filter( 'rest_url', __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
 
 /**
  * Prepopulate GraphQL endpoint URL with default value if unset.
@@ -152,8 +164,6 @@ function adjust_main_site_urls( string $url ) : string {
 }
 add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
-
-
 
 /**
  * Add /wp prefix to all admin and login URLs.
