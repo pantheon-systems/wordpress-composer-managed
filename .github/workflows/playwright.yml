@@ -154,7 +154,7 @@ jobs:
           SITE_URL: ${{ env.SITE_URL }}
         run: |
           npm run test .github/tests/wpcm.spec.ts
-
+          SITE_NAME=Foo
           SITE_URL=${{ env.SITE_URL }}/foo
           echo "Running Playwright tests on WordPress subdirectory subsite"
             npm run test .github/tests/wpcm.spec.ts
