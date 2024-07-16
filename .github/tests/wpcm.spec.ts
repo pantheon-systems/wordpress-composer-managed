@@ -41,6 +41,15 @@ test("validate core resource URLs", async ({ request }) => {
 });
 
 test("graphql is able to access hello world post", async ({ request }) => {
+  let graphqlEndpoint = `${siteUrl}/wp/graphql`;
+  let apiRoot = await request.get(`${siteUrl}/wp/graphql`);
+  // If the above request doesn't resolve, it's because we're on a subsite where the path is ${siteUrl}/graphql -- similar to the rest api.
+  if (!apiRoot.ok()) {
+    graphqlEndpoint = `${siteUrl}/graphql`;
+    apiRoot = await request.get(`${siteUrl}/graphql`);
+  }
+
+  expect(apiRoot.ok().toBeTruthy());
   const query = `
     query {
       posts(where: { search: "${exampleArticle}" }) {
@@ -53,7 +62,7 @@ test("graphql is able to access hello world post", async ({ request }) => {
     }
   `;
 
-  const response = await request.post(`${siteUrl}/wp/graphql`, {
+  const response = await request.post(graphqlEndpoint, {
     data: {
       query: query
     },
