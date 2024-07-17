@@ -24,7 +24,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
-          COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+          COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"') | sed "s/'/'\"'\"'/g"
           echo "Last commit: ${COMMIT_MSG}"
           # Use printf to correctly handle the commit message with single quotes
           printf "COMMIT_MSG=%s\n" "$COMMIT_MSG" >> $GITHUB_ENV
@@ -99,7 +99,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
-          COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
+          COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"') | sed "s/'/'\"'\"'/g"
           echo "Last commit: $COMMIT_MSG"
           # Use printf to correctly handle the commit message with single quotes
           printf "COMMIT_MSG=%s\n" "$COMMIT_MSG" >> $GITHUB_ENV
