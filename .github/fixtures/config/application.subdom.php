@@ -137,7 +137,7 @@ Config::define( 'WP_POST_REVISIONS', env( 'WP_POST_REVISIONS' ) ?? true );
 /**
  * Debugging Settings
  */
-if ( $_ENV['PANTHEON_ENVIRONMENT'] === 'dev' || isset( $_ENV['LANDO'] ) ) {
+if ( ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && $_ENV['PANTHEON_ENVIRONMENT'] === 'dev' ) || isset( $_ENV['LANDO'] ) ) {
 	Config::define( 'WP_DEBUG_DISPLAY', true );
 	Config::define( 'WP_DEBUG_LOG', true );
 	Config::define( 'SCRIPT_DEBUG', true );
