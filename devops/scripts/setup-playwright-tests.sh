@@ -102,29 +102,26 @@ status_check() {
   echo ""
   echo -e "${YELLOW}Checking WordPress install status${RESET}"
   terminus wp "${site_id}".dev -- cli info
-  if [ "${type}" != 'single' ]; then
-    if ! terminus wp "${site_id}".dev -- config get MULTISITE; then
-      echo -e "${RED}Multisite not found!"
+  if [[ "${type}" == 'single' ]]; then
+    return
+  fi
+    if ! terminus wp "${site_id}".dev -- config is-true MULTISITE; then
+      echo -e "${RED}Multisite not found!${RESET}"
       exit 1
     fi
 
     # Check SUBDOMAIN_INSTALL value
     SUBDOMAIN_INSTALL=$(terminus wp "${site_id}".dev -- config get SUBDOMAIN_INSTALL)
-    if [ "${type}" == 'subdir' ]; then
+    if [[ "${type}" == 'subdir' && "${SUBDOMAIN_INSTALL}" == "1" ]]; then
       # SUBDOMAIN_INSTALL should be false.
-      if [ "${SUBDOMAIN_INSTALL}" == "1" ]; then
-        echo -e "${RED}Subdirectory configuration not found!"
+        echo -e "${RED}Subdirectory configuration not found!${RESET}"
         exit 1
-      fi
     fi
-    if [ "${type}" == 'subdom' ]; then
+    if [[ "${type}" == 'subdom' && "${SUBDOMAIN_INSTALL}" != "1" ]]; then
       # SUBDOMAIN_INSTALL should be true.
-      if [ "${SUBDOMAIN_INSTALL}" != "1" ]; then
-        echo -e "${RED}Subdomain configuration not found!"
+        echo -e "${RED}Subdomain configuration not found!${RESET}"
         exit 1
-      fi
     fi
-  fi
 }
 
 set_up_subsite() {
