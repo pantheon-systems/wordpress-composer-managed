@@ -37,7 +37,6 @@ create_site() {
   echo -e "${YELLOW}Create ${site_id} if it does not exist.${RESET}"
   if terminus site:info "${site_id}"; then
     echo "Test site already exists, skipping site creation."
-    # If the site exists already, we should switch it to git mode.
   else
     terminus site:create "${site_id}" "${site_name}" "${UPSTREAM_NAME}" --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
   fi
