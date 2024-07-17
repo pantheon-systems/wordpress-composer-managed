@@ -4,13 +4,13 @@ set -e
 # This script handles setting up the environments necessary for running Playwright tests on different WordPress (Composer Managed) environments.
 
 # Get variables from environment.
-site_id=${SITE_ID:-""}
-site_name=${SITE_NAME:-""}
-site_url=${SITE_URL:-""}
-type=${TYPE:-""}
-terminus_token=${TERMINUS_TOKEN:-""}
-commit_msg=${COMMIT_MSG:-""}
-workspace=${WORKSPACE:-""}
+readonly site_id=${SITE_ID:-""}
+readonly site_name=${SITE_NAME:-""}
+readonly site_url=${SITE_URL:-""}
+readonly type=${TYPE:-""}
+readonly terminus_token=${TERMINUS_TOKEN:-""}
+readonly commit_msg=${COMMIT_MSG:-""}
+readonly workspace=${WORKSPACE:-""}
 
 # Set some colors.
 RED="\033[1;31m"
@@ -37,7 +37,6 @@ create_site() {
   echo -e "${YELLOW}Create ${site_id} if it does not exist.${RESET}"
   if terminus site:info "${site_id}"; then
     echo "Test site already exists, skipping site creation."
-    # If the site exists already, we should switch it to git mode.
   else
     terminus site:create "${site_id}" "${site_name}" "${UPSTREAM_NAME}" --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
   fi
@@ -54,16 +53,17 @@ clone_site() {
 }
 
 copy_multisite_config() {
-  if [ "${type}" != 'single' ]; then
-    echo ""
-    echo -e "${YELLOW}Copying multisite application.php${RESET}"
-    rm "${workspace}"/config/application.php
-    cp "${workspace}/.github/fixtures/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/"
-    mv "${HOME}/pantheon-local-copies/${site_id}/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
-    cd ~/pantheon-local-copies/"${site_id}"
-    git add "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
-    git commit -m "Set up ${type} multisite config" || true
+  if [[ "${type}" == 'single' ]]; then
+    return
   fi
+  echo ""
+  echo -e "${YELLOW}Copying multisite application.php${RESET}"
+  rm "${workspace}"/config/application.php
+  cp "${workspace}/.github/fixtures/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/"
+  mv "${HOME}/pantheon-local-copies/${site_id}/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
+  cd ~/pantheon-local-copies/"${site_id}"
+  git add "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
+  git commit -m "Set up ${type} multisite config" || true
 }
 
 copy_pr_updates() {
@@ -81,22 +81,17 @@ install_wp() {
   terminus wp "${site_id}".dev -- db reset --yes
   echo ""
   # Single site.
-  if [ "${type}" == 'single' ]; then
+  if [[ "${type}" == 'single' ]]; then
     echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
     terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
   fi
 
-  # Subdirectory multisite.
-  if [ "${type}" == 'subdir' ]; then
-    echo -e "${YELLOW}Install (Subdirectory Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false --url="${site_url}"
+  local is_subdomains="false"
+  if [[ "${type}" == 'subdom' ]]; then
+    is_subdomains="true"
   fi
-
-  # Subdomain multisite.
-  if [ "${type}" == 'subdom' ]; then
-    echo -e "${YELLOW}Install (Subdomain Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true --url="${site_url}"
-  fi
+  
+  terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
 
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
   terminus wp "${site_id}".dev -- rewrite flush
@@ -107,29 +102,26 @@ status_check() {
   echo ""
   echo -e "${YELLOW}Checking WordPress install status${RESET}"
   terminus wp "${site_id}".dev -- cli info
-  if [ "${type}" != 'single' ]; then
-    if ! terminus wp "${site_id}".dev -- config get MULTISITE; then
-      echo -e "${RED}Multisite not found!"
+  if [[ "${type}" == 'single' ]]; then
+    return
+  fi
+    if ! terminus wp "${site_id}".dev -- config is-true MULTISITE; then
+      echo -e "${RED}Multisite not found!${RESET}"
       exit 1
     fi
 
     # Check SUBDOMAIN_INSTALL value
     SUBDOMAIN_INSTALL=$(terminus wp "${site_id}".dev -- config get SUBDOMAIN_INSTALL)
-    if [ "${type}" == 'subdir' ]; then
+    if [[ "${type}" == 'subdir' && "${SUBDOMAIN_INSTALL}" == "1" ]]; then
       # SUBDOMAIN_INSTALL should be false.
-      if [ "${SUBDOMAIN_INSTALL}" == "1" ]; then
-        echo -e "${RED}Subdirectory configuration not found!"
+        echo -e "${RED}Subdirectory configuration not found!${RESET}"
         exit 1
-      fi
     fi
-    if [ "${type}" == 'subdom' ]; then
+    if [[ "${type}" == 'subdom' && "${SUBDOMAIN_INSTALL}" != "1" ]]; then
       # SUBDOMAIN_INSTALL should be true.
-      if [ "${SUBDOMAIN_INSTALL}" != "1" ]; then
-        echo -e "${RED}Subdomain configuration not found!"
+        echo -e "${RED}Subdomain configuration not found!${RESET}"
         exit 1
-      fi
     fi
-  fi
 }
 
 set_up_subsite() {
@@ -164,12 +156,17 @@ install_wp_graphql() {
   echo -e "${YELLOW}Install WP GraphQL${RESET}"
   terminus wp "${site_id}".dev -- plugin install --activate wp-graphql
   terminus env:commit "${site_id}".dev --message="Install WP GraphQL"
+
+  local url
   if [ "${type}" == 'subdom' ]; then
-    # We're going to assume the foo.dev subdomain already exists.
-    terminus wp "${site_id}".dev -- plugin activate wp-graphql --url=foo.dev-"${site_id}".pantheonsite.io
+    url="foo.dev-${site_id}.pantheonsite.io"
+  elif [ "${type}" == 'subdir' ]; then
+    url="${site_url}/foo"
   fi
-  if [ "${type}" == 'subdir' ]; then
-    terminus wp "${site_id}".dev -- plugin activate wp-graphql --url="${site_url}"/foo
+  
+  # activate if not single site
+  if [[ -n "$url" ]]; then
+    terminus wp "${site_id}.dev" -- plugin activate wp-graphql --url="$url"
   fi
 }
 
