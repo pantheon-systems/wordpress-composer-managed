@@ -81,22 +81,17 @@ install_wp() {
   terminus wp "${site_id}".dev -- db reset --yes
   echo ""
   # Single site.
-  if [ "${type}" == 'single' ]; then
+  if [[ "${type}" == 'single' ]]; then
     echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
     terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
   fi
 
-  # Subdirectory multisite.
-  if [ "${type}" == 'subdir' ]; then
-    echo -e "${YELLOW}Install (Subdirectory Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=false --url="${site_url}"
+  local is_subdomains="false"
+  if [[ "${type}" == 'subdom' ]]; then
+    is_subdomains="true"
   fi
-
-  # Subdomain multisite.
-  if [ "${type}" == 'subdom' ]; then
-    echo -e "${YELLOW}Install (Subdomain Multisite) WordPress${RESET}"
-    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains=true --url="${site_url}"
-  fi
+  
+  terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
 
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
   terminus wp "${site_id}".dev -- rewrite flush
