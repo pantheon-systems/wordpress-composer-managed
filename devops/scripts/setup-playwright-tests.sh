@@ -156,12 +156,17 @@ install_wp_graphql() {
   echo -e "${YELLOW}Install WP GraphQL${RESET}"
   terminus wp "${site_id}".dev -- plugin install --activate wp-graphql
   terminus env:commit "${site_id}".dev --message="Install WP GraphQL"
+
+  local url
   if [ "${type}" == 'subdom' ]; then
-    # We're going to assume the foo.dev subdomain already exists.
-    terminus wp "${site_id}".dev -- plugin activate wp-graphql --url=foo.dev-"${site_id}".pantheonsite.io
+    url="foo.dev-${site_id}.pantheonsite.io"
+  elif [ "${type}" == 'subdir' ]; then
+    url="${site_url}/foo"
   fi
-  if [ "${type}" == 'subdir' ]; then
-    terminus wp "${site_id}".dev -- plugin activate wp-graphql --url="${site_url}"/foo
+  
+  # activate if not single site
+  if [[ -n "$url" ]]; then
+    terminus wp "${site_id}.dev" -- plugin activate wp-graphql --url="$url"
   fi
 }
 
