@@ -125,29 +125,28 @@ status_check() {
 }
 
 set_up_subsite() {
-  if [ "${type}" != 'single' ]; then
+  if [[ "${type}" == 'single' ]]; then
+    return
+  fi
     echo ""
     echo -e "${YELLOW}Set up subsite${RESET}"
     # Set a URL var for the type of multisite.
-    if [ "${type}" == 'subdom' ]; then
+    if [[ "${type}" == 'subdom' ]]; then
       URL="foo.dev-${site_id}.pantheonsite.io"
     fi
-    if [ "${type}" == 'subdir' ]; then
+    if [[ "${type}" == 'subdir' ]]; then
       URL="${site_url}/foo"
     fi
 
     # Check if the sub-site already exists.
-    EXISTING_SITE=$(terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo" || true)
-
-    if [ -z "$EXISTING_SITE" ]; then
+    if terminus wp "${site_id}".dev -- site list --field=url | grep -w "foo"; then
+      echo -e "${YELLOW}Sub-site already exists at $URL. Skipping creation.${RESET}"
+    else
       # Create the sub-site only if it does not already exist.
       terminus wp "${site_id}".dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
-      terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
-    else
-      echo -e "${YELLOW}Sub-site already exists at $URL. Skipping creation.${RESET}"
+      terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"      
     fi
     terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
-  fi
 }
 
 install_wp_graphql() {
