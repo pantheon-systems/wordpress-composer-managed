@@ -26,7 +26,8 @@ jobs:
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "Last commit: ${COMMIT_MSG}"
-          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
+          # Use printf to correctly handle the commit message with single quotes
+          printf "COMMIT_MSG=%s\n" "$COMMIT_MSG" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
@@ -100,7 +101,8 @@ jobs:
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           echo "Last commit: $COMMIT_MSG"
-          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+          # Use printf to correctly handle the commit message with single quotes
+          printf "COMMIT_MSG=%s\n" "$COMMIT_MSG" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
