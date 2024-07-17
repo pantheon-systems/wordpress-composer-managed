@@ -13,12 +13,6 @@
 use Roots\WPConfig\Config;
 use function Env\env;
 
-// Cookie settings.
-defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', $_SERVER['HTTP_HOST'] );
-defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
-defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
-defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
-
 // Pantheon-specific settings.
 if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 	// These settings do not apply when using Lando local.
@@ -86,3 +80,9 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 		define( 'PANTHEON_HOSTNAME', $hostname );
 	}
 }
+
+// Cookie settings.
+defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', PANTHEON_HOSTNAME );
+defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
+defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
+defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
