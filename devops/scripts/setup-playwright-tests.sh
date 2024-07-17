@@ -53,16 +53,17 @@ clone_site() {
 }
 
 copy_multisite_config() {
-  if [ "${type}" != 'single' ]; then
-    echo ""
-    echo -e "${YELLOW}Copying multisite application.php${RESET}"
-    rm "${workspace}"/config/application.php
-    cp "${workspace}/.github/fixtures/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/"
-    mv "${HOME}/pantheon-local-copies/${site_id}/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
-    cd ~/pantheon-local-copies/"${site_id}"
-    git add "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
-    git commit -m "Set up ${type} multisite config" || true
+  if [[ "${type}" == 'single' ]]; then
+    return
   fi
+  echo ""
+  echo -e "${YELLOW}Copying multisite application.php${RESET}"
+  rm "${workspace}"/config/application.php
+  cp "${workspace}/.github/fixtures/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/"
+  mv "${HOME}/pantheon-local-copies/${site_id}/config/application.${type}.php" "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
+  cd ~/pantheon-local-copies/"${site_id}"
+  git add "${HOME}/pantheon-local-copies/${site_id}/config/application.php"
+  git commit -m "Set up ${type} multisite config" || true
 }
 
 copy_pr_updates() {
