@@ -4,13 +4,13 @@ set -e
 # This script handles setting up the environments necessary for running Playwright tests on different WordPress (Composer Managed) environments.
 
 # Get variables from environment.
-site_id=${SITE_ID:-""}
-site_name=${SITE_NAME:-""}
-site_url=${SITE_URL:-""}
-type=${TYPE:-""}
-terminus_token=${TERMINUS_TOKEN:-""}
-commit_msg=${COMMIT_MSG:-""}
-workspace=${WORKSPACE:-""}
+readonly site_id=${SITE_ID:-""}
+readonly site_name=${SITE_NAME:-""}
+readonly site_url=${SITE_URL:-""}
+readonly type=${TYPE:-""}
+readonly terminus_token=${TERMINUS_TOKEN:-""}
+readonly commit_msg=${COMMIT_MSG:-""}
+readonly workspace=${WORKSPACE:-""}
 
 # Set some colors.
 RED="\033[1;31m"
