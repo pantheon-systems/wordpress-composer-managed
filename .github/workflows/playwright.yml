@@ -25,8 +25,8 @@ jobs:
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-          echo "Last commit: $COMMIT_MSG"
-          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+          echo "Last commit: ${COMMIT_MSG}"
+          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
@@ -178,8 +178,8 @@ jobs:
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-          echo "Last commit: $COMMIT_MSG"
-          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+          echo "Last commit: ${COMMIT_MSG}"
+          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
