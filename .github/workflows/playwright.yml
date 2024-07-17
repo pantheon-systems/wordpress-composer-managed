@@ -25,10 +25,10 @@ jobs:
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-          # Handle single quotes in the commit message
-          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed "s/'/'\"'\"'/g")
-          echo "Last commit: ${COMMIT_MSG}"
-          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
+          # Escape newlines and other special characters to prevent issues
+          ESCAPED_COMMIT_MSG=$(printf "%q" "$COMMIT_MSG")
+          echo "Last commit: ${ESCAPED_COMMIT_MSG}"
+          echo "COMMIT_MSG=${ESCAPED_COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
@@ -101,10 +101,10 @@ jobs:
           cd ${{ github.workspace }}/
           PR_NUMBER=$(echo ${{ github.event.pull_request.number }})
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
-          # Handle single quotes in the commit message
-          COMMIT_MSG=$(echo "$COMMIT_MSG" | sed "s/'/'\"'\"'/g")
-          echo "Last commit: ${COMMIT_MSG}"
-          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
+          # Escape newlines and other special characters to prevent issues
+          ESCAPED_COMMIT_MSG=$(printf "%q" "$COMMIT_MSG")
+          echo "Last commit: ${ESCAPED_COMMIT_MSG}"
+          echo "COMMIT_MSG=${ESCAPED_COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
