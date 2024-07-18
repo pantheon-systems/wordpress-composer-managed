@@ -40,8 +40,18 @@ add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) 
  * @return string The fixed URL.
  */
 function fix_core_resource_urls( string $url ) : string {
+	global $current_blog;
 	$main_site_url = trailingslashit( network_site_url( '/' ) );
-	$current_site_path = trailingslashit( get_blog_details()->path );
+
+	// Get the current site path. Covers a variety of scenarios since we're using this function on a bunch of different filters.
+	$current_site_path = '/'; // Define a default path.
+	if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
+		$current_site_path = trailingslashit( $current_blog->path );
+	} elseif ( function_exists( 'get_blog_details' ) ) {
+		$current_site_path = trailingslashit( get_blog_details()->path );
+	} else {
+		$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) );
+	}
 
 	// Parse the URL to get its components.
 	$parsed_url = parse_url( $url );
@@ -59,6 +69,14 @@ function fix_core_resource_urls( string $url ) : string {
 		if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
 			$path = str_replace( $current_site_path . $core_path, $core_path, $path );
 			$path_modified = true;
+		}
+
+		if ( str_contains( $path, 'wp' ) ) {
+			$path = str_replace( '/wp/', '/', $path );
+			$path_modified = true;
+		}
+
+		if ( $path_modified ) {
 			break;
 		}
 	}
@@ -81,19 +99,19 @@ function fix_core_resource_urls( string $url ) : string {
 
 // Only run the filter on non-main sites in a subdirectory multisite network.
 if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
-	$filters = [
-		'script_loader_src',
-		'style_loader_src',
-		'plugins_url',
-		'theme_file_uri',
-		'stylesheet_directory_uri',
-		'template_directory_uri',
-		'site_url',
-		'content_url'
-	];
-	foreach ( $filters as $filter ) {
-		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
-	}
+		$filters = [
+			'script_loader_src',
+			'style_loader_src',
+			'plugins_url',
+			'theme_file_uri',
+			'stylesheet_directory_uri',
+			'template_directory_uri',
+			'site_url',
+			'content_url',
+		];
+		foreach ( $filters as $filter ) {
+			add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
+		}
 }
 
 /**
@@ -105,16 +123,16 @@ if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
 function prepopulate_graphql_endpoint_url() {
 	$options = get_option( 'graphql_general_settings' );
 
-    // Bail early if options have already been set.
-    if ( $options ) {
-        return;
-    }
+	// Bail early if options have already been set.
+	if ( $options ) {
+		return;
+	}
 
-    $options = [];
+	$options = [];
 	$site_path = site_url();
-    $endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
-    $options['graphql_endpoint'] = $endpoint;
-    update_option( 'graphql_general_settings', $options );
+	$endpoint = ( ! empty( $site_path ) || strpos( $site_path, 'wp' ) !== false ) ? 'graphql' : 'wp/graphql';
+	$options['graphql_endpoint'] = $endpoint;
+	update_option( 'graphql_general_settings', $options );
 }
 add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url' );
 
@@ -225,7 +243,7 @@ function __normalize_wp_url( string $url ): string {
 function __rebuild_url_from_parts( array $parts ) : string {
 	return trailingslashit(
 		( isset( $parts['scheme'] ) ? "{$parts['scheme']}:" : '' ) .
-        ( isset( $parts['host'] ) ? "{$parts['host']}" : '' ) .
+		( isset( $parts['host'] ) ? "{$parts['host']}" : '' ) .
 		( isset( $parts['path'] ) ? untrailingslashit( "{$parts['path']}" ) : '' ) .
 		( isset( $parts['query'] ) ? str_replace( '/', '', "?{$parts['query']}" ) : '' ) .
 		( isset( $parts['fragment'] ) ? str_replace( '/', '', "#{$parts['fragment']}" ) : '' )

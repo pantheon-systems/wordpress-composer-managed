@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const exampleArticle = "Hello world!";
-const siteTitle = "WPCM Playwright Tests";
+const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
 const siteUrl = process.env.SITE_URL || "https://dev-wpcm-playwright-tests.pantheonsite.io";
 
 test("homepage loads and contains example content", async ({ page }) => {
@@ -11,7 +11,11 @@ test("homepage loads and contains example content", async ({ page }) => {
 });
 
 test("WP REST API is accessible", async ({ request }) => {
-  const apiRoot = await request.get(`${siteUrl}/wp-json`);
+  let apiRoot = await request.get(`${siteUrl}/wp-json`);
+  // If the api endpoint isn't /wp-json, it should be /wp/wp-json. This will probably be the case for main sites on subdirectory multisites.
+  if (!apiRoot.ok()) {
+    apiRoot = await request.get(`${siteUrl}/wp/wp-json`);
+  }
   expect(apiRoot.ok()).toBeTruthy();
 });
 
@@ -37,6 +41,15 @@ test("validate core resource URLs", async ({ request }) => {
 });
 
 test("graphql is able to access hello world post", async ({ request }) => {
+  let graphqlEndpoint = `${siteUrl}/wp/graphql`;
+  let apiRoot = await request.get(`${siteUrl}/wp/graphql`);
+  // If the above request doesn't resolve, it's because we're on a subsite where the path is ${siteUrl}/graphql -- similar to the rest api.
+  if (!apiRoot.ok()) {
+    graphqlEndpoint = `${siteUrl}/graphql`;
+    apiRoot = await request.get(`${siteUrl}/graphql`);
+  }
+
+  expect(apiRoot.ok()).toBeTruthy();
   const query = `
     query {
       posts(where: { search: "${exampleArticle}" }) {
@@ -49,7 +62,7 @@ test("graphql is able to access hello world post", async ({ request }) => {
     }
   `;
 
-  const response = await request.post(`${siteUrl}/wp/graphql`, {
+  const response = await request.post(graphqlEndpoint, {
     data: {
       query: query
     },

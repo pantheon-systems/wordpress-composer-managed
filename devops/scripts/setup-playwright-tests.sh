@@ -70,7 +70,7 @@ copy_pr_updates() {
   echo "Commit Message: ${commit_msg}"
   cd ~/pantheon-local-copies/"${site_id}"
   echo -e "${YELLOW}Copying latest changes and committing to the site.${RESET}"
-  rsync -a --exclude='.git' --exclude='status-*.txt' "${workspace}/" .
+  rsync -a --exclude='.git' "${workspace}"/ .
   git add -A
   git commit -m "Update to latest commit: ${commit_msg}" || true
   git push origin master || true
@@ -90,7 +90,7 @@ install_wp() {
   if [[ "${type}" == 'subdom' ]]; then
     is_subdomains="true"
   fi
-
+  
   terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
 
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
@@ -144,7 +144,7 @@ set_up_subsite() {
     else
       # Create the sub-site only if it does not already exist.
       terminus wp "${site_id}".dev -- site create --slug=foo --title="Foo" --email="foo@dev.null"
-      terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
+      terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"      
     fi
     terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/' --url="$URL"
 }
@@ -162,7 +162,7 @@ install_wp_graphql() {
   elif [ "${type}" == 'subdir' ]; then
     url="${site_url}/foo"
   fi
-
+  
   # activate if not single site
   if [[ -n "$url" ]]; then
     terminus wp "${site_id}.dev" -- plugin activate wp-graphql --url="$url"
