@@ -14,10 +14,12 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Install Composer dependencies and run PHPCBF
         run: |
+          CBF=false
           composer install
-          composer phpcbf || true # Allow the workflow to continue even if PHPCBF fails
+          composer phpcbf || CBF=true && echo "cbf=true" >> $GITHUB_ENV
       - name: Commit changes to PR
         id: git-auto-commit
+        if: env.cbf == 'true'
         run: |
           git config --global user.email "bot@getpantheon.com"
           git config --global user.name "Pantheon Robot"
