@@ -62,22 +62,14 @@ function fix_core_resource_urls( string $url ) : string {
 	}
 
 	$path = $parsed_url['path'];
-	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
+	$core_paths = [ '/wp-includes/', '/wp-content/' ];
 	$path_modified = false;
 
 	foreach ( $core_paths as $core_path ) {
 		if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
 			$path = str_replace( $current_site_path . $core_path, $core_path, $path );
 			$path_modified = true;
-		}
-
-		if ( str_contains( $path, 'wp' ) ) {
-			$path = str_replace( '/wp/', '/', $path );
-			$path_modified = true;
-		}
-
-		if ( $path_modified ) {
-			break;
+            break;
 		}
 	}
 
@@ -164,26 +156,6 @@ function adjust_main_site_urls( string $url ) : string {
 }
 add_filter( 'home_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
 add_filter( 'site_url', __NAMESPACE__ . '\\adjust_main_site_urls', 9 );
-
-/**
- * Add /wp prefix to all admin and login URLs.
- * Since /wp is where the core files are installed, this normalizes all non-front-facing urls to use the correct url structure.
- *
- * @since 1.1.0
- * @param string $url The URL to check.
- * @return string The corrected admin or login URL (or the base url if not an admin or login url).
- */
-function add_wp_prefix_to_login_and_admin_urls( string $url ) : string {
-	if (  ! __is_login_url( $url ) ) {
-		return $url;
-	}
-	if ( strpos( $url, '/wp/' ) !== false ) {
-		return $url;
-	}
-	return __normalize_wp_url( preg_replace( '/(\/wp-(login|admin))/', '/wp/$1', $url ) );
-}
-add_filter( 'login_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
-add_filter( 'admin_url', __NAMESPACE__ . '\\add_wp_prefix_to_login_and_admin_urls', 9 );
 
 /**
  * Check the URL to see if it's either an admin or wp-login URL.
