@@ -69,15 +69,7 @@ function fix_core_resource_urls( string $url ) : string {
 		if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
 			$path = str_replace( $current_site_path . $core_path, $core_path, $path );
 			$path_modified = true;
-		}
-
-		if ( str_contains( $path, 'wp' ) ) {
-			$path = str_replace( '/wp/', '/', $path );
-			$path_modified = true;
-		}
-
-		if ( $path_modified ) {
-			break;
+            break;
 		}
 	}
 
