@@ -25,10 +25,11 @@ jobs:
           git config --global user.name "Pantheon Robot"
           DIFF=$(git diff-index --quiet HEAD || echo "true")
           if [ "$DIFF" == "true" ]; then
+            CHANGES_DETECTED=true
             git add *.php
             git commit -m "PHPCBF: Fix coding standards" --no-verify
-            git push origin ${{ github.event.pull_request.head.ref }}
-            echo "changes_detected=true" >> $GITHUB_ENV
+            git push origin ${{ github.event.pull_request.head.ref }} || CHANGES_DETECTED=false
+            echo "changes_detected=$CHANGES_DETECTED" >> $GITHUB_ENV
           else
             echo "changes_detected=false" >> $GITHUB_ENV
           fi
