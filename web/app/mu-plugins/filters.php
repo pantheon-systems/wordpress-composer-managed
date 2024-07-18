@@ -62,7 +62,7 @@ function fix_core_resource_urls( string $url ) : string {
 	}
 
 	$path = $parsed_url['path'];
-	$core_paths = [ 'wp-includes/', 'wp-admin/', 'wp-content/' ];
+	$core_paths = [ '/wp-includes/', '/wp-content/' ];
 	$path_modified = false;
 
 	foreach ( $core_paths as $core_path ) {
