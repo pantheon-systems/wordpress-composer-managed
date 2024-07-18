@@ -27,10 +27,12 @@ jobs:
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           # Remove newlines and carriage returns
           CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr -d '\n' | tr -d '\r')
-          # Escape single quotes
-          ESCAPED_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'/'\"'\"'/g")
-          echo "Last commit: ${ESCAPED_COMMIT_MSG}"
-          echo "COMMIT_MSG=${ESCAPED_COMMIT_MSG}" >> $GITHUB_ENV
+          # Replace newlines and carriage returns with spaces
+          CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr '\n\r' '  ')
+          # Remove single quotes
+          CLEAN_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'//g")
+          echo "Cleaned commit message: ${CLEAN_COMMIT_MSG}"
+          echo "COMMIT_MSG=${CLEAN_COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
@@ -105,10 +107,12 @@ jobs:
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           # Remove newlines and carriage returns
           CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr -d '\n' | tr -d '\r')
-          # Escape single quotes
-          ESCAPED_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'/'\"'\"'/g")
-          echo "Last commit: ${ESCAPED_COMMIT_MSG}"
-          echo "COMMIT_MSG=${ESCAPED_COMMIT_MSG}" >> $GITHUB_ENV
+          # Replace newlines and carriage returns with spaces
+          CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr '\n\r' '  ')
+          # Remove single quotes
+          CLEAN_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'//g")
+          echo "Cleaned commit message: ${CLEAN_COMMIT_MSG}"
+          echo "COMMIT_MSG=${CLEAN_COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
@@ -188,10 +192,12 @@ jobs:
           COMMIT_MSG=$(gh pr view $PR_NUMBER --json commits --jq '.commits[-1] | "\(.messageHeadline) \(.messageBody)"')
           # Remove newlines and carriage returns
           CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr -d '\n' | tr -d '\r')
-          # Escape single quotes
-          ESCAPED_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'/'\"'\"'/g")
-          echo "Last commit: ${ESCAPED_COMMIT_MSG}"
-          echo "COMMIT_MSG=${ESCAPED_COMMIT_MSG}" >> $GITHUB_ENV
+          # Replace newlines and carriage returns with spaces
+          CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | tr '\n\r' '  ')
+          # Remove single quotes
+          CLEAN_COMMIT_MSG=$(echo "$CLEAN_COMMIT_MSG" | sed "s/'//g")
+          echo "Cleaned commit message: ${CLEAN_COMMIT_MSG}"
+          echo "COMMIT_MSG=${CLEAN_COMMIT_MSG}" >> $GITHUB_ENV
 
       - name: Set up env variables
         run: |
