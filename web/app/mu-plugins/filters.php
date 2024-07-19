@@ -33,6 +33,14 @@ add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) 
 } );
 
 /**
+ * Disable the subdirectory networks custom wp-content directory warning.
+ *
+ * @since 1.2.0
+ * @return bool Default true. We set false to disable the warning.
+ */
+add_filter( 'pantheon.enable_subdirectory_networks_message', '__return_false' );
+
+/**
  * Correct core resource URLs for non-main sites in a subdirectory multisite network.
  *
  * @since 1.1.0
