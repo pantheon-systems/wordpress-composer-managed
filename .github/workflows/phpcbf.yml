@@ -16,20 +16,17 @@ jobs:
         run: |
           CBF=false
           composer install
-          composer lint:phpcbf || true
-          if [ $? -ne 0 ]; then
+          if ! composer lint:phpcbf; then
             echo "cbf=true" >> $GITHUB_ENV
           else
             echo "cbf=false" >> $GITHUB_ENV
           fi
       - name: Commit changes to PR
-        id: git-auto-commit
         if: env.cbf == 'true'
         run: |
           git config --global user.email "bot@getpantheon.com"
           git config --global user.name "Pantheon Robot"
-          DIFF=$(git diff-index --quiet HEAD || echo "true")
-          if [ "$DIFF" == "true" ]; then
+          if ! git diff-index --quiet HEAD; then
             CHANGES_DETECTED=true
             git add *.php
             git commit -m "PHPCBF: Fix coding standards" --no-verify
