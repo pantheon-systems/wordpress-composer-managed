@@ -3,7 +3,7 @@
  * Plugin Name: Pantheon WordPress Filters
  * Plugin URI:   https://github.com/pantheon-systems/wordpress-composer-managed
  * Description:  Filters for Composer-managed WordPress sites on Pantheon.
- * Version:      1.1.0
+ * Version:      1.2.0
  * Author:       Pantheon Systems
  * Author URI:   https://pantheon.io/
  * License:      MIT License
@@ -31,6 +31,14 @@ add_filter( 'pantheon.multisite.config_contents', function ( $config_contents ) 
 add_filter( 'pantheon.multisite.config_filename', function ( $config_filename ) {
 	return 'config/application.php';
 } );
+
+/**
+ * Disable the subdirectory networks custom wp-content directory warning.
+ *
+ * @since 1.2.0
+ * @return bool Default true. We set false to disable the warning.
+ */
+add_filter( 'pantheon.enable_subdirectory_networks_message', '__return_false' );
 
 /**
  * Correct core resource URLs for non-main sites in a subdirectory multisite network.
