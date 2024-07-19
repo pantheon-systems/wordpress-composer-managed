@@ -23,7 +23,6 @@ jobs:
             echo "cbf=false" >> $GITHUB_ENV
           fi
       - name: Commit changes to PR
-        id: git-auto-commit
         if: env.cbf == 'true'
         run: |
           git config --global user.email "bot@getpantheon.com"
