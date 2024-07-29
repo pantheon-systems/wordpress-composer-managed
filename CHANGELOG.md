@@ -1,3 +1,7 @@
+### v1.31.1 (2024-07-29)
+* Removes code that for handling wp-admin URLs. ([#143](https://github.com/pantheon-systems/wordpress-composer-managed/pull/143)) This code was not working as intended and testing revealed it to be unnecessary.
+* Adds a filter to disable the subdirectory multisite custom wp-content directory warning. ([#144](https://github.com/pantheon-systems/wordpress-composer-managed/pull/144)) This implements the filter added in the [Pantheon MU Plugin](https://github.com/pantheon-systems/pantheon-mu-plugin) in [#51](https://github.com/pantheon-systems/pantheon-mu-plugin/pull/51).
+
 ### v1.31.0 (2024-07-10)
 * `wp-config-pantheon.php` deprecated in favor of `application.pantheon.php`. All previous functionality in `wp-config-pantheon.php` moved to `application.pantheon.php`. ([#139](https://github.com/pantheon-systems/wordpress-composer-managed/pull/139))
 * `DISABLE_WP_CRON` constant removed from `application.php` (and `wp-config-pantheon.php`) and moved to `application.pantheon.php`. ([#139](https://github.com/pantheon-systems/wordpress-composer-managed/pull/139)) It's possible this change could cause a merge conflict. Accept incoming changes from the upstream or [resolve manually](https://docs.pantheon.io/guides/git/resolve-merge-conflicts).
