@@ -35,7 +35,7 @@ function identify_commit_type() {
 # Verifies that the given commit does not contain forbidden files.
 function only_allowed_files() {
   local commit=$1
-  local forbidden_files=("composer.lock" ".github/workflows/ci.yml")
+  local forbidden_files=("composer.lock" "package-lock.json")
   local has_forbidden_files=0
 
   affected_paths=$(git show "${commit}" --pretty=oneline --name-only | tail -n +2)
