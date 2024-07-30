@@ -1,11 +1,9 @@
 name: WordPress Composer Playwright Tests
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["Lint and Test"]
     types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
+      - completed
 
 permissions:
     contents: write
@@ -17,6 +15,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download build status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: status
+
+      - name: Check status
+        id: check-status
+        run: |
+          status=$(cat status.txt)
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: exit 1
 
       - name: Get last commit message
         env:
@@ -97,6 +110,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download build status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: status
+
+      - name: Check status
+        id: check-status
+        run: |
+          status=$(cat status.txt)
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: exit 1
 
       - name: Get last commit message
         env:
@@ -182,6 +210,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download build status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: status
+
+      - name: Check status
+        id: check-status
+        run: |
+          status=$(cat status.txt)
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: exit 1
 
       - name: Get last commit message
         env:

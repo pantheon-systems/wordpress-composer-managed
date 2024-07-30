@@ -68,3 +68,17 @@ jobs:
         CI: 1
       run: |
           bats -p -t .github/tests
+
+    - name: Create failure status artifact
+      if: failure()
+      run: echo "1" > status.txt
+    - name: Create success status artifact
+      if: success()
+      run: echo "0" > status.txt
+
+    - name: Upload status artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: status
+        path: status.txt
