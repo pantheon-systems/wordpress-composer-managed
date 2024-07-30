@@ -211,20 +211,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download build status artifact
+      - name: Download 8.1 build status artifact
         uses: actions/download-artifact@v4
         with:
-          name: status
+          name: status-8.1
+
+      - name: Download 8.2 build status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: status-8.2
+
+      - name: Download 8.3 build status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: status-8.3
 
       - name: Check status
         id: check-status
         run: |
-          status=$(cat status.txt)
+          status=0
+          for file in status-*.txt; do
+            status=$(cat $file)
+            if [ $status -eq 1 ]; then
+              echo "status=$status" >> $GITHUB_ENV
+              exit 1
+            fi
           echo "status=$status" >> $GITHUB_ENV
 
       - name: Linting failed
         if: env.status == '1'
-        run: exit 1
+        run: |
+          echo "One or more jobs in a previous workflow failed. Exiting."
+          exit 1
 
       - name: Get last commit message
         env:
