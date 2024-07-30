@@ -71,10 +71,19 @@ jobs:
 
     - name: Create failure status artifact
       if: failure()
-      run: echo "1" > status.txt
+      run: |
+        # In the case of a failure, remove the previous status, whatever it was, and update it to 1.
+        if [ -f status.txt ]; then
+          rm status.txt
+        fi
+        echo "1" > status.txt
     - name: Create success status artifact
       if: success()
-      run: echo "0" > status.txt
+      run: |
+        # Only create a status file if it doesn't already exist.
+        if [ ! -f status.txt ]; then
+          echo "0" > status.txt
+        fi
 
     - name: Upload status artifact
       uses: actions/upload-artifact@v4
