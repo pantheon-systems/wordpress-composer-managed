@@ -75,14 +75,14 @@ jobs:
       if: failure()
       run: |
         # In the case of a failure, remove the previous status, whatever it was, and update it to 1.
-        if [ -f status-${{ matrix.php-version }}.txt ]; then
-          rm status-${{ matrix.php-version }}.txt
+        if [ -f status-${{ matrix.php-version }}-${{ github.sha }}.txt ]; then
+          rm status-${{ matrix.php-version }}-${{ github.sha }}.txt
         fi
-        echo "1" > status-${{ matrix.php-version }}.txt
+        echo "1" > status-${{ matrix.php-version }}-${{ github.sha }}.txt
     - name: Create success status artifact
       if: success()
       run: |
         # Only create a status file if it doesn't already exist.
-        if [ ! -f status-${{ matrix.php-version }}.txt ]; then
-          echo "0" > status-${{ matrix.php-version }}.txt
+        if [ ! -f status-${{ matrix.php-version }}-${{ github.sha }}.txt ]; then
+          echo "0" > status-${{ matrix.php-version }}-${{ github.sha }}.txt
         fi
