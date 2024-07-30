@@ -71,25 +71,7 @@ jobs:
       run: |
           bats -p -t .github/tests
 
-    - name: Create failure status artifact
-      if: failure()
-      run: |
-        # In the case of a failure, remove the previous status, whatever it was, and update it to 1.
-        if [ -f status-*.txt ]; then
-          rm status-*.txt
-        fi
-        echo "1" > status-${{ matrix.php-version }}.txt
-    - name: Create success status artifact
+    - name: Dispatch Playwright tests
       if: success()
       run: |
-        # Only create a status file if it doesn't already exist.
-        if [ ! -f status.txt ]; then
-          echo "0" > status-${{ matrix.php-version }}.txt
-        fi
-
-    - name: Upload status artifact
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: status-${{ matrix.php-version }}
-        path: status-${{ matrix.php-version }}.txt
+        gh workflow run playwright.yml --ref ${{ github.event.pull_request.head.ref }}
