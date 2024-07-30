@@ -12,11 +12,6 @@ permissions:
     actions: read
 
 jobs:
-  test-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Note success
-        run: echo "Triggered workflow started"
 
   playwright-single:
     name: Single site
