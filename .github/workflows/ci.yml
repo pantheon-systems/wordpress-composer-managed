@@ -91,34 +91,3 @@ jobs:
       with:
         name: status-${{ matrix.php-version }}
         path: status-${{ matrix.php-version }}.txt
-
-  generate-aggregate-status:
-    runs-on: ubuntu-latest
-    needs: build
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2', '8.3']
-
-    steps:
-    - name: Download status artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: status-${{ matrix.php-version }}
-
-    - name: Aggregate status
-      run: |
-        # If any of the status files contain a 1, then the aggregate status is 1.
-        for file in status-*.txt; do
-          if [ "$(cat $file)" == "1" ]; then
-            echo "1" > status.txt
-            exit 0
-          fi
-          # If we get here, then the status is 0.
-          echo "0" > status.txt
-        done
-
-    - name: Upload aggregate status
-      uses: actions/upload-artifact@v4
-      with:
-        name: status
-        path: status.txt
