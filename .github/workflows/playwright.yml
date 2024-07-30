@@ -1,9 +1,6 @@
 name: WordPress Composer Playwright Tests
 on:
-  workflow_run:
-    workflows: ["Lint and Test"]
-    types:
-      - completed
+  workflow_dispatch:
 
 permissions:
     contents: write
