@@ -60,6 +60,8 @@ jobs:
               exit 1
             fi
           done
+
+          echo "Linting tests passed. Proceeding with Playwright tests. ✅"
           echo "status=$status" >> $GITHUB_ENV
 
       - name: Linting failed
