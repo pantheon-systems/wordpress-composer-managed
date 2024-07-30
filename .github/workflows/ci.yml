@@ -71,9 +71,18 @@ jobs:
       run: |
           bats -p -t .github/tests
 
-    - name: Dispatch Playwright tests
-      if: success()
-      env:
-        GH_TOKEN: ${{ github.token }}
+    - name: Create failure status artifact
+      if: failure()
       run: |
-        gh workflow run playwright.yml --ref ${{ github.event.pull_request.head.ref }}
+        # In the case of a failure, remove the previous status, whatever it was, and update it to 1.
+        if [ -f status-${{ matrix.php-version }}.txt ]; then
+          rm status-${{ matrix.php-version }}.txt
+        fi
+        echo "1" > status-${{ matrix.php-version }}.txt
+    - name: Create success status artifact
+      if: success()
+      run: |
+        # Only create a status file if it doesn't already exist.
+        if [ ! -f status-${{ matrix.php-version }}.txt ]; then
+          echo "0" > status-${{ matrix.php-version }}.txt
+        fi
