@@ -86,3 +86,9 @@ jobs:
         if [ ! -f status-${{ matrix.php-version }}-${{ github.sha }}.txt ]; then
           echo "0" > status-${{ matrix.php-version }}-${{ github.sha }}.txt
         fi
+
+    - name: Upload status artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: status-${{ matrix.php-version }}-${{ github.sha }}
+        path: status-${{ matrix.php-version }}-${{ github.sha }}.txt
