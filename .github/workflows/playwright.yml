@@ -34,13 +34,11 @@ jobs:
 
           while [ $attempt -lt $max_attempts ]; do
             # Attempt to download the artifacts.
-            gh run download -n status-8.1-${{ github.sha }}
-            gh run download -n status-8.2-${{ github.sha }}
-            gh run download -n status-8.3-${{ github.sha }}
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
 
             if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
-              ls status-*.txt
-              echo "All status files found."
               success=1
               break
             else
@@ -164,9 +162,9 @@ jobs:
 
           while [ $attempt -lt $max_attempts ]; do
             # Attempt to download the artifacts.
-            gh run download -n status-8.1-${{ github.sha }}
-            gh run download -n status-8.2-${{ github.sha }}
-            gh run download -n status-8.3-${{ github.sha }}
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
 
             if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
               success=1
@@ -297,9 +295,9 @@ jobs:
 
           while [ $attempt -lt $max_attempts ]; do
             # Attempt to download the artifacts.
-            gh run download -n status-8.1-${{ github.sha }}
-            gh run download -n status-8.2-${{ github.sha }}
-            gh run download -n status-8.3-${{ github.sha }}
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
 
             if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
               success=1
