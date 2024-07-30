@@ -38,6 +38,8 @@ jobs:
 
     - name: Check Commits
       run: |
+        # Don't warn about detached head.
+        git config variable advice.detachedHead false
         git fetch --all
         git checkout -b default origin/default
         git checkout ${{ github.event.pull_request.head.sha }}
