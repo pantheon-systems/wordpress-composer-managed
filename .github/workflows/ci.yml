@@ -11,7 +11,7 @@ on:
 permissions:
     contents: write
     actions: read
-    id-token: write
+    pull-requests: write
 
 jobs:
   build:
@@ -50,6 +50,8 @@ jobs:
 
     - name: Comment on PR if commit check failed
       if: env.commit_check_failed == '1'
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         gh pr comment ${{ github.event.pull_request.number }} -b "Hi from your friendly robot! :robot: It looks like there might be commits to both release and non-release files in this PR. Please review and remove any commits that don't belong."
         exit 1
