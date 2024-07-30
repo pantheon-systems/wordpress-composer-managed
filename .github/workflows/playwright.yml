@@ -59,6 +59,7 @@ jobs:
               echo "status=$status" >> $GITHUB_ENV
               exit 1
             fi
+          done
           echo "status=$status" >> $GITHUB_ENV
 
       - name: Linting failed
@@ -186,6 +187,7 @@ jobs:
               echo "status=$status" >> $GITHUB_ENV
               exit 1
             fi
+          done
           echo "status=$status" >> $GITHUB_ENV
 
       - name: Linting failed
@@ -318,6 +320,7 @@ jobs:
               echo "status=$status" >> $GITHUB_ENV
               exit 1
             fi
+          done
           echo "status=$status" >> $GITHUB_ENV
 
       - name: Linting failed
