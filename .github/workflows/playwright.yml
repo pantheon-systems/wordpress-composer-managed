@@ -447,9 +447,11 @@ jobs:
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
           SITE_URL: ${{ env.SITE_URL }}
+          GRAPHQL_ENDPOINT: ${{ env.SITE_URL }}/wp/graphql
         run: npm run test .github/tests/wpcm.spec.ts
       - name: Run Playwright tests on subdomain site
         env:
           SITE_NAME: Foo
           SITE_URL: ${{ env.SUBDOMAIN_URL }}
+          GRAPHQL_ENDPOINT: ${{ env.SUBDOMAIN_URL }}/wp/graphql
         run: npm run test .github/tests/wpcm.spec.ts

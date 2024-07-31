@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 const exampleArticle = "Hello world!";
 const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
 const siteUrl = process.env.SITE_URL || "https://dev-wpcm-playwright-tests.pantheonsite.io";
+let graphqlEndpoint = process.env.GRAPHQL_ENDPOINT || `${siteUrl}/wp/graphql`;
 
 test("homepage loads and contains example content", async ({ page }) => {
   await page.goto(siteUrl);
@@ -41,8 +42,7 @@ test("validate core resource URLs", async ({ request }) => {
 });
 
 test("graphql is able to access hello world post", async ({ request }) => {
-  let graphqlEndpoint = `${siteUrl}/wp/graphql`;
-  let apiRoot = await request.get(`${siteUrl}/wp/graphql`);
+  let apiRoot = await request.get(graphqlEndpoint);
   // If the above request doesn't resolve, it's because we're on a subsite where the path is ${siteUrl}/graphql -- similar to the rest api.
   if (!apiRoot.ok()) {
     graphqlEndpoint = `${siteUrl}/graphql`;
