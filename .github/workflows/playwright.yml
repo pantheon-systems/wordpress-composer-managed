@@ -393,6 +393,9 @@ jobs:
           git config --global user.email "cms-platform+sage-testing@pantheon.io"
           git config --global user.name "Pantheon WPCM Bot"
 
+          echo "Switching to git mode..."
+          terminus connection:set "${{ env.SITE_ID }}".dev git
+
           echo "Clone the site locally and copy PR updates"
           terminus local:clone ${{ env.SITE_ID }}
           cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
