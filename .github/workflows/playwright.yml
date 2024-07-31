@@ -433,6 +433,7 @@ jobs:
 
           # Activte WP-GraphQL plugin
           terminus wp "${{ env.SITE_ID }}".dev -- plugin activate wp-graphql
+          terminus env:clear-cache "${{ env.SITE_ID }}".dev
 
           # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
           echo "Checking site URLs"
