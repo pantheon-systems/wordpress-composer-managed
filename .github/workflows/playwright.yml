@@ -400,7 +400,7 @@ jobs:
           terminus local:clone ${{ env.SITE_ID }}
           cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
           echo "Copying latest changes and committing to the site."
-          rsync -a --exclude='.git' --exclude='status-*.txt' "${{ github.workspace }}/" .
+          rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
           git add -A
           git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
           git push origin master || true

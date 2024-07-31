@@ -70,7 +70,7 @@ copy_pr_updates() {
   echo "Commit Message: ${commit_msg}"
   cd ~/pantheon-local-copies/"${site_id}"
   echo -e "${YELLOW}Copying latest changes and committing to the site.${RESET}"
-  rsync -a --exclude='.git' --exclude='status-*.txt' "${workspace}/" .
+  rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" ${workspace}/" .
   git add -A
   git commit -m "Update to latest commit: ${commit_msg}" || true
   git push origin master || true
