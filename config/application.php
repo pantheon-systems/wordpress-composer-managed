@@ -60,13 +60,6 @@ require_once __DIR__ . '/application.pantheon.php';
 define( 'WP_ENV', env( 'WP_ENV' ) ?: 'production' );
 
 /**
- * Custom Content Directory
- */
-Config::define( 'CONTENT_DIR', '/app' );
-Config::define( 'WP_CONTENT_DIR', $webroot_dir . Config::get( 'CONTENT_DIR' ) );
-Config::define( 'WP_CONTENT_URL', Config::get( 'WP_HOME' ) . Config::get( 'CONTENT_DIR' ) );
-
-/**
  * DB settings
  */
 Config::define( 'DB_NAME', env( 'DB_NAME' ) );
