@@ -417,15 +417,21 @@ jobs:
 
           echo "Copying latest changes and committing to the site."
           rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
+          git add -A
+          git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
 
           echo "Installing wp-graphql..."
           composer require wp-graphql/wp-graphql
+          git add composer.json composer.lock
+          git commit -m "Add WP-GraphQL plugin" || true
 
-          git add -A
-          git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
+          echo "Copying the subdomain multisite config/application.php file..."
+          cp -f "${{ github.workspace }}/.github/fixtures/config/application.subdom.php" config/application.php
+          git add config/application.php
+          git commit -m "Add subdomain multisite config" || true
+
+          # Push and wait for the git push to finish.
           git push origin master || true
-
-          # Wait for the git push to finish.
           terminus workflow:wait "${{ env.SITE_ID }}".dev
 
           echo "Checking WordPress install status"
