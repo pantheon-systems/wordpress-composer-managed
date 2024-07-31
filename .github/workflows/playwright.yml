@@ -417,6 +417,10 @@ jobs:
 
           echo "Copying latest changes and committing to the site."
           rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
+
+          echo "Installing wp-graphql..."
+          composer require wp-graphql/wp-graphql
+
           git add -A
           git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
           git push origin master || true
@@ -426,6 +430,9 @@ jobs:
 
           echo "Checking WordPress install status"
           terminus wp "${{ env.SITE_ID }}".dev -- cli info
+
+          # Activte WP-GraphQL plugin
+          terminus wp "${{ env.SITE_ID }}".dev -- plugin activate wp-graphql
 
           # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
           echo "Checking site URLs"
