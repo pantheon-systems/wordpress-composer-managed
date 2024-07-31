@@ -9,14 +9,66 @@ on:
 
 permissions:
     contents: write
+    actions: read
 
 jobs:
+
   playwright-single:
     name: Single site
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Wait for status artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          max_attempts=10
+          delay_seconds=30
+          attempt=0
+          success=0
+          status=0
+
+          echo "Checking for status artifacts..."
+
+          while [ $attempt -lt $max_attempts ]; do
+            # Attempt to download the artifacts.
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
+
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+              success=1
+              break
+            else
+              echo "Status files not found. Sleeping for $delay_seconds seconds..."
+              sleep $delay_seconds
+            fi
+            attempt=$(( attempt + 1 ))
+          done
+
+          if [ $success -eq 0 ]; then
+            echo "Timed out waiting for status artifacts."
+            exit 1
+          fi
+
+          for file in status-*.txt; do
+            status=$(cat $file)
+            if [ $status -eq 1 ]; then
+              echo "status=$status" >> $GITHUB_ENV
+              exit 1
+            fi
+          done
+
+          echo "Linting tests passed. Proceeding with Playwright tests. ✅"
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: |
+          echo "One or more jobs in a previous workflow failed. Exiting."
+          exit 1
 
       - name: Get last commit message
         env:
@@ -97,6 +149,54 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Wait for status artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          max_attempts=10
+          delay_seconds=30
+          attempt=0
+          success=0
+          status=0
+
+          echo "Checking for status artifacts..."
+
+          while [ $attempt -lt $max_attempts ]; do
+            # Attempt to download the artifacts.
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
+
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+              success=1
+              break
+            else
+              echo "Status files not found. Sleeping for $delay_seconds seconds..."
+              sleep $delay_seconds
+            fi
+            attempt=$(( attempt + 1 ))
+          done
+
+          if [ $success -eq 0 ]; then
+            echo "Timed out waiting for status artifacts."
+            exit 1
+          fi
+
+          for file in status-*.txt; do
+            status=$(cat $file)
+            if [ $status -eq 1 ]; then
+              echo "status=$status" >> $GITHUB_ENV
+              exit 1
+            fi
+          done
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: |
+          echo "One or more jobs in a previous workflow failed. Exiting."
+          exit 1
 
       - name: Get last commit message
         env:
@@ -182,6 +282,54 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Wait for status artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          max_attempts=10
+          delay_seconds=30
+          attempt=0
+          success=0
+          status=0
+
+          echo "Checking for status artifacts..."
+
+          while [ $attempt -lt $max_attempts ]; do
+            # Attempt to download the artifacts.
+            gh run download -n status-8.1-${{ github.sha }} || true
+            gh run download -n status-8.2-${{ github.sha }} || true
+            gh run download -n status-8.3-${{ github.sha }} || true
+
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+              success=1
+              break
+            else
+              echo "Status files not found. Sleeping for $delay_seconds seconds..."
+              sleep $delay_seconds
+            fi
+            attempt=$(( attempt + 1 ))
+          done
+
+          if [ $success -eq 0 ]; then
+            echo "Timed out waiting for status artifacts."
+            exit 1
+          fi
+
+          for file in status-*.txt; do
+            status=$(cat $file)
+            if [ $status -eq 1 ]; then
+              echo "status=$status" >> $GITHUB_ENV
+              exit 1
+            fi
+          done
+          echo "status=$status" >> $GITHUB_ENV
+
+      - name: Linting failed
+        if: env.status == '1'
+        run: |
+          echo "One or more jobs in a previous workflow failed. Exiting."
+          exit 1
 
       - name: Get last commit message
         env:
