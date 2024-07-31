@@ -415,17 +415,6 @@ jobs:
           terminus local:clone ${{ env.SITE_ID }}
           cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
 
-          if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true MULTISITE; then
-            echo "Multisite not configured yet..."
-            echo "Copying multisite application.php"
-            rm ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
-            cp "${{ github.workspace }}/.github/fixtures/config/application.subdom.php" ~/pantheon-local-copies/${{ env.SITE_ID }}/config/
-            mv ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.subdom.php ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
-            cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
-            git add ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
-            git commit -m "Set up subdomain multisite config" || true
-          fi
-
           echo "Copying latest changes and committing to the site."
           rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
           git add -A
@@ -437,14 +426,14 @@ jobs:
 
           echo "Checking WordPress install status"
           terminus wp "${{ env.SITE_ID }}".dev -- cli info
-          if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true MULTISITE; then
-            echo -e "Multisite not found!"
+
+          # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
+          echo "Checking site URLs"
+          SITE_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
+          SUBDOMAIN_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
+          if [ $SITE_URL_TEST -ne 200 ] || [ $SUBDOMAIN_URL_TEST -ne 200 ]; then
+            echo "One or more site URLs are not returning a 200 status code. Exiting."
             exit 1
-          fi
-          # Check SUBDOMAIN_INSTALL value
-          if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true SUBDOMAIN_INSTALL; then
-              echo -e "Subdomain configuration not found!"
-              exit 1
           fi
       - name: Run Playwright tests
         env:
