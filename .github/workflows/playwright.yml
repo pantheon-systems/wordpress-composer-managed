@@ -439,9 +439,7 @@ jobs:
             exit 1
           fi
           # Check SUBDOMAIN_INSTALL value
-          SUBDOMAIN_INSTALL=$(terminus wp "${{ env.SITE_ID }}".dev -- config get SUBDOMAIN_INSTALL)
-          if [[ "${SUBDOMAIN_INSTALL}" != "1" ]]; then
-            # SUBDOMAIN_INSTALL should be true.
+          if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true SUBDOMAIN_INSTALL; then
               echo -e "Subdomain configuration not found!"
               exit 1
           fi
