@@ -432,6 +432,9 @@ jobs:
           git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
           git push origin master || true
 
+          # Wait for the git push to finish.
+          terminus workflow:wait "${{ env.SITE_ID }}".dev
+
           echo "Checking WordPress install status"
           terminus wp "${{ env.SITE_ID }}".dev -- cli info
           if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true MULTISITE; then
@@ -443,8 +446,6 @@ jobs:
               echo -e "Subdomain configuration not found!"
               exit 1
           fi
-          # Wait for the git push to finish.
-          terminus workflow:wait "${{ env.SITE_ID }}".dev
       - name: Run Playwright tests
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
