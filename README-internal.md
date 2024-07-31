@@ -1,7 +1,7 @@
 # Working with the WordPress (Composer Managed) upstream
 
 ## "Release" and "non-release" commits
-The composer-managed upstreams (including Drupal (Composer Managed)) have a idiosyncratic concept of "release" or "normal" commits and "non-release" commits. **Release** commits are those that affect files that are ultimately pushed to the `pantheon-upstreams` repository. This includes the everything that makes the base upstream work and _excludes_ any CI-related files, scripts or tests. **Non-release** commits are those that affect files that are not pushed to the `pantheon-upstreams` repository. This includes CI-related files, scripts, tests, and any other files that are not part of the base upstream.
+The composer-managed upstreams (including Drupal (Composer Managed)) have a idiosyncratic concept of "release" or "normal" commits and "non-release" commits. **Release** commits are those that affect files that are ultimately pushed to the `pantheon-upstreams` repository. This includes everything that makes the base upstream work and _excludes_ any CI-related files, scripts or tests. **Non-release** commits are those that affect files that are not pushed to the `pantheon-upstreams` repository. This includes CI-related files, scripts, tests, and any other files that are not part of the base upstream.
 
 Because we tend to prefer Squash merges on PRs rather than Merge commits, it is vital to separate interests and not combine _release_ and _non-release_ commits in the same PR. Doing so will lead to portions of the PR being dropped when the deploy script is run, leading to a mismatch between the `pantheon-systems` and `pantheon-upstreams` repositories.
 
