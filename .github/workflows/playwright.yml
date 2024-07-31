@@ -358,6 +358,7 @@ jobs:
           echo "SITE_NAME=$SITE_NAME" >> $GITHUB_ENV
           echo "SITE_URL=$SITE_URL" >> $GITHUB_ENV
           echo "SUBDOMAIN_URL=$SUBDOMAIN_URL" >> $GITHUB_ENV
+          echo "SITE_ID=wpcm-subdom-playwright-tests" >> $GITHUB_ENV
 
       - name: Install SSH keys
         uses: webfactory/ssh-agent@v0.9.0
@@ -385,6 +386,37 @@ jobs:
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
 
+      - name: Copy changes from PR
+        run: |
+          echo "Commit Message: ${{ env.COMMIT_MSG }}"
+          echo "Setting up some git config..."
+          git config --global user.email "cms-platform+sage-testing@pantheon.io"
+          git config --global user.name "Pantheon WPCM Bot"
+
+          echo "Clone the site locally and copy PR updates"
+          terminus local:clone ${{ env.SITE_ID }}
+          cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
+          echo "Copying latest changes and committing to the site."
+          rsync -a --exclude='.git' --exclude='status-*.txt' "${{ github.workspace }}/" .
+          git add -A
+          git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
+          git push origin master || true
+
+          echo "Checking WordPress install status"
+          terminus wp "${{ env.SITE_ID }}".dev -- cli info
+          if ! terminus wp "${{ env.SITE_ID }}".dev -- config is-true MULTISITE; then
+            echo -e "${RED}Multisite not found!${RESET}"
+            exit 1
+          fi
+          # Check SUBDOMAIN_INSTALL value
+          SUBDOMAIN_INSTALL=$(terminus wp "${{ env.SITE_ID }}".dev -- config get SUBDOMAIN_INSTALL)
+          if [[ "${SUBDOMAIN_INSTALL}" != "1" ]]; then
+            # SUBDOMAIN_INSTALL should be true.
+              echo -e "${RED}Subdomain configuration not found!${RESET}"
+              exit 1
+          fi
+          # Wait for the git push to finish.
+          terminus workflow:wait "${{ env.SITE_ID }}".dev
       - name: Run Playwright tests
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
