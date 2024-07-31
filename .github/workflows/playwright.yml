@@ -1,6 +1,21 @@
 name: WordPress Composer Playwright Tests
 on:
   pull_request:
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/composer-diff.yml'
+      - '.github/workflows/phpcbf.yml'
+      - '.github/workflows/sage-test.yml'
+      - '.github/workflows/sync-default.yml'
+      - '.github/tests/*.bats'
+      - 'private/scripts/**'
+      - 'docs/**'
+      - '*.md'
+      - 'phpcs.yml'
+      - 'wp-cli.yml'
+      - '.lando.upstream.yml'
+      - 'CODEOWNERS'
+      - '.editorconfig'
     types:
       - opened
       - reopened
