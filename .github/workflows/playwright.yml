@@ -443,13 +443,13 @@ jobs:
             echo "One or more site URLs are not returning a 200 status code. Exiting."
             exit 1
           fi
-      - name: Run Playwright tests
+      - name: Run Playwright tests on main site
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
           SITE_URL: ${{ env.SITE_URL }}
-        run: |
-          npm run test .github/tests/wpcm.spec.ts
-          SITE_NAME=Foo
-          SITE_URL=${{ env.SUBDOMAIN_URL }}
-          echo "Running Playwright tests on WordPress Subdomain subsite"
-            npm run test .github/tests/wpcm.spec.ts
+        run: npm run test .github/tests/wpcm.spec.ts
+      - name: Run Playwright tests on subdomain site
+        env:
+          SITE_NAME: Foo
+          SITE_URL: ${{ env.SUBDOMAIN_URL }}
+        run: npm run test .github/tests/wpcm.spec.ts
