@@ -405,10 +405,10 @@ jobs:
             echo "Copying multisite application.php"
             rm ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
             cp "${{ github.workspace }}/.github/fixtures/config/application.subdom.php" ~/pantheon-local-copies/${{ env.SITE_ID }}/config/
-            mv ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.${type}.php" ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
+            mv ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.subdom.php ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
             cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
             git add ~/pantheon-local-copies/${{ env.SITE_ID }}/config/application.php
-            git commit -m "Set up ${type} multisite config" || true
+            git commit -m "Set up subdomain multisite config" || true
           fi
 
           echo "Copying latest changes and committing to the site."
