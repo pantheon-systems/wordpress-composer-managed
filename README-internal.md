@@ -34,8 +34,8 @@ There are some atypical development and release procedures in use with this repo
  1. Merging a PR to `default` _does not_ create a new release of `pantheon-upstreams/wordpress-composer-managed`. This allows us to batch more than one relatively small change into a single new "release" such that the number of separate update events appearing on customer dashboards is more controlled.
 
 ### Differences between `pantheon-upstreams` and `pantheon-systems` repos:
- 1. Commits modifying any of the following files and directories are omitted from `pantheon-upstreams`: `.circleci`, `devops`, `.github`, `README-internal.md`. This prevents downstream Pantheon sites from being littered with our internal CI configuration, and allows us to enhance CI without generating irrelevant site updates. However, it means **you must not create commits that modify both automation and other files** in the same commit. For this reason **squash commits are discouraged** (as they can contain changes to multiple files).
- 2. Commit authors appear on the dashboard. For this reason, they are rewritten to `Pantheon Automation <bot@getpantheon.com>`.
+ 1. Commits modifying any of the following files and directories are omitted from `pantheon-upstreams`: `.circleci`, `devops`, `.github`. This prevents downstream Pantheon sites from being littered with our internal CI configuration, and allows us to enhance CI without generating irrelevant site updates. However, it means **you must not create commits that modify both automation and other files** in the same commit. 
+ 2. Commit authors appear on the dashboard. For this reason, they are rewritten to `Pantheon Automation <bot@getpantheon.com>` by automation.
 
 ## Automation demystified
 The following workflows run on this repository:
