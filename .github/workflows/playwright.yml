@@ -447,6 +447,8 @@ jobs:
           SUBDOMAIN_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
           if [ $SITE_URL_TEST -ne 200 ] || [ $SUBDOMAIN_URL_TEST -ne 200 ]; then
             echo "One or more site URLs are not returning a 200 status code. Exiting."
+            echo "${{ env.SITE_URL }} - ${SITE_URL_TEST}"
+            echo "${{ env.SUBDOMAIN_URL }} - ${SUBDOMAIN_URL_TEST}"
             exit 1
           fi
       - name: Run Playwright tests on main site
