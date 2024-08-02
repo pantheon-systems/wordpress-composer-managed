@@ -9,6 +9,7 @@ on:
       - '.github/workflows/sync-default.yml'
       - '.github/tests/*.bats'
       - 'private/scripts/**'
+      - 'devops/**'
       - 'docs/**'
       - '*.md'
       - 'phpcs.yml'
