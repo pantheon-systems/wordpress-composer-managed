@@ -65,7 +65,7 @@ for commit in "${commits[@]}"; do
   fi
   echo "Adding $commit:"
   git --no-pager log --format=%B -n 1 "$commit"
-  git cherry-pick -rn -X theirs "$commit" 2>&1
+  git cherry-pick -rn -X theirs -m 1 "$commit" 2>&1
   # Product request - single commit per release
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
