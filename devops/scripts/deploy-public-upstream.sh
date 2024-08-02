@@ -79,9 +79,7 @@ for commit in "${commits[@]}"; do
 
     # Stage the changes and continue the cherry-pick
     git add -u
-    git commit --no-edit || {
-      echo "No changes to commit. Continuing."
-    }
+    git commit --no-edit || echo "No changes to commit. Continuing."
   fi
   # Product request - single commit per release
   # The commit message from the last commit will be used.
