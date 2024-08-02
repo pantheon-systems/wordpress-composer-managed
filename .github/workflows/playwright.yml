@@ -1,6 +1,21 @@
 name: WordPress Composer Playwright Tests
 on:
   pull_request:
+    paths-ignore:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/composer-diff.yml'
+      - '.github/workflows/phpcbf.yml'
+      - '.github/workflows/sage-test.yml'
+      - '.github/workflows/sync-default.yml'
+      - '.github/tests/*.bats'
+      - 'private/scripts/**'
+      - 'docs/**'
+      - '*.md'
+      - 'phpcs.yml'
+      - 'wp-cli.yml'
+      - '.lando.upstream.yml'
+      - 'CODEOWNERS'
+      - '.editorconfig'
     types:
       - opened
       - reopened
@@ -358,6 +373,7 @@ jobs:
           echo "SITE_NAME=$SITE_NAME" >> $GITHUB_ENV
           echo "SITE_URL=$SITE_URL" >> $GITHUB_ENV
           echo "SUBDOMAIN_URL=$SUBDOMAIN_URL" >> $GITHUB_ENV
+          echo "SITE_ID=wpcm-subdom-playwright-tests" >> $GITHUB_ENV
 
       - name: Install SSH keys
         uses: webfactory/ssh-agent@v0.9.0
@@ -385,13 +401,65 @@ jobs:
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
 
-      - name: Run Playwright tests
+      - name: Copy changes from PR
+        run: |
+          echo "Commit Message: ${{ env.COMMIT_MSG }}"
+          echo "Setting up some git config..."
+          git config --global user.email "cms-platform+sage-testing@pantheon.io"
+          git config --global user.name "Pantheon WPCM Bot"
+
+          echo "Switching to git mode..."
+          terminus connection:set "${{ env.SITE_ID }}".dev git
+
+          echo "Clone the site locally and copy PR updates"
+          terminus local:clone ${{ env.SITE_ID }}
+          cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
+
+          echo "Copying latest changes and committing to the site."
+          rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
+          git add -A
+          git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
+
+          echo "Installing wp-graphql..."
+          composer require wp-graphql/wp-graphql
+          git add composer.json composer.lock
+          git commit -m "Add WP-GraphQL plugin" || true
+
+          echo "Copying the subdomain multisite config/application.php file..."
+          cp -f "${{ github.workspace }}/.github/fixtures/config/application.subdom.php" config/application.php
+          git add config/application.php
+          git commit -m "Add subdomain multisite config" || true
+
+          # Push and wait for the git push to finish.
+          git push origin master || true
+          terminus workflow:wait "${{ env.SITE_ID }}".dev
+
+          echo "Checking WordPress install status"
+          terminus wp "${{ env.SITE_ID }}".dev -- cli info
+
+          # Activte WP-GraphQL plugin
+          terminus wp "${{ env.SITE_ID }}".dev -- plugin activate wp-graphql
+          terminus env:clear-cache "${{ env.SITE_ID }}".dev
+
+          # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
+          echo "Checking site URLs"
+          SITE_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
+          SUBDOMAIN_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
+          if [ $SITE_URL_TEST -ne 200 ] || [ $SUBDOMAIN_URL_TEST -ne 200 ]; then
+            echo "One or more site URLs are not returning a 200 status code. Exiting."
+            echo "${{ env.SITE_URL }} - ${SITE_URL_TEST}"
+            echo "${{ env.SUBDOMAIN_URL }} - ${SUBDOMAIN_URL_TEST}"
+            exit 1
+          fi
+      - name: Run Playwright tests on main site
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
           SITE_URL: ${{ env.SITE_URL }}
-        run: |
-          npm run test .github/tests/wpcm.spec.ts
-          SITE_NAME=Foo
-          SITE_URL=${{ env.SUBDOMAIN_URL }}
-          echo "Running Playwright tests on WordPress Subdomain subsite"
-            npm run test .github/tests/wpcm.spec.ts
+          GRAPHQL_ENDPOINT: ${{ env.SITE_URL }}/wp/graphql
+        run: npm run test .github/tests/wpcm.spec.ts
+      - name: Run Playwright tests on subdomain site
+        env:
+          SITE_NAME: Foo
+          SITE_URL: ${{ env.SUBDOMAIN_URL }}
+          GRAPHQL_ENDPOINT: ${{ env.SUBDOMAIN_URL }}/wp/graphql
+        run: npm run test .github/tests/wpcm.spec.ts
