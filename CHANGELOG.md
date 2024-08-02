@@ -1,3 +1,5 @@
+### v1.32.0 (2024-08-15)
+
 ### v1.31.1 (2024-07-29)
 * Removes code that for handling wp-admin URLs. ([#143](https://github.com/pantheon-systems/wordpress-composer-managed/pull/143)) This code was not working as intended and testing revealed it to be unnecessary.
 * Adds a filter to disable the subdirectory multisite custom wp-content directory warning. ([#144](https://github.com/pantheon-systems/wordpress-composer-managed/pull/144)) This implements the filter added in the [Pantheon MU Plugin](https://github.com/pantheon-systems/pantheon-mu-plugin) in [#51](https://github.com/pantheon-systems/pantheon-mu-plugin/pull/51).
