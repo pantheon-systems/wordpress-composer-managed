@@ -1,4 +1,8 @@
-### v1.32.0 (2024-08-15)
+### v1.32.0 (2024-08-06)
+* This update primarily fixes consistency issues between the development repository ([`pantheon-systems/wordpress-composer-managed`](https://github.com/pantheon-systems/wordpress-composer-managed)) and the upstream repository ([`pantheon-upstreams/wordpress-composer-managed`](https://github.com/pantheon-upstreams/wordpress-composer-managed)). Most notably, this update removes decoupled packages that were erroneously being added to the non-decoupled upstream (and are not included in this repository).
+* Fixes issues with subdomain multisite testing ([#148](https://github.com/pantheon-systems/wordpress-composer-managed/pull/148))
+* Updates automation steps to check PRs for "mixed" commits ([#146](https://github.com/pantheon-systems/wordpress-composer-managed/pull/146)) and adds handling for merge commits and conflicts ([#152](https://github.com/pantheon-systems/wordpress-composer-managed/pull/152))
+* Moves cookie settings inside the pantheon environment check ([#151](https://github.com/pantheon-systems/wordpress-composer-managed/pull/151))
 
 ### v1.31.1 (2024-07-29)
 * Removes code that for handling wp-admin URLs. ([#143](https://github.com/pantheon-systems/wordpress-composer-managed/pull/143)) This code was not working as intended and testing revealed it to be unnecessary.
