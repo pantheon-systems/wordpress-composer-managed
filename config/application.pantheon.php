@@ -79,10 +79,11 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 		$hostname = isset( $_ENV['LANDO'] ) ? "{$site_name}.lndo.site" : $hostname;
 		define( 'PANTHEON_HOSTNAME', $hostname );
 	}
+
+    // Cookie settings.
+    defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', PANTHEON_HOSTNAME );
+    defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
+    defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
+    defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
 }
 
-// Cookie settings.
-defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', PANTHEON_HOSTNAME );
-defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
-defined( 'COOKIEPATH' ) or Config::define( 'COOKIEPATH', '' );
-defined( 'SITECOOKIEPATH' ) or Config::define( 'SITECOOKIEPATH', '' );
