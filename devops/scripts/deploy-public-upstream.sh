@@ -92,21 +92,16 @@ echo "Copying README to docroot."
 rm ./README.md
 cp /tmp/composer-managed-README.md ./README.md
 
-# Check for composer.lock. If it exists, delete it. Composer lock files should never be in the upstream. See: https://github.com/pantheon-systems/wordpress-composer-managed/blob/main/README-internal.md#preventing-composerlock-from-being-committed
-if [ -f composer.lock ]; then
-  echo "Deleting composer.lock"
-  rm composer.lock
-fi
+# Create a list of files that we need to exclude from the commit.
+ignored_files="composer.lock CODE_OF_CONDUCT.md CONTRIBUTING.md"
 
-# Check for Roots-specific community files.
-if [ -f CODE_OF_CONDUCT.md ]; then
-  echo "Deleting CODE_OF_CONDUCT.md"
-  rm CODE_OF_CONDUCT.md
-fi
-if [ -f CONTRIBUTING.md ]; then
-  echo "Deleting CONTRIBUTING.md"
-  rm CONTRIBUTING.md
-fi
+# Remove ignored files from the commit.
+for file in $ignored_files; do
+  if [ -f "$file" ]; then
+    echo "Removing $file from the commit."
+    git rm "$file"
+  fi
+done
 
 git add .
 
