@@ -92,6 +92,12 @@ echo "Copying README to docroot."
 rm ./README.md
 cp /tmp/composer-managed-README.md ./README.md
 
+# Check for composer.lock. If it exists, delete it. Composer lock files should never be in the upstream. See: https://github.com/pantheon-systems/wordpress-composer-managed/blob/main/README-internal.md#preventing-composerlock-from-being-committed
+if [ -f composer.lock ]; then
+  echo "Deleting composer.lock"
+  rm composer.lock
+fi
+
 git add .
 
 echo "Committing changes"
