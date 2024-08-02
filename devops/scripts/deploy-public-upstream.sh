@@ -93,6 +93,7 @@ rm ./README.md
 cp /tmp/composer-managed-README.md ./README.md
 
 # Create a list of files that we need to exclude from the commit.
+# These are files that may be coming from Roots or old commits that do not exist in the source and _should not exist_ on the upstream.
 ignored_files="composer.lock CODE_OF_CONDUCT.md CONTRIBUTING.md"
 
 # Remove ignored files from the commit.
