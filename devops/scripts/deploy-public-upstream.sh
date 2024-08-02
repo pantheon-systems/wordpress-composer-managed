@@ -2,9 +2,6 @@
 # This script is pretty tailored to assuming it's running in the CircleCI environment / a fresh git clone.
 # It mirrors most commits from `pantheon-systems/wordpress-composer-managed:release` to `pantheon-upstreams/wordpress-composer-managed`.
 
-UPSTREAM_REPO_REMOTE_URL=git@github.com:jazzsequence/wordpress-composer-managed.git
-CIRCLE_BRANCH="handle-complex-deploys"
-
 # Check github authentication; ignore status code 1 returned from this command
 ssh -T git@github.com
 
@@ -57,10 +54,10 @@ fi
 git checkout -b public --track public/main
 git pull
 
-# if [[ "$CIRCLECI" != "" ]]; then
-#   git config --global user.email "bot@getpantheon.com"
-#   git config --global user.name "Pantheon Automation"
-# fi
+if [[ "$CIRCLECI" != "" ]]; then
+  git config --global user.email "bot@getpantheon.com"
+  git config --global user.name "Pantheon Automation"
+fi
 
 for commit in "${commits[@]}"; do
   if [[ -z "$commit" ]] ; then
@@ -109,8 +106,8 @@ git push public public:main
 
 git checkout "$CIRCLE_BRANCH"
 
-# # update the release-pointer
-# git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
+# update the release-pointer
+git tag -f -m 'Last commit set on upstream repo' release-pointer HEAD
 
-# # Push release-pointer
-# git push -f origin release-pointer
+# Push release-pointer
+git push -f origin release-pointer
