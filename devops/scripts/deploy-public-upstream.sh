@@ -68,7 +68,26 @@ for commit in "${commits[@]}"; do
   fi
   echo "Adding $commit:"
   git --no-pager log --format=%B -n 1 "$commit"
-  git cherry-pick -rn -X theirs -m 1 "$commit" 2>&1
+  if ! git cherry-pick -rn -X theirs -m 1 "$commit"; then
+    echo "Conflict detected in $commit. Checking for deleted files."
+    conflicted_files=$(git diff --name-only --diff-filter=U)
+    for file in $conflicted_files; do
+      if git show "$commit" -- "$file" | grep -q 'delete mode'; then
+        echo "File $file was deleted in the cherry-picked commit. Resolving by keeping the deletion."
+        git rm "$file"
+      else
+        echo "Resolving conflict for $file with 'theirs'."
+        git checkout --theirs -- "$file"
+        git add "$file"
+      fi
+    done
+
+    # Stage the changes and continue the cherry-pick
+    git add -u
+    git commit --no-edit || {
+      echo "No changes to commit. Continuing."
+    }
+  fi
   # Product request - single commit per release
   # The commit message from the last commit will be used.
   git log --format=%B -n 1 "$commit" > /tmp/commit_message
