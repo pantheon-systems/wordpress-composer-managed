@@ -98,6 +98,16 @@ if [ -f composer.lock ]; then
   rm composer.lock
 fi
 
+# Check for Roots-specific community files.
+if [ -f CODE_OF_CONDUCT.md ]; then
+  echo "Deleting CODE_OF_CONDUCT.md"
+  rm CODE_OF_CONDUCT.md
+fi
+if [ -f CONTRIBUTING.md ]; then
+  echo "Deleting CONTRIBUTING.md"
+  rm CONTRIBUTING.md
+fi
+
 git add .
 
 echo "Committing changes"
