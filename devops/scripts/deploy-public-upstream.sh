@@ -72,13 +72,11 @@ for commit in "${commits[@]}"; do
     echo "Conflict detected in $commit. Checking for deleted files."
     conflicted_files=$(git diff --name-only --diff-filter=U)
     for file in $conflicted_files; do
-      if git diff "$commit"^.."$commit" -- "$file" | grep -q 'delete mode'; then
+      if ! git ls-tree -r "$commit" --name-only | grep -q "^$file$"; then
         echo "File $file was deleted in the cherry-picked commit. Resolving by keeping the deletion."
         git rm "$file"
       else
-        echo "Resolving conflict for $file with 'theirs'."
-        git checkout --theirs -- "$file"
-        git add "$file"
+        echo "Conflict required manual resolution for $file."
       fi
     done
 
