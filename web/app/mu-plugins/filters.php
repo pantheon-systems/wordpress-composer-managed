@@ -146,7 +146,7 @@ add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url'
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( string $url ) : string {
-	if ( doing_action( 'graphql_init' ) ) {
+	if ( doing_action( 'graphql_init' ) || __is_login_url( $url ) ) {
 		return $url;
 	}
 
@@ -156,7 +156,7 @@ function adjust_main_site_urls( string $url ) : string {
 	}
 
 	// If this is the main site, drop the /wp.
-	if ( is_main_site() && ! __is_login_url( $url ) ) {
+	if ( is_main_site() ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
 
