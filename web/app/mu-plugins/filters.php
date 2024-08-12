@@ -97,22 +97,22 @@ function fix_core_resource_urls( string $url ) : string {
 	return __normalize_wp_url( $new_url );
 }
 
-// Only run the filter on non-main sites in a subdirectory multisite network.
-if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
-		$filters = [
-			'script_loader_src',
-			'style_loader_src',
-			'plugins_url',
-			'theme_file_uri',
-			'stylesheet_directory_uri',
-			'template_directory_uri',
-			'site_url',
-			'content_url',
-		];
-		foreach ( $filters as $filter ) {
-			add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
-		}
+function filter_core_resource_urls() {
+	$filters = [
+		'script_loader_src',
+		'style_loader_src',
+		'plugins_url',
+		'theme_file_uri',
+		'stylesheet_directory_uri',
+		'template_directory_uri',
+		'site_url',
+		'content_url',
+	];
+	foreach ( $filters as $filter ) {
+		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
+	}
 }
+add_action( 'init', __NAMESPACE__ . '\\filter_core_resource_urls' );
 
 /**
  * Prepopulate GraphQL endpoint URL with default value if unset.
