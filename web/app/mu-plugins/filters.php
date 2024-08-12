@@ -49,16 +49,16 @@ add_filter( 'pantheon.enable_subdirectory_networks_message', '__return_false' );
  */
 function fix_core_resource_urls( string $url ) : string {
 	global $current_blog;
-	$main_site_url = trailingslashit( network_site_url( '/' ) );
+	$main_site_url = trailingslashit( is_multisite() ? network_site_url( '/' ) : home_url() );
 
 	// Get the current site path. Covers a variety of scenarios since we're using this function on a bunch of different filters.
-	$current_site_path = '/'; // Define a default path.
-	if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
-		$current_site_path = trailingslashit( $current_blog->path );
-	} elseif ( function_exists( 'get_blog_details' ) ) {
-		$current_site_path = trailingslashit( get_blog_details()->path );
-	} else {
-		$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) );
+	$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) ); // Define a default path.
+	if ( is_multisite() ) {
+		if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
+			$current_site_path = trailingslashit( $current_blog->path );
+		} elseif ( function_exists( 'get_blog_details' ) ) {
+			$current_site_path = trailingslashit( get_blog_details()->path );
+		}
 	}
 
 	// Parse the URL to get its components.
