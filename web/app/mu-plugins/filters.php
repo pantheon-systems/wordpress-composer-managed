@@ -97,6 +97,12 @@ function fix_core_resource_urls( string $url ) : string {
 	return __normalize_wp_url( $new_url );
 }
 
+/**
+ * Filters to run fix_core_resource_urls on to fix the core resource URLs.
+ *
+ * @since 1.2.1
+ * @see fix_core_resource_urls
+ */
 function filter_core_resource_urls() {
 	$filters = [
 		'script_loader_src',
