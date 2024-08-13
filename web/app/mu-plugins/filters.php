@@ -3,7 +3,7 @@
  * Plugin Name: Pantheon WordPress Filters
  * Plugin URI:   https://github.com/pantheon-systems/wordpress-composer-managed
  * Description:  Filters for Composer-managed WordPress sites on Pantheon.
- * Version:      1.2.0
+ * Version:      1.2.1
  * Author:       Pantheon Systems
  * Author URI:   https://pantheon.io/
  * License:      MIT License
@@ -49,16 +49,16 @@ add_filter( 'pantheon.enable_subdirectory_networks_message', '__return_false' );
  */
 function fix_core_resource_urls( string $url ) : string {
 	global $current_blog;
-	$main_site_url = trailingslashit( network_site_url( '/' ) );
+	$main_site_url = trailingslashit( is_multisite() ? network_site_url( '/' ) : home_url() );
 
 	// Get the current site path. Covers a variety of scenarios since we're using this function on a bunch of different filters.
-	$current_site_path = '/'; // Define a default path.
-	if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
-		$current_site_path = trailingslashit( $current_blog->path );
-	} elseif ( function_exists( 'get_blog_details' ) ) {
-		$current_site_path = trailingslashit( get_blog_details()->path );
-	} else {
-		$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) );
+	$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) ); // Define a default path.
+	if ( is_multisite() ) {
+		if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
+			$current_site_path = trailingslashit( $current_blog->path );
+		} elseif ( function_exists( 'get_blog_details' ) ) {
+			$current_site_path = trailingslashit( get_blog_details()->path );
+		}
 	}
 
 	// Parse the URL to get its components.
@@ -77,7 +77,7 @@ function fix_core_resource_urls( string $url ) : string {
 		if ( strpos( $path, $current_site_path . $core_path ) !== false ) {
 			$path = str_replace( $current_site_path . $core_path, $core_path, $path );
 			$path_modified = true;
-            break;
+			break;
 		}
 	}
 
@@ -97,22 +97,28 @@ function fix_core_resource_urls( string $url ) : string {
 	return __normalize_wp_url( $new_url );
 }
 
-// Only run the filter on non-main sites in a subdirectory multisite network.
-if ( is_multisite() && ! is_subdomain_install() && ! is_main_site() ) {
-		$filters = [
-			'script_loader_src',
-			'style_loader_src',
-			'plugins_url',
-			'theme_file_uri',
-			'stylesheet_directory_uri',
-			'template_directory_uri',
-			'site_url',
-			'content_url',
-		];
-		foreach ( $filters as $filter ) {
-			add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
-		}
+/**
+ * Filters to run fix_core_resource_urls on to fix the core resource URLs.
+ *
+ * @since 1.2.1
+ * @see fix_core_resource_urls
+ */
+function filter_core_resource_urls() {
+	$filters = [
+		'script_loader_src',
+		'style_loader_src',
+		'plugins_url',
+		'theme_file_uri',
+		'stylesheet_directory_uri',
+		'template_directory_uri',
+		'site_url',
+		'content_url',
+	];
+	foreach ( $filters as $filter ) {
+		add_filter( $filter, __NAMESPACE__ . '\\fix_core_resource_urls', 9 );
+	}
 }
+add_action( 'init', __NAMESPACE__ . '\\filter_core_resource_urls' );
 
 /**
  * Prepopulate GraphQL endpoint URL with default value if unset.
@@ -146,7 +152,7 @@ add_action( 'graphql_init', __NAMESPACE__ . '\\prepopulate_graphql_endpoint_url'
  * @return string The filtered URL.
  */
 function adjust_main_site_urls( string $url ) : string {
-	if ( doing_action( 'graphql_init' ) ) {
+	if ( doing_action( 'graphql_init' ) || __is_login_url( $url ) ) {
 		return $url;
 	}
 
@@ -156,7 +162,7 @@ function adjust_main_site_urls( string $url ) : string {
 	}
 
 	// If this is the main site, drop the /wp.
-	if ( is_main_site() && ! __is_login_url( $url ) ) {
+	if ( is_main_site() ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
 
