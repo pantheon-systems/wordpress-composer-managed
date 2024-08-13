@@ -1,3 +1,6 @@
+### v1.32.1 (2024-08-16)
+* Refactors core resource URL filtering and multisite handling. ([#157](https://github.com/pantheon-systems/wordpress-composer-managed/pull/157)) This resolves an issue where some WordPress core resources were 404ing on single site installs.
+
 ### v1.32.0 (2024-08-06)
 * This update primarily fixes consistency issues between the development repository ([`pantheon-systems/wordpress-composer-managed`](https://github.com/pantheon-systems/wordpress-composer-managed)) and the upstream repository ([`pantheon-upstreams/wordpress-composer-managed`](https://github.com/pantheon-upstreams/wordpress-composer-managed)). Most notably, this update removes decoupled packages that were erroneously being added to the non-decoupled upstream (and are not included in this repository).
 * Fixes issues with subdomain multisite testing ([#148](https://github.com/pantheon-systems/wordpress-composer-managed/pull/148))
