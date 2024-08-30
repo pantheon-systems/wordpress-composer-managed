@@ -1,3 +1,6 @@
+### v1.32.2 (2024-09-03)
+* Fixes a bug in the previous update where some WordPress core resources were not available on some single and subdirectory multisite installs. ([161](https://github.com/pantheon-systems/wordpress-composer-managed/pull/161))
+
 ### v1.32.1 (2024-08-16)
 * Refactors core resource URL filtering and multisite handling. ([#157](https://github.com/pantheon-systems/wordpress-composer-managed/pull/157)) This resolves an issue where some WordPress core resources were 404ing on single site installs.
 
