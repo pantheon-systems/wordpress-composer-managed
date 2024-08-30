@@ -162,7 +162,7 @@ function adjust_main_site_urls( string $url ) : string {
 	}
 
 	// If this is the main site, drop the /wp.
-	if ( is_main_site() ) {
+	if ( is_main_site() && is_multisite() ) {
 		$url = str_replace( '/wp/', '/', $url );
 	}
 
