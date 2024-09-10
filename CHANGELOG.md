@@ -1,3 +1,6 @@
+### v1.32.3 (2024-09-10)
+* Updates `COOKIEPATH` and `SITECOOKIEPATH` values to `/` in `application.pantheon.php` to resolve cookie-related nonce authentication failures. Previously, the values were set to `''` (empty string), which does not allow the cookies to allow authentication within all the paths in a domain. ([#164](https://github.com/pantheon-systems/wordpress-composer-managed/pull/164))
+
 ### v1.32.2 (2024-09-03)
 * Fixes a bug in the previous update where some WordPress core resources were not available on some single and subdirectory multisite installs. ([161](https://github.com/pantheon-systems/wordpress-composer-managed/pull/161))
 
