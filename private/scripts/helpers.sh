@@ -183,6 +183,28 @@ function get_info() {
   sagedir=$themedir/$sagename
 }
 
+# Create the web/index.php if it does not exist.
+function check_index_php() {
+  # Check if we are in the web directory
+  if [ "${PWD##*/}" != "web" ]; then
+    echo "${red}Error: You must be in the 'web' directory to run this script.${normal}"
+    exit 1
+  fi
+  # Check if index.php exists, create if it doesn't
+  if [ ! -f "index.php" ]; then
+    echo "${yellow}Creating index.php...${normal}"
+    cat > index.php << 'EOF'
+<?php
+/**
+ * WordPress View Bootstrapper
+ */
+define('WP_USE_THEMES', true);
+require __DIR__ . '/wp/wp-blog-header.php';
+EOF
+    echo "${green}Created index.php${normal}"
+  fi
+}
+
 # Confirm user-submitted theme-name and ensure letters are lower-space
 function confirmThemeName() {
   # Replace spaces with dashes and convert to lowercase
@@ -554,6 +576,8 @@ function maybe_create_symlinks() {
   done
   printf "\e[D✅\e[C"
   echo ""
+
+  check_index_php
   echo "${green}Done creating symlinks!${normal} 🔗"
 }
 
