@@ -76,3 +76,11 @@ teardown() {
   run grep -q "php_version: 8.3" pantheon.yml
   [ "$status" -eq 0 ]
 }
+
+@test "Test missing index.php" {
+  # Remove web/index.php.
+  rm web/index.php
+  bash ./private/scripts/helpers.sh maybe_create_symlinks >> /dev/null
+  run cat web/index.php
+  [ "$status" -eq 0 ]
+}
