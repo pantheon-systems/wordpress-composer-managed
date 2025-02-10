@@ -1,4 +1,7 @@
-### v1.32.4
+### v1.32.5 (2025-02-10)
+* Adds the `maybe-install-symlinks` Composer script to `post-update-cmd` hook. This ensures that symlinks are created (and the `web/index.php` file is re-created) after a `composer update`. ([#175](https://github.com/pantheon-systems/wordpress-composer-managed/pull/175))
+
+### v1.32.4 (2025-02-10)
 * Adds a check for `web/index.php` and re-creates the file if it does not exist. Resolves issues where `web/index.php` is missing and breaks a site. ([#173](https://github.com/pantheon-systems/wordpress-composer-managed/pull/173))
 
 ### v1.32.3 (2024-09-10)
