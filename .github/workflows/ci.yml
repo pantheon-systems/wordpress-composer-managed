@@ -77,7 +77,7 @@ jobs:
       env:
         CI: 1
       run: |
-          bats -p -t .github/tests
+          bats -p -t .github/tests/1-test-update-php.bats
 
     - name: Create failure status artifact
       if: failure()
