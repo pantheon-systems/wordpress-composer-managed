@@ -1,4 +1,4 @@
-name: WordPress Composer Playwright Tests
+name: WordPress Composer Tests
 on:
   pull_request:
     paths-ignore:
@@ -29,12 +29,15 @@ permissions:
 
 jobs:
 
-  playwright-single:
+  test-single:
     name: Single site
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Bats
+        uses: bats-core/bats-action@2.0.0
 
       - name: Wait for status artifacts
         env:
@@ -154,17 +157,30 @@ jobs:
           SITE_URL: ${{ env.SITE_URL }}
         run: npm run test .github/tests/wpcm.spec.ts
 
+      - name: Run Bats tests for URL fixes (Single Site)
+        env:
+          SITE_ID: wpcm-playwright-tests
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          # Corrected path to the test file
+          bats -p -t .github/tests/rest-url-fix.bats
+
       - name: Delete Site
         if: success()
         shell: bash
         run: terminus site:delete wpcm-playwright-tests -y
 
-  playwright-subdir:
+  test-subdir:
     name: Subdirectory multisite
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Bats
+        uses: bats-core/bats-action@2.0.0
 
       - name: Wait for status artifacts
         env:
@@ -287,17 +303,34 @@ jobs:
           echo "Running Playwright tests on WordPress subdirectory subsite"
             npm run test .github/tests/wpcm.spec.ts
 
+      - name: Run Bats tests for URL fixes
+        # This step runs *after* the site setup, including the initial permalink flush.
+        # The Bats test itself handles permalink changes for specific test cases.
+        # We need to pass the SITE_ID to the Bats test environment so WP-CLI commands work via Terminus.
+        env:
+          SITE_ID: wpcm-subdir-playwright-tests
+          SUBSITE: foo
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          # Ensure Terminus is logged in if needed by Bats WP-CLI calls
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          bats -p -t .github/tests/2-rest-url-fix.bats
+
       - name: Delete Site
         if: success()
         shell: bash
         run: terminus site:delete wpcm-subdir-playwright-tests -y
 
-  playwright-subdom:
+  test-subdom:
     name: Subdomain multisite
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Bats
+        uses: bats-core/bats-action@2.0.0
 
       - name: Wait for status artifacts
         env:
@@ -464,3 +497,20 @@ jobs:
           SITE_URL: ${{ env.SUBDOMAIN_URL }}
           GRAPHQL_ENDPOINT: ${{ env.SUBDOMAIN_URL }}/wp/graphql
         run: npm run test .github/tests/wpcm.spec.ts
+
+      - name: Run Bats tests for URL fixes (Subdomain)
+        env:
+          SITE_ID: wpcm-subdom-playwright-tests
+          SUBSITE: foo
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          # Corrected path to the test file
+          bats -p -t .github/tests/rest-url-fix.bats
+
+      - name: Delete Site
+        # Run always to ensure cleanup
+        if: always()
+        shell: bash
+        run: terminus site:delete wpcm-subdom-playwright-tests -y
