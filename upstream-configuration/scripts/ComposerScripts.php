@@ -108,7 +108,7 @@ class ComposerScripts
             }
         }
 
-        $maybe_add_symlinks = '@maybe-add-symlinks';
+        $maybe_add_symlinks = '@maybe-create-symlinks';
         // Check if @maybe-add-symlinks is already in post-update-cmd. If not, add it.
         if (!in_array($maybe_add_symlinks, $composerJson['scripts']['post-update-cmd'])) {
             $io->write("<info>Adding $maybe_add_symlinks to post-update-cmd hook</info>");
