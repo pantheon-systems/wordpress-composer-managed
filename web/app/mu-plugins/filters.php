@@ -250,18 +250,21 @@ function __extract_rest_endpoint( string $path ) : string {
 	$rest_route = '/'; // Default to base route
 	$wp_json_pos = strpos( $path, '/wp-json/' );
 
-	if ( $wp_json_pos !== false ) {
-		$extracted_route = substr( $path, $wp_json_pos + strlen( '/wp-json' ) ); // Get everything after /wp-json
-		// Special case: Handle the originally reported '/wp-json/wp/' malformation
-		if ( strpos( $extracted_route, 'wp/' ) === 0 ) {
-			$extracted_route = substr( $extracted_route, strlen( 'wp' ) ); // Remove the extra 'wp'
-		}
-		// Ensure the extracted route starts with a slash
-		if ( ! $extracted_route && $extracted_route[0] !== '/' ) {
-			$extracted_route = '/' . $extracted_route;
-		}
-		$rest_route = $extracted_route ?: '/'; // Use extracted route or default to base
-	}
+    if ( $wp_json_pos === false ) {
+        return $rest_route; // Return base if /wp-json/ not found
+    }
+
+    $extracted_route = substr( $path, $wp_json_pos + strlen( '/wp-json' ) ); // Get everything after /wp-json
+    // Special case: Handle the originally reported '/wp-json/wp/' malformation
+    if ( strpos( $extracted_route, 'wp/' ) === 0 ) {
+        $extracted_route = substr( $extracted_route, strlen( 'wp' ) ); // Remove the extra 'wp'
+    }
+    // Ensure the extracted route starts with a slash
+    if ( ! $extracted_route && $extracted_route[0] !== '/' ) {
+        $extracted_route = '/' . $extracted_route;
+    }
+    $rest_route = $extracted_route ?: '/'; // Use extracted route or default to base
+
 	return $rest_route;
 }
 
