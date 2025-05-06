@@ -368,8 +368,6 @@ function handle_pretty_rest_request_on_plain_permalinks( \WP &$wp ) {
 			// Directly set the query variable for the REST API.
 			$wp->query_vars['rest_route'] = $endpoint;
 
-			// Optional: Unset other query vars WP might have incorrectly parsed.
-			// unset($wp->query_vars['pagename'], $wp->query_vars['error']);
 		}
 		// No redirect, no exit. Let WP continue processing with the modified query vars.
 	}
