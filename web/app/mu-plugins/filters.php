@@ -301,9 +301,9 @@ function __build_plain_rest_url( string $endpoint, ?string $query_str, ?string $
 	// Use normalization helper if available
 	if ( function_exists( __NAMESPACE__ . '\\__normalize_wp_url' ) ) {
 		return __normalize_wp_url( $correct_url );
-	} else {
-		return $correct_url; // Return without full normalization as fallback
 	}
+
+    return $correct_url; // Return without full normalization as fallback
 }
 
 /**
