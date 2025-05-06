@@ -285,7 +285,7 @@ function __build_plain_rest_url( string $endpoint, ?string $query_str, ?string $
 	$correct_url = rtrim( $home_url, '/' ) . '/?rest_route=' . $endpoint;
 
 	// Append original query parameters (if any, besides rest_route)
-	if ( !empty( $query_str ) ) {
+	if ( ! empty( $query_str ) ) {
 		parse_str( $query_str, $query_params );
 		unset( $query_params['rest_route'] ); // Ensure no leftover rest_route
 		if ( ! empty( $query_params ) ) {
@@ -294,7 +294,7 @@ function __build_plain_rest_url( string $endpoint, ?string $query_str, ?string $
 		}
 	}
 	// Append fragment if present
-	if ( !empty( $fragment ) ) {
+	if ( ! empty( $fragment ) ) {
 		$correct_url .= '#' . $fragment;
 	}
 
