@@ -165,7 +165,7 @@ jobs:
           echo "Running REST URL Bats tests..."
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
           # Corrected path to the test file
-          bats -p -t .github/tests/rest-url-fix.bats
+          bats -p -t .github/tests/2-rest-url-fix.bats
 
       - name: Delete Site
         if: success()
@@ -315,7 +315,7 @@ jobs:
           echo "Running REST URL Bats tests..."
           # Ensure Terminus is logged in if needed by Bats WP-CLI calls
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
-          bats -p -t .github/tests/2-rest-url-fix.bats
+          bats -p -t .github/tests/2-2-rest-url-fix.bats
 
       - name: Delete Site
         if: success()
@@ -507,7 +507,7 @@ jobs:
           echo "Running REST URL Bats tests..."
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
           # Corrected path to the test file
-          bats -p -t .github/tests/rest-url-fix.bats
+          bats -p -t .github/tests/2-rest-url-fix.bats
 
       - name: Delete Site
         # Run always to ensure cleanup
