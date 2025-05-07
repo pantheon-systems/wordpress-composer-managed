@@ -1,7 +1,15 @@
 #!/usr/bin/env bats
 
-load 'bats-support/load.bash'
-load 'bats-assert/load.bash'
+# Function to load necessary BATS helper libraries
+_load_bats_helpers() {
+  # Ensure BATS_LIB_PATH includes /usr/lib if not already set,
+  # as bats-core/bats-action installs helpers there.
+  export BATS_LIB_PATH="${BATS_LIB_PATH:-/usr/lib}"
+
+  bats_load_library bats-support
+  bats_load_library bats-assert
+}
+_load_bats_helpers
 
 # wp wrapper function
 _wp() {
