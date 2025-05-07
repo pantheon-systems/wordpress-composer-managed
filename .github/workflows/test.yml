@@ -496,7 +496,7 @@ jobs:
           terminus wp "${{ env.SITE_ID }}".dev -- rewrite flush
           terminus wp "${{ env.SITE_ID }}".dev -- cache flush
           terminus env:clear-cache "${{ env.SITE_ID }}".dev
-          terminus workflow:wait -- "${{ env.SITE_ID }}" --max 30
+          terminus workflow:wait --max=10 -- "${{ env.SITE_ID }}".dev
       - name: Run Playwright tests on main site
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
