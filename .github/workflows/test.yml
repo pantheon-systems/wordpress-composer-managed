@@ -510,7 +510,6 @@ jobs:
           bats -p -t .github/tests/2-rest-url-fix.bats
 
       - name: Delete Site
-        # Run always to ensure cleanup
-        if: always()
+        if: success()
         shell: bash
         run: terminus site:delete wpcm-subdom-playwright-tests -y
