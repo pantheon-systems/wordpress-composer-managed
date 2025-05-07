@@ -1,9 +1,26 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Browser } from "@playwright/test";
 
 const exampleArticle = "Hello world!";
 const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
 const siteUrl = process.env.SITE_URL || "https://dev-wpcm-playwright-tests.pantheonsite.io";
 let graphqlEndpoint = process.env.GRAPHQL_ENDPOINT || `${siteUrl}/wp/graphql`;
+
+test.beforeAll(async ({ browser }: { browser: Browser }) => {
+  const page = await browser.newPage();
+  await page.goto(siteUrl);
+  const continueButtonLocator = page.locator('button.pds-button:has-text("Continue")');
+  try {
+    // Wait for up to 10 seconds for the button to be visible
+    await continueButtonLocator.waitFor({ state: 'visible', timeout: 10000 });
+    await continueButtonLocator.click();
+    // Wait for navigation to complete after click, if necessary
+    await page.waitForLoadState('domcontentloaded', { timeout: 5000 });
+  } catch (e) {
+    // Button not visible within the timeout, or other error, assume not present and continue
+    console.log("Interstitial 'Continue' button not found or not clicked during beforeAll, proceeding with tests.");
+  }
+  await page.close();
+});
 
 test("homepage loads and contains example content", async ({ page }) => {
   await page.goto(siteUrl);
