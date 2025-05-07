@@ -15,6 +15,17 @@ get_home_url_path() {
   _wp eval 'echo rtrim(parse_url(home_url(), PHP_URL_PATH) ?: "", "/");'
 }
 
+set_permalinks_to_pretty() {
+  _wp option update permalink_structure '/%postname%/' --quiet
+}
+
+unset_pretty_permalinks() {
+  _wp option update permalink_structure '' --quiet
+}
+
+flush_rewrites() {
+  _wp rewrite flush --hard --quiet
+}
 setup_suite() {
   # Ensure WP is installed and we are in the right directory
   _wp core is-installed || (echo "WordPress not installed. Run setup script first." && exit 1)
