@@ -46,8 +46,9 @@ teardown_test() {
 
 @test "Check REST URL with plain permalinks" {
   # Set plain permalinks and flush
-  _wp option update permalink_structure '' --quiet
-  _wp rewrite flush --hard --quiet
+  unset_pretty_permalinks
+  flush_rewrites
+
   run get_rest_url
   assert_success
   # With plain permalinks, expect ?rest_route= based on home_url
@@ -57,13 +58,12 @@ teardown_test() {
   assert_output --partial "?rest_route=/"
 
   # Restore pretty permalinks for subsequent tests
-  _wp option update permalink_structure '/%postname%/' --quiet
-  _wp rewrite flush --hard --quiet
+  set_permalinks_to_pretty
 }
 
 @test "Check REST URL with pretty permalinks *before* flush (Simulates new site)" {
   # Set pretty permalinks *without* flushing
-  _wp option update permalink_structure '/%postname%/' --quiet
+  set_permalinks_to_pretty
   # DO NOT FLUSH HERE
 
   # Check home_url path to confirm /wp setup
@@ -80,15 +80,12 @@ teardown_test() {
   # If the plain permalink fix was active, it might output /wp/wp-json/wp/ and fail.
   assert_output --partial "/wp/wp-json/"
   refute_output --partial "/wp-json/wp/" # Ensure the bad structure isn't present
-
-  # Clean up: Flush permalinks
-  _wp rewrite flush --hard --quiet
 }
 
 @test "Access pretty REST API path directly with plain permalinks active" {
   # Set plain permalinks and flush
-  _wp option update permalink_structure '' --quiet
-  _wp rewrite flush --hard --quiet
+  unset_pretty_permalinks
+  flush_rewrites
 
   # Get the full home URL to construct the test URL
   SITE_URL=$( _wp option get home )
@@ -97,18 +94,11 @@ teardown_test() {
   TEST_URL="${SITE_URL}/wp-json/wp/v2/posts"
 
   # Make a curl request to the pretty URL
-  # -s: silent, -o /dev/null: discard body, -w '%{http_code}': output only HTTP code
-  # -L: follow redirects (we expect NO redirect, so this helps verify)
-  # We expect a 200 OK if the internal handling works, or maybe 404 if not found,
-  # but crucially NOT a 301/302 redirect.
-  run curl -s -o /dev/null -w '%{http_code}' -L "${TEST_URL}"
+  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${TEST_URL}"
   assert_success
-  # Assert that the final HTTP status code is 200 (OK)
-  # If it were redirecting, -L would follow, but the *initial* code wouldn't be 200.
-  # If the internal handling fails, it might be 404 or other error.
-  assert_output "200"
+  # Assert that the final HTTP status code is 200 (OK) and application/json
+  assert_output --partial "200:application/json"
 
   # Restore pretty permalinks for subsequent tests
-  _wp option update permalink_structure '/%postname%/' --quiet
-  _wp rewrite flush --hard --quiet
+  set_permalinks_to_pretty
 }
