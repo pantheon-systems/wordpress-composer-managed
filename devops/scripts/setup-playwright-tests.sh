@@ -94,7 +94,9 @@ install_wp() {
   fi
 
   terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
+}
 
+setup_permalinks() {
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
   terminus wp "${site_id}".dev -- rewrite flush
   terminus wp "${site_id}".dev -- cache flush
@@ -182,4 +184,5 @@ install_wp
 status_check
 set_up_subsite
 install_wp_graphql
+setup_permalinks
 echo -e "${GREEN}Done${RESET} ✨"
