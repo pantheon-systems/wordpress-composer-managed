@@ -97,9 +97,12 @@ install_wp() {
 }
 
 setup_permalinks() {
+  echo "Setting permalink structure"
   terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
   terminus wp "${site_id}".dev -- rewrite flush
   terminus wp "${site_id}".dev -- cache flush
+  terminus env:clear-cache "${site_id}".dev
+  terminus workflow:wait --max=30
 }
 
 status_check() {
