@@ -171,7 +171,9 @@ jobs:
       - name: Delete Site
         if: success()
         shell: bash
-        run: terminus site:delete wpcm-playwright-tests -y
+        run: |
+          terminus plan:set wpcm-playwright-tests plan-free-preferred-monthly-1
+          terminus site:delete wpcm-playwright-tests -y
 
   test-subdir:
     name: Subdirectory multisite
@@ -323,7 +325,9 @@ jobs:
       - name: Delete Site
         if: success()
         shell: bash
-        run: terminus site:delete wpcm-subdir-playwright-tests -y
+        run: |
+          terminus plan:set wpcm-subdir-playwright-tests plan-free-preferred-monthly-1
+          terminus site:delete wpcm-subdir-playwright-tests -y
 
   test-subdom:
     name: Subdomain multisite
