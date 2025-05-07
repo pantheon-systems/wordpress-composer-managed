@@ -121,7 +121,7 @@ teardown_test() {
   # Create temp file for body
   local BODY_FILE
   BODY_FILE=$(mktemp)
-  trap 'rm -f "$BODY_FILE"' EXIT # Ensure cleanup
+  # trap 'rm -f "$BODY_FILE"' EXIT # Ensure cleanup -- Removing trap for diagnostics
 
   # curl writes body to BODY_FILE, metadata to stdout (captured by 'run')
   run curl -s -L -o "$BODY_FILE" \
