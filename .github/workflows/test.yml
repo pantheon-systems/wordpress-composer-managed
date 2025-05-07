@@ -492,10 +492,10 @@ jobs:
 
           # Ensure permalinks are pretty for playwright tests
           echo "Setting permalink structure"
-          terminus wp "${site_id}".dev -- option update permalink_structure '/%postname%/'
-          terminus wp "${site_id}".dev -- rewrite flush
-          terminus wp "${site_id}".dev -- cache flush
-          terminus env:clear-cache "${site_id}".dev
+          terminus wp "${{ env.SITE_ID }}".dev -- option update permalink_structure '/%postname%/'
+          terminus wp "${{ env.SITE_ID }}".dev -- rewrite flush
+          terminus wp "${{ env.SITE_ID }}".dev -- cache flush
+          terminus env:clear-cache "${{ env.SITE_ID }}".dev
           terminus workflow:wait --max=30
       - name: Run Playwright tests on main site
         env:
