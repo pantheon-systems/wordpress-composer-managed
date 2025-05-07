@@ -102,3 +102,47 @@ teardown_test() {
   # Restore pretty permalinks for subsequent tests
   set_permalinks_to_pretty
 }
+
+@test "Validate REST API JSON output for 'hello-world' post (with plain permalinks)" {
+  unset_pretty_permalinks
+
+  SITE_URL=$( _wp option get home )
+  # Get the ID of the 'hello-world' post.
+  POST_ID=$( _wp post list --post_type=post --name=hello-world --field=ID --format=ids )
+  assert_not_empty "$POST_ID" "The 'Hello world!' post (slug: hello-world) was not found."
+
+  # Even with plain permalinks, we test accessing the pretty REST API path
+  HELLO_WORLD_API_URL="${SITE_URL}/wp-json/wp/v2/posts/${POST_ID}"
+  BODY_FILE=$(mktemp)
+  trap 'rm -f "$BODY_FILE"' EXIT # Ensure cleanup
+
+  # curl writes body to BODY_FILE, metadata to stdout (captured by 'run')
+  run curl -s -L -o "$BODY_FILE" \
+    -w "HTTP_STATUS:%{http_code}\nCONTENT_TYPE:%{content_type}" \
+    "${HELLO_WORLD_API_URL}"
+
+  assert_success "curl command failed for ${HELLO_WORLD_API_URL}. Output: $output"
+
+  # Parse and assert metadata from $output
+  HTTP_STATUS=$(echo "$output" | grep "HTTP_STATUS:" | cut -d: -f2)
+  CONTENT_TYPE=$(echo "$output" | grep "CONTENT_TYPE:" | cut -d: -f2-)
+
+  assert_equal "$HTTP_STATUS" "200" "HTTP status was '$HTTP_STATUS', expected '200'. Full metadata: $output"
+  assert_match "$CONTENT_TYPE" "application/json" "Content-Type was '$ CONTENT_TYPE', expected to contain 'application/json'. Full metadata: $output"
+
+  JSON_BODY=$(cat "$BODY_FILE")
+
+  echo "$JSON_BODY" | jq -e . > /dev/null
+  assert_success "Response body is not valid JSON. Body: $JSON_BODY"
+
+  run jq -e ".id == ${POST_ID}" <<< "$JSON_BODY"
+  assert_success "JSON .id mismatch. Expected ${POST_ID}. Body: $JSON_BODY"
+
+  run jq -e '.slug == "hello-world"' <<< "$JSON_BODY"
+  assert_success "JSON .slug mismatch. Expected 'hello-world'. Body: $JSON_BODY"
+
+  run jq -e '.title.rendered == "Hello world!"' <<< "$JSON_BODY"
+  assert_success "JSON .title.rendered mismatch. Expected 'Hello world!'. Body: $JSON_BODY"
+
+  set_permalinks_to_pretty
+}
