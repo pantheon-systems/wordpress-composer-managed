@@ -102,7 +102,6 @@ setup_permalinks() {
   terminus wp "${site_id}".dev -- rewrite flush
   terminus wp "${site_id}".dev -- cache flush
   terminus env:clear-cache "${site_id}".dev
-  terminus workflow:wait --max=30
 }
 
 status_check() {
