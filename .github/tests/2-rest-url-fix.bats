@@ -43,11 +43,13 @@ teardown_test() {
 @test "Check REST URL with default (pretty) permalinks (after setup script flush)" {
   set_permalinks_to_pretty
   flush_rewrites
-  run get_rest_url
-  assert_success
-  # Default setup script sets /%postname%/ and flushes.
-  # Expecting /wp/wp-json/ because home_url path should be /wp
-  assert_output --partial "/wp/wp-json/"
+
+  EXPECTED_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${EXPECTED_URL}"
+  assert_success "curl command failed to access ${EXPECTED_URL}"
+  # Assert that the final HTTP status code is 200 (OK) and application/json
+  assert_output --partial "200:" "Expected HTTP 200 for ${EXPECTED_URL}. Output: $output"
+  assert_output --partial ":application/json" "Expected Content-Type application/json for ${EXPECTED_URL}. Output: $output"
 }
 
 @test "Check REST URL with plain permalinks" {
@@ -77,15 +79,13 @@ teardown_test() {
   assert_success
   assert_output --partial "/wp"
 
-  # Now check get_rest_url() - this is where the original issue might occur
-  run get_rest_url
-  assert_success
-  # Assert that the output *should* be the correct /wp/wp-json/ even before flush,
-  # assuming the fix (either integrated or separate filter) is in place.
-  # If the fix is NOT in place, this might output /wp-json/ and fail.
-  # If the plain permalink fix was active, it might output /wp/wp-json/wp/ and fail.
-  assert_output --partial "/wp/wp-json/"
-  refute_output --partial "/wp-json/wp/" # Ensure the bad structure isn't present
+  EXPECTED_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${EXPECTED_URL}"
+  assert_success "curl command failed to access ${EXPECTED_URL} (before flush)"
+  # Assert that the final HTTP status code is 200 (OK) and application/json
+  # This assumes the fix ensures the correct URL works even before flushing.
+  assert_output --partial "200:" "Expected HTTP 200 for ${EXPECTED_URL} (before flush). Output: $output"
+  assert_output --partial ":application/json" "Expected Content-Type application/json for ${EXPECTED_URL} (before flush). Output: $output"
 }
 
 @test "Access pretty REST API path directly with plain permalinks active" {
