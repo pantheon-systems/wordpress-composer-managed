@@ -44,12 +44,12 @@ teardown_test() {
   set_permalinks_to_pretty
   flush_rewrites
 
-  EXPECTED_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
-  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${EXPECTED_URL}"
-  assert_success "curl command failed to access ${EXPECTED_URL}"
+  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
+  assert_success "curl command failed to access ${SITE_URL}"
   # Assert that the final HTTP status code is 200 (OK) and application/json
-  assert_output --partial "200:" "Expected HTTP 200 for ${EXPECTED_URL}. Output: $output"
-  assert_output --partial ":application/json" "Expected Content-Type application/json for ${EXPECTED_URL}. Output: $output"
+  assert_output --partial "200:" "Expected HTTP 200 for ${SITE_URL}. Output: $output"
+  assert_output --partial ":application/json" "Expected Content-Type application/json for ${SITE_URL}. Output: $output"
 }
 
 @test "Check REST URL with plain permalinks" {
@@ -79,13 +79,13 @@ teardown_test() {
   assert_success
   assert_output --partial "/wp"
 
-  EXPECTED_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
-  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${EXPECTED_URL}"
-  assert_success "curl command failed to access ${EXPECTED_URL} (before flush)"
+  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
+  assert_success "curl command failed to access ${SITE_URL} (before flush)"
   # Assert that the final HTTP status code is 200 (OK) and application/json
   # This assumes the fix ensures the correct URL works even before flushing.
-  assert_output --partial "200:" "Expected HTTP 200 for ${EXPECTED_URL} (before flush). Output: $output"
-  assert_output --partial ":application/json" "Expected Content-Type application/json for ${EXPECTED_URL} (before flush). Output: $output"
+  assert_output --partial "200:" "Expected HTTP 200 for ${SITE_URL} (before flush). Output: $output"
+  assert_output --partial ":application/json" "Expected Content-Type application/json for ${SITE_URL} (before flush). Output: $output"
 }
 
 @test "Access pretty REST API path directly with plain permalinks active" {
