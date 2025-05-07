@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load 'bats-assert/load.bash'
+load '/tmp/bats-assert/load.bash'
 
 # wp wrapper function
 _wp() {
