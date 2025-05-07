@@ -1,11 +1,7 @@
 #!/usr/bin/env bats
 
-# Function to load necessary BATS helper libraries
-_load_bats_helpers() {
-  bats_load_library bats-support
-  bats_load_library bats-assert
-}
-_load_bats_helpers
+load 'bats-support/load'
+load 'bats-assert/load'
 
 # wp wrapper function
 _wp() {
