@@ -508,8 +508,3 @@ jobs:
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
           # Corrected path to the test file
           bats -p -t .github/tests/2-rest-url-fix.bats
-
-      - name: Delete Site
-        if: success()
-        shell: bash
-        run: terminus site:delete wpcm-subdom-playwright-tests -y

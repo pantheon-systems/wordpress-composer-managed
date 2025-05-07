@@ -12,8 +12,6 @@ on:
           - all
           - wpcm-playwright-tests
           - wpcm-subdir-playwright-tests
-          - wpcm-subdom-playwright-tests
-
 
 jobs:
   delete-test-sites:
@@ -45,7 +43,6 @@ jobs:
             sites_to_delete=(
               "wpcm-playwright-tests"
               "wpcm-subdir-playwright-tests"
-              "wpcm-subdom-playwright-tests"
             )
           else
             echo "Single site selected: ${{ github.event.inputs.site }}"
