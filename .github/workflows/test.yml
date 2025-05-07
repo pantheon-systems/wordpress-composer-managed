@@ -40,11 +40,6 @@ jobs:
         uses: bats-core/bats-action@3.0.1
         id: setup-bats
 
-      - name: Run REST URL fix tests
-        run: bats .github/tests/2-rest-url-fix.bats
-        env:
-          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-
       - name: Wait for status artifacts
         env:
           GH_TOKEN: ${{ github.token }}
@@ -170,7 +165,7 @@ jobs:
         run: |
           echo "Running REST URL Bats tests..."
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
-          # Corrected path to the test file
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
           bats -p -t .github/tests/2-rest-url-fix.bats
 
       - name: Delete Site
@@ -188,11 +183,6 @@ jobs:
       - name: Install Bats
         uses: bats-core/bats-action@3.0.1
         id: setup-bats
-
-      - name: Run REST URL fix tests
-        run: bats .github/tests/2-rest-url-fix.bats
-        env:
-          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
 
       - name: Wait for status artifacts
         env:
@@ -327,6 +317,7 @@ jobs:
           echo "Running REST URL Bats tests..."
           # Ensure Terminus is logged in if needed by Bats WP-CLI calls
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
           bats -p -t .github/tests/2-rest-url-fix.bats
 
       - name: Delete Site
@@ -344,11 +335,6 @@ jobs:
       - name: Install Bats
         uses: bats-core/bats-action@3.0.1
         id: setup-bats
-
-      - name: Run REST URL fix tests
-        run: bats .github/tests/2-rest-url-fix.bats
-        env:
-          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
 
       - name: Wait for status artifacts
         env:
@@ -524,5 +510,5 @@ jobs:
         run: |
           echo "Running REST URL Bats tests..."
           terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
-          # Corrected path to the test file
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
           bats -p -t .github/tests/2-rest-url-fix.bats
