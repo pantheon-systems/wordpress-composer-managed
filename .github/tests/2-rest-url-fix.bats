@@ -26,9 +26,14 @@ unset_pretty_permalinks() {
 flush_rewrites() {
   _wp rewrite flush --hard --quiet
 }
+
 setup_suite() {
   # Ensure WP is installed and we are in the right directory
   _wp core is-installed || (echo "WordPress not installed. Run setup script first." && exit 1)
+}
+
+teardown_test() {
+  flush_rewrites # Call your helper
 }
 
 @test "Check REST URL with default (pretty) permalinks (after setup script flush)" {
