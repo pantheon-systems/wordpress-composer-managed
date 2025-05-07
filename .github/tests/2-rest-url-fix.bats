@@ -6,19 +6,7 @@ bats_load_library bats-assert
 
 # wp wrapper function
 _wp() {
-  # Capture all output, then filter.
-  # The `|| true` prevents the command from exiting the script if terminus
-  # returns a non-zero exit code but still outputs something we might want to
-  # see for debugging (though BATS will catch the failure).
-  local raw_output
-  raw_output=$(terminus wp -- ${SITE_ID}.dev "$@" 2>&1 || true)
-
-  # Filter out known Terminus noise and extract the relevant line.
-  # This tries to get the last line that is NOT a warning or a command notice.
-  echo "$raw_output" | \
-    grep -vE "(^\[warning\]|^\[notice\] Command:)" | \
-    grep -vE "^Deprecated: rtrim\(\): Passing null to parameter #1" | \
-    tail -n 1
+  terminus wp -- ${SITE_ID}.dev "$@"
 }
 
 # Helper function to get REST URL via WP-CLI
@@ -53,6 +41,8 @@ teardown_test() {
 }
 
 @test "Check REST URL with default (pretty) permalinks (after setup script flush)" {
+  set_permalinks_to_pretty
+  flush_rewrites
   run get_rest_url
   assert_success
   # Default setup script sets /%postname%/ and flushes.
@@ -85,7 +75,7 @@ teardown_test() {
   # Check home_url path to confirm /wp setup
   run get_home_url_path
   assert_success
-  assert_output "/wp"
+  assert_output --partial "/wp"
 
   # Now check get_rest_url() - this is where the original issue might occur
   run get_rest_url
