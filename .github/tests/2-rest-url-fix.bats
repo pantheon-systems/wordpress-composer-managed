@@ -19,6 +19,17 @@ get_home_url_path() {
   _wp eval 'echo rtrim(parse_url(home_url(), PHP_URL_PATH) ?: "", "/");'
 }
 
+# Helper function to check if it's a multisite installation
+_is_multisite() {
+  # This command exits with 0 if it's a network (multisite) installation,
+  # and 1 otherwise. We suppress output as we only care about the exit code.
+  if _wp core is-installed --network > /dev/null 2>&1; then
+    return 0 # true, it is multisite
+  else
+    return 1 # false, it is not multisite
+  fi
+}
+
 set_permalinks_to_pretty() {
   _wp option update permalink_structure '/%postname%/' --quiet
 }
@@ -40,11 +51,18 @@ teardown_test() {
   flush_rewrites # Call your helper
 }
 
-@test "Check REST URL with default (pretty) permalinks (after setup script flush)" {
+@test "Check REST URL with default (pretty) permalinks" {
   set_permalinks_to_pretty
   flush_rewrites
 
-  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  local rest_api_base_path
+  if _is_multisite; then
+    rest_api_base_path="/wp/wp-json/"
+  else
+    rest_api_base_path="/wp-json/"
+  fi
+  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io${rest_api_base_path}"
+
   run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
   assert_success "curl command failed to access ${SITE_URL}"
   # Assert that the final HTTP status code is 200 (OK) and application/json
@@ -75,11 +93,20 @@ teardown_test() {
   # DO NOT FLUSH HERE
 
   # Check home_url path to confirm /wp setup
-  run get_home_url_path
-  assert_success
-  assert_output --partial "/wp"
+  if _is_multisite; then
+    run get_home_url_path
+    assert_success
+    assert_output --partial "/wp"
+  fi
 
-  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  local rest_api_base_path
+  if _is_multisite; then
+    rest_api_base_path="/wp/wp-json/"
+  else
+    rest_api_base_path="/wp-json/"
+  fi
+  SITE_URL="https://dev-${SITE_ID}.pantheonsite.io${rest_api_base_path}"
+
   run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
   assert_success "curl command failed to access ${SITE_URL} (before flush)"
   # Assert that the final HTTP status code is 200 (OK) and application/json
@@ -93,17 +120,24 @@ teardown_test() {
   unset_pretty_permalinks
   flush_rewrites
 
-  # Get the full home URL to construct the test URL
-  SITE_URL=$( _wp option get home )
-  # Construct the pretty-style REST API URL
-  # Note: home_url() includes /wp, so we append /wp-json/... directly
-  TEST_URL="${SITE_URL}/wp-json/wp/v2/posts"
+  # Construct the pretty-style REST API URL for a specific endpoint
+  local base_domain="https://dev-${SITE_ID}.pantheonsite.io"
+  local rest_endpoint_full_path
+  if _is_multisite; then
+    # For multisite in /wp/, the REST API base is /wp/wp-json/
+    rest_endpoint_full_path="/wp/wp-json/wp/v2/posts"
+  else
+    # For single site, the REST API base is /wp-json/
+    rest_endpoint_full_path="/wp-json/wp/v2/posts"
+  fi
+  TEST_URL="${base_domain}${rest_endpoint_full_path}"
 
   # Make a curl request to the pretty URL
   run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${TEST_URL}"
-  assert_success
+  assert_success "curl command failed for ${TEST_URL}. Output: $output"
   # Assert that the final HTTP status code is 200 (OK) and application/json
-  assert_output --partial "200:application/json"
+  assert_output --partial "200:" "Expected HTTP 200 for ${TEST_URL}. Output: $output"
+  assert_output --partial ":application/json" "Expected Content-Type application/json for ${TEST_URL}. Output: $output"
 
   # Restore pretty permalinks for subsequent tests
   set_permalinks_to_pretty
@@ -112,10 +146,16 @@ teardown_test() {
 @test "Validate REST API JSON output for 'hello-world' post (with plain permalinks)" {
   unset_pretty_permalinks
 
-  # Hardcode known post ID and construct URL from SITE_ID env var
-  # This avoids issues with noisy output from _wp option get home / _wp post list
+  # Hardcode known post ID
   local POST_ID=1
-  local BASE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  local base_domain="https://dev-${SITE_ID}.pantheonsite.io"
+  local rest_api_base_path
+  if _is_multisite; then
+    rest_api_base_path="/wp/wp-json/"
+  else
+    rest_api_base_path="/wp-json/"
+  fi
+  local BASE_URL="${base_domain}${rest_api_base_path}"
   local HELLO_WORLD_API_URL="${BASE_URL}wp/v2/posts/${POST_ID}"
 
   # Create temp file for body
