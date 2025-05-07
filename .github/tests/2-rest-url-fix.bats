@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+load 'bats-assert/load.bash'
+
 # wp wrapper function
 _wp() {
   terminus wp -- ${SITE_ID}.dev "$@"

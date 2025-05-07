@@ -39,6 +39,13 @@ jobs:
       - name: Install Bats
         uses: bats-core/bats-action@2.0.0
 
+      - name: Install bats-assert and bats-support
+        run: |
+          git clone https://github.com/bats-core/bats-support.git /tmp/bats-support
+          git clone https://github.com/bats-core/bats-assert.git /tmp/bats-assert
+          echo "/tmp/bats-support/bin" >> $GITHUB_PATH
+          echo "/tmp/bats-assert/bin" >> $GITHUB_PATH
+
       - name: Wait for status artifacts
         env:
           GH_TOKEN: ${{ github.token }}
@@ -181,6 +188,13 @@ jobs:
 
       - name: Install Bats
         uses: bats-core/bats-action@2.0.0
+
+      - name: Install bats-assert and bats-support
+        run: |
+          git clone https://github.com/bats-core/bats-support.git /tmp/bats-support
+          git clone https://github.com/bats-core/bats-assert.git /tmp/bats-assert
+          echo "/tmp/bats-support/bin" >> $GITHUB_PATH
+          echo "/tmp/bats-assert/bin" >> $GITHUB_PATH
 
       - name: Wait for status artifacts
         env:
@@ -331,6 +345,13 @@ jobs:
 
       - name: Install Bats
         uses: bats-core/bats-action@2.0.0
+
+      - name: Install bats-assert and bats-support
+        run: |
+          git clone https://github.com/bats-core/bats-support.git /tmp/bats-support
+          git clone https://github.com/bats-core/bats-assert.git /tmp/bats-assert
+          echo "/tmp/bats-support/bin" >> $GITHUB_PATH
+          echo "/tmp/bats-assert/bin" >> $GITHUB_PATH
 
       - name: Wait for status artifacts
         env:
