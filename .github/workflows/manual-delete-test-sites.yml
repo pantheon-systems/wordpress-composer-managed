@@ -1,0 +1,60 @@
+name: (Manual) Delete test sites
+on:
+  workflow_dispatch:
+    # Use inputs to specify whether to delete a specific site or all sites.
+    inputs:
+      site:
+        description: 'Site to delete '
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - wpcm-playwright-tests
+          - wpcm-subdir-playwright-tests
+          - wpcm-subdom-playwright-tests
+
+
+jobs:
+  delete-test-sites:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH keys
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Validate Pantheon Host Key
+        shell: bash
+        run: |
+          echo "Host *.drush.in HostKeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+          echo "Host *.drush.in PubkeyAcceptedKeyTypes +ssh-rsa" >> ~/.ssh/config
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Install Terminus
+        uses: pantheon-systems/terminus-github-actions@v1
+        with:
+          pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
+
+      - name: Delete test sites
+        run: |
+          # Check if the input is 'all' or a specific site
+          if [[ "${{ github.event.inputs.site }}" == "all" ]]; then
+            echo "Deleting all test sites..."
+            # List of all test sites to delete
+            sites_to_delete=(
+              "wpcm-playwright-tests"
+              "wpcm-subdir-playwright-tests"
+              "wpcm-subdom-playwright-tests"
+            )
+          else
+            echo "Single site selected: ${{ github.event.inputs.site }}"
+            # If a specific site is provided, use it
+            sites_to_delete=("${{ github.event.inputs.site }}")
+          fi
+
+          for site in "${sites_to_delete[@]}"; do
+            echo "Deleting site: $site"
+            terminus site:delete $site -y
+          done
+          echo "All done! 🧹"
