@@ -112,13 +112,14 @@ teardown_test() {
 @test "Validate REST API JSON output for 'hello-world' post (with plain permalinks)" {
   unset_pretty_permalinks
 
-  SITE_URL=$( _wp option get home )
-  # Get the ID of the 'hello-world' post.
-  POST_ID=$( _wp post list --post_type=post --name=hello-world --field=ID --format=ids )
-  assert_not_empty "$POST_ID" "The 'Hello world!' post (slug: hello-world) was not found."
+  # Hardcode known post ID and construct URL from SITE_ID env var
+  # This avoids issues with noisy output from _wp option get home / _wp post list
+  local POST_ID=1
+  local BASE_URL="https://dev-${SITE_ID}.pantheonsite.io/wp/wp-json/"
+  local HELLO_WORLD_API_URL="${BASE_URL}wp/v2/posts/${POST_ID}"
 
-  # Even with plain permalinks, we test accessing the pretty REST API path
-  HELLO_WORLD_API_URL="${SITE_URL}/wp-json/wp/v2/posts/${POST_ID}"
+  # Create temp file for body
+  local BODY_FILE
   BODY_FILE=$(mktemp)
   trap 'rm -f "$BODY_FILE"' EXIT # Ensure cleanup
 
