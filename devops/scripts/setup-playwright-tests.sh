@@ -40,7 +40,7 @@ create_site() {
   else
     terminus site:create "${site_id}" "${site_name}" "${UPSTREAM_NAME}" --org=5ae1fa30-8cc4-4894-8ca9-d50628dcba17
     echo "Site created. Setting site plan to 'pro'"
-    terminus plan:set "${site_id}" pro
+    terminus plan:set "${site_id}" plan-performance_small-contract-annual-1
   fi
   terminus connection:set "${site_id}".dev git -y
 }
