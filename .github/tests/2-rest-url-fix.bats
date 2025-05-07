@@ -2,10 +2,6 @@
 
 # Function to load necessary BATS helper libraries
 _load_bats_helpers() {
-  # Ensure BATS_LIB_PATH includes /usr/lib if not already set,
-  # as bats-core/bats-action installs helpers there.
-  export BATS_LIB_PATH="${BATS_LIB_PATH:-/usr/lib}"
-
   bats_load_library bats-support
   bats_load_library bats-assert
 }
