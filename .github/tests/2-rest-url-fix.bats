@@ -121,7 +121,6 @@ teardown_test() {
   # Create temp file for body
   local BODY_FILE
   BODY_FILE=$(mktemp)
-  # trap 'rm -f "$BODY_FILE"' EXIT # Ensure cleanup -- Removing trap for diagnostics
 
   # curl writes body to BODY_FILE, metadata to stdout (captured by 'run')
   run curl -s -L -o "$BODY_FILE" \
@@ -135,7 +134,9 @@ teardown_test() {
   CONTENT_TYPE=$(echo "$output" | grep "CONTENT_TYPE:" | cut -d: -f2-)
 
   assert_equal "$HTTP_STATUS" "200" "HTTP status was '$HTTP_STATUS', expected '200'. Full metadata: $output"
-  assert_match "$CONTENT_TYPE" "application/json" "Content-Type was '$ CONTENT_TYPE', expected to contain 'application/json'. Full metadata: $output"
+
+  echo "$CONTENT_TYPE" | grep -q "application/json"
+  assert_success "Content-Type was '$CONTENT_TYPE', expected to contain 'application/json'. Full metadata: $output"
 
   JSON_BODY=$(cat "$BODY_FILE")
 
