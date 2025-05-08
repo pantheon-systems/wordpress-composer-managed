@@ -1,3 +1,7 @@
+### v1.33.0 (2025-05-08)
+* Fixes an issue where we were running `maybe-add-symlinks` but the script didn't exist. ([#183](https://github.com/pantheon-systems/wordpress-composer-managed/pull/183))
+* Fixes an issue where WP REST API urls would break on new sites before "pretty permalink" structure was set. ([#186](https://github.com/pantheon-systems/wordpress-composer-managed/pull/186))
+
 ### v1.32.5 (2025-02-10)
 * Adds the `maybe-install-symlinks` Composer script to `post-update-cmd` hook. This ensures that symlinks are created (and the `web/index.php` file is re-created) after a `composer update`. ([#175](https://github.com/pantheon-systems/wordpress-composer-managed/pull/175))
 
