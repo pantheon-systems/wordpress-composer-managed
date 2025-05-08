@@ -111,15 +111,25 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         ERROR_DETAILS: ${{ steps.commit_check.outputs.final_error_summary }}
       run: |
-        COMMENT_BODY="Hi from your friendly robot! :robot:
-        Please review the commit checks for this PR:
-        \`\`\`
-        ${ERROR_DETAILS}
-        \`\`\`
-        If issues are present, please ensure commits modify either 'normal' or 'non-release' files (not a mix within a single commit) and do not contain forbidden files.
-        If this PR intentionally mixes 'normal' and 'non-release' commit types, remember to use **rebase and merge** rather than **squash** when merging to preserve individual commit integrity for the deploy process."
+        COMMENT_MARKER="<!-- GITHUB_ACTIONS_COMMIT_CHECK_COMMENT -->"
 
-        gh pr comment $PR_NUMBER -b "$COMMENT_BODY"
+        # Check for existing comment with the marker
+        EXISTING_COMMENT_ID=$(gh pr view $PR_NUMBER --json comments -q ".comments[] | select(.body | contains(\"${COMMENT_MARKER}\")) | .id" || echo "")
+
+        if [ -n "$EXISTING_COMMENT_ID" ]; then
+          echo "Commit check comment already exists (ID: $EXISTING_COMMENT_ID). Skipping new comment."
+        else
+          echo "No existing commit check comment found. Posting a new one."
+          COMMENT_BODY="Hi from your friendly robot! :robot: ${COMMENT_MARKER}
+          Please review the commit checks for this PR:
+          \`\`\`
+          ${ERROR_DETAILS}
+          \`\`\`
+          If issues are present, please ensure commits modify either 'normal' or 'non-release' files (not a mix within a single commit) and do not contain forbidden files.
+          If this PR intentionally mixes 'normal' and 'non-release' commit types, remember to use **rebase and merge** rather than **squash** when merging to preserve individual commit integrity for the deploy process."
+
+          gh pr comment $PR_NUMBER -b "$COMMENT_BODY"
+        fi
 
     - name: Check Composer lock file is up to date
       run: composer validate --no-check-all
