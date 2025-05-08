@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./custom-test";
 
 const exampleArticle = "Hello world!";
 const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
@@ -7,6 +7,7 @@ let graphqlEndpoint = process.env.GRAPHQL_ENDPOINT || `${siteUrl}/wp/graphql`;
 
 test("homepage loads and contains example content", async ({ page }) => {
   await page.goto(siteUrl);
+
   await expect(page).toHaveTitle(siteTitle);
   await expect(page.getByText(exampleArticle)).toHaveText(exampleArticle);
 });
@@ -22,6 +23,7 @@ test("WP REST API is accessible", async ({ request }) => {
 
 test("Hello World post is accessible", async ({ page }) => {
   await page.goto(`${siteUrl}/hello-world/'`);
+
   await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
   // Locate the element containing the desired text
   const welcomeText = page.locator('text=Welcome to WordPress');
