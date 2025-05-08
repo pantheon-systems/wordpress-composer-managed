@@ -173,7 +173,8 @@ jobs:
         if: success()
         shell: bash
         run: |
-          terminus plan:set wpcm-playwright-tests plan-free-preferred-monthly-1
+          # Downgrade the site to a free plan, if applicable.
+          terminus plan:set wpcm-playwright-tests plan-free-preferred-monthly-1 || true
           terminus site:delete wpcm-playwright-tests -y
 
   test-subdir:
@@ -327,7 +328,8 @@ jobs:
         if: success()
         shell: bash
         run: |
-          terminus plan:set wpcm-subdir-playwright-tests plan-free-preferred-monthly-1
+          # Downgrade the site to a free plan, if applicable.
+          terminus plan:set wpcm-subdir-playwright-tests plan-free-preferred-monthly-1 || true
           terminus site:delete wpcm-subdir-playwright-tests -y
 
   test-subdom:

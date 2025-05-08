@@ -52,7 +52,8 @@ jobs:
 
           for site in "${sites_to_delete[@]}"; do
             echo "Deleting site: $site"
-            terminus plan:set $site plan-free-preferred-monthly-1
+            # Downgrade the site to a free plan, if applicable.
+            terminus plan:set $site plan-free-preferred-monthly-1 || true
             terminus site:delete $site -y
           done
           echo "All done! 🧹"
