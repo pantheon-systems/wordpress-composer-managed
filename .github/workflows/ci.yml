@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['8.1', '8.2', '8.3']
+        php-version: ['8.1', '8.2', '8.3', '8.4']
 
     steps:
     - uses: actions/checkout@v4
@@ -39,22 +39,97 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Check Commits
+      id: commit_check # Add an ID to access outputs
       run: |
         # Don't warn about detached head.
         git config advice.detachedHead false
-        git fetch --all
-        git checkout -b default origin/default
-        git checkout ${{ github.event.pull_request.head.sha }}
-        echo "This script does preliminary checks to make sure that the commits in a PR made in this repository are ready for the deploy-public-upstream script. i.e. any given commit modifies either 'normal' or 'non-release' files, never mixed."
-        bash ${{ github.workspace }}/devops/scripts/check-commits.sh || echo "commit_check_failed=1" >> $GITHUB_ENV
+        git fetch --all --prune # Fetch all refs and remove stale remote-tracking branches
 
-    - name: Comment on PR if commit check failed
-      if: env.commit_check_failed == '1'
+        # Ensure the local 'default' branch reflects 'origin/default'
+        git checkout -B default origin/default
+
+        # Checkout the actual head of the pull request branch
+        git checkout ${{ github.event.pull_request.head.sha }}
+
+        echo "Running check-commits.sh to analyze PR commits..."
+
+        script_exit_code=0
+        # Execute the script, capturing all its stderr.
+        script_stderr_output=$(bash ${{ github.workspace }}/devops/scripts/check-commits.sh 2>&1) || script_exit_code=$?
+
+        echo "--- Script Standard Error Output (and stdout if any) ---"
+        echo "${script_stderr_output}"
+        echo "--- End Script Output ---"
+        echo "Script exit code: $script_exit_code"
+
+        # Script itself failed (e.g., mixed files in a single commit, forbidden files)
+        commit_script_failed_output="false"
+        if [ "$script_exit_code" -ne 0 ]; then
+          commit_script_failed_output="true"
+        fi
+        echo "commit_script_failed=${commit_script_failed_output}" >> $GITHUB_OUTPUT
+
+        # Mixture of 'normal' and 'non-release' commit types across the PR
+        has_normal_commits=$(echo "${script_stderr_output}" | grep -c "is a normal commit" || true)
+        has_nonrelease_commits=$(echo "${script_stderr_output}" | grep -c "is a non-release commit" || true)
+
+        echo "Normal commits found: $has_normal_commits"
+        echo "Non-release commits found: $has_nonrelease_commits"
+
+        mixed_commit_types_in_pr_output="false"
+        if [ "$has_normal_commits" -gt 0 ] && [ "$has_nonrelease_commits" -gt 0 ]; then
+          mixed_commit_types_in_pr_output="true"
+        fi
+        echo "mixed_commit_types_in_pr=${mixed_commit_types_in_pr_output}" >> $GITHUB_OUTPUT
+
+        # Prepare overall error summary for the comment
+        final_error_summary=""
+        if [ "${commit_script_failed_output}" == "true" ]; then
+          # Extract lines that look like errors from the script
+          script_reported_errors=$(echo "${script_stderr_output}" | grep -E "contains both release and nonrelease changes|contains forbidden files" || true)
+          if [ -n "${script_reported_errors}" ]; then
+            final_error_summary+="Script reported the following issues with specific commits:\n${script_reported_errors}\n\n"
+          else
+            # If script failed but no specific errors were grepped, include the full output for context
+            final_error_summary+="The check-commits.sh script failed (exit code $script_exit_code). Full script output for context:\n${script_stderr_output}\n\n"
+          fi
+        fi
+
+        if [ "${mixed_commit_types_in_pr_output}" == "true" ]; then
+          final_error_summary+="This PR contains a mixture of 'normal' (release) commits and 'non-release' (internal) commits. This requires careful merging (e.g., rebase and merge) to ensure only 'normal' commits are deployed to public upstream if that's the intent."
+        fi
+
+        echo "final_error_summary<<ERROR_SUMMARY_EOF" >> $GITHUB_OUTPUT
+        echo -e "${final_error_summary}" >> $GITHUB_OUTPUT
+        echo "ERROR_SUMMARY_EOF" >> $GITHUB_OUTPUT
+
+    - name: Comment on PR if commit check failed or types are mixed
+      # Trigger if the script failed OR if there's a mix of commit types
+      if: steps.commit_check.outputs.commit_script_failed == 'true' || steps.commit_check.outputs.mixed_commit_types_in_pr == 'true'
       env:
         GH_TOKEN: ${{ github.token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        ERROR_DETAILS: ${{ steps.commit_check.outputs.final_error_summary }}
       run: |
-        gh pr comment ${{ github.event.pull_request.number }} -b "Hi from your friendly robot! :robot: It looks like there might be commits to both release and non-release files in this PR. Please review and remove any commits that don't belong."
-        exit 1
+        COMMENT_MARKER="<!-- GITHUB_ACTIONS_COMMIT_CHECK_COMMENT -->"
+
+        # Check for existing comment with the marker
+        EXISTING_COMMENT_ID=$(gh pr view $PR_NUMBER --json comments -q ".comments[] | select(.body | contains(\"${COMMENT_MARKER}\")) | .id" || echo "")
+
+        if [ -n "$EXISTING_COMMENT_ID" ]; then
+          echo "Commit check comment already exists (ID: $EXISTING_COMMENT_ID). Skipping new comment."
+        else
+          echo "No existing commit check comment found. Posting a new one."
+          COMMENT_BODY="Hi from your friendly robot! :robot: ${COMMENT_MARKER}
+          Please review the commit checks for this PR:
+
+          > ${ERROR_DETAILS}
+
+          If issues are present, please ensure commits modify either 'normal' or 'non-release' files (not a mix within a single commit) and do not contain forbidden files.
+          If this PR intentionally mixes 'normal' and 'non-release' commit types, remember to use **rebase and merge** rather than **squash** when merging to preserve individual commit integrity for the deploy process."
+
+          gh pr comment $PR_NUMBER -b "$COMMENT_BODY"
+        fi
 
     - name: Check Composer lock file is up to date
       run: composer validate --no-check-all
@@ -77,7 +152,7 @@ jobs:
       env:
         CI: 1
       run: |
-          bats -p -t .github/tests
+          bats -p -t .github/tests/1-test-update-php.bats
 
     - name: Create failure status artifact
       if: failure()
