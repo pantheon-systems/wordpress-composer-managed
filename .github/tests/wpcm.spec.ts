@@ -1,27 +1,12 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./custom-test";
 
 const exampleArticle = "Hello world!";
 const siteTitle = process.env.SITE_NAME || "WPCM Playwright Tests";
 const siteUrl = process.env.SITE_URL || "https://dev-wpcm-playwright-tests.pantheonsite.io";
 let graphqlEndpoint = process.env.GRAPHQL_ENDPOINT || `${siteUrl}/wp/graphql`;
-let interstitialClicked = false;
 
 test("homepage loads and contains example content", async ({ page }) => {
   await page.goto(siteUrl);
-
-  if (!interstitialClicked) {
-    try {
-      const continueButtonLocator = page.locator('button.pds-button:has-text("Continue")');
-      // Wait for a short period for the button to be visible
-      await continueButtonLocator.waitFor({ state: 'visible', timeout: 7000 });
-      await continueButtonLocator.click();
-      // Wait for potential navigation after click
-      await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    } catch (e) {
-      // Button not visible, or other error, assume not present or already handled.
-    }
-    interstitialClicked = true; // Mark as attempted/handled for this suite execution.
-  }
 
   await expect(page).toHaveTitle(siteTitle);
   await expect(page.getByText(exampleArticle)).toHaveText(exampleArticle);
@@ -38,20 +23,6 @@ test("WP REST API is accessible", async ({ request }) => {
 
 test("Hello World post is accessible", async ({ page }) => {
   await page.goto(`${siteUrl}/hello-world/'`);
-
-  if (!interstitialClicked) {
-    try {
-      const continueButtonLocator = page.locator('button.pds-button:has-text("Continue")');
-      // Wait for a short period for the button to be visible
-      await continueButtonLocator.waitFor({ state: 'visible', timeout: 7000 });
-      await continueButtonLocator.click();
-      // Wait for potential navigation after click
-      await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    } catch (e) {
-      // Button not visible, or other error, assume not present or already handled.
-    }
-    interstitialClicked = true; // Mark as attempted/handled for this suite execution.
-  }
 
   await expect(page).toHaveTitle(`${exampleArticle} – ${siteTitle}`);
   // Locate the element containing the desired text
