@@ -95,19 +95,18 @@ teardown_test() {
   set_permalinks_to_pretty
   # DO NOT FLUSH HERE
 
+  local rest_api_base_path
+
   # Check home_url path to confirm /wp setup
   if _is_multisite; then
     run get_home_url_path
     assert_success
     assert_output --partial "/wp"
-  fi
-
-  local rest_api_base_path
-  if _is_multisite; then
     rest_api_base_path="/wp/wp-json/"
   else
     rest_api_base_path="/wp-json/"
   fi
+
   SITE_URL="https://dev-${SITE_ID}.pantheonsite.io${rest_api_base_path}"
 
   run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
