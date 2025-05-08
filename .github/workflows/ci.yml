@@ -122,9 +122,9 @@ jobs:
           echo "No existing commit check comment found. Posting a new one."
           COMMENT_BODY="Hi from your friendly robot! :robot: ${COMMENT_MARKER}
           Please review the commit checks for this PR:
-          \`\`\`
+
           ${ERROR_DETAILS}
-          \`\`\`
+
           If issues are present, please ensure commits modify either 'normal' or 'non-release' files (not a mix within a single commit) and do not contain forbidden files.
           If this PR intentionally mixes 'normal' and 'non-release' commit types, remember to use **rebase and merge** rather than **squash** when merging to preserve individual commit integrity for the deploy process."
 
