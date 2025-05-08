@@ -44,7 +44,10 @@ flush_rewrites() {
 
 setup_suite() {
   # Ensure WP is installed and we are in the right directory
-  _wp core is-installed || (echo "WordPress not installed. Run setup script first." && exit 1)
+  if ! _wp core is-installed; then
+    echo "WordPress not installed. Run setup script first."
+    exit 1
+  fi
 }
 
 teardown_test() {
