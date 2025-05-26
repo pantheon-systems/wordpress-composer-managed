@@ -53,8 +53,9 @@ jobs:
             gh run download -n status-8.1-${{ github.sha }} || true
             gh run download -n status-8.2-${{ github.sha }} || true
             gh run download -n status-8.3-${{ github.sha }} || true
+            gh run download -n status-8.4-${{ github.sha }} || true
 
-            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ] && [ -f status-8.4-${{ github.sha }}.txt ]; then
               success=1
               break
             else
@@ -183,8 +184,9 @@ jobs:
             gh run download -n status-8.1-${{ github.sha }} || true
             gh run download -n status-8.2-${{ github.sha }} || true
             gh run download -n status-8.3-${{ github.sha }} || true
+            gh run download -n status-8.4-${{ github.sha }} || true
 
-            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ] && [ -f status-8.4-${{ github.sha }}.txt ]; then
               success=1
               break
             else
@@ -316,8 +318,9 @@ jobs:
             gh run download -n status-8.1-${{ github.sha }} || true
             gh run download -n status-8.2-${{ github.sha }} || true
             gh run download -n status-8.3-${{ github.sha }} || true
+            gh run download -n status-8.4-${{ github.sha }} || true
 
-            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ]; then
+            if [ -f status-8.1-${{ github.sha }}.txt ] && [ -f status-8.2-${{ github.sha }}.txt ] && [ -f status-8.3-${{ github.sha }}.txt ] && [ -f status-8.4-${{ github.sha }}.txt ]; then
               success=1
               break
             else

@@ -77,6 +77,15 @@ teardown() {
   [ "$status" -eq 0 ]
 }
 
+@test "Keep PHP version 8.4" {
+  custom_setup "84"
+  run bash private/scripts/helpers.sh update_php
+  echo "$output"
+  [ "$status" -eq 0 ]
+  run grep -q "php_version: 8.4" pantheon.yml
+  [ "$status" -eq 0 ]
+}
+
 @test "Test missing index.php" {
   # Remove web/index.php.
   rm web/index.php
