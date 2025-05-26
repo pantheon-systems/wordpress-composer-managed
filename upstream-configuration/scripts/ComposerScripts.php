@@ -206,6 +206,7 @@ class ComposerScripts
     {
         // Integrated Composer requires PHP 7.1 at a minimum.
         $patchVersions = [
+            '8.4' => '8.4.7',
             '8.3' => '8.3.14',
             '8.2' => '8.2.26',
             '8.1' => '8.1.31',
