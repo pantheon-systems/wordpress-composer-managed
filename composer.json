@@ -44,6 +44,10 @@
       "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
     },
     {
+      "type": "vcs",
+      "url": "git@github.com:fairpm/fair-plugin.git"
+    },
+    {
         "type": "path",
         "url": "upstream-configuration"
     }
@@ -63,7 +67,8 @@
     "pantheon-upstreams/upstream-configuration": "dev-main",
     "wpackagist-plugin/pantheon-advanced-page-cache": "*",
     "wpackagist-plugin/wp-native-php-sessions": "*",
-    "cweagans/composer-patches": "^1.7"
+    "cweagans/composer-patches": "^1.7",
+    "fair/fair-plugin": "*"
   },
   "require-dev": {
     "pantheon-systems/pantheon-wp-coding-standards": "*",
