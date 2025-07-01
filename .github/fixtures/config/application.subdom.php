@@ -137,17 +137,10 @@ Config::define( 'WP_POST_REVISIONS', env( 'WP_POST_REVISIONS' ) ?? true );
 /**
  * Debugging Settings
  */
-if ( ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) && $_ENV['PANTHEON_ENVIRONMENT'] === 'dev' ) || isset( $_ENV['LANDO'] ) ) {
-	Config::define( 'WP_DEBUG_DISPLAY', true );
-	Config::define( 'WP_DEBUG_LOG', true );
-	Config::define( 'SCRIPT_DEBUG', true );
-	ini_set( 'display_errors', '1' );
-} else {
-	Config::define( 'WP_DEBUG_DISPLAY', false );
-	Config::define( 'WP_DEBUG_LOG', false );
-	Config::define( 'SCRIPT_DEBUG', false );
-	ini_set( 'display_errors', '0' );
-}
+Config::define( 'WP_DEBUG_DISPLAY', false );
+Config::define( 'WP_DEBUG_LOG', true );
+Config::define( 'SCRIPT_DEBUG', false );
+ini_set( 'display_errors', '0' );
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
