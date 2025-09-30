@@ -80,6 +80,11 @@ if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 		define( 'PANTHEON_HOSTNAME', $hostname );
 	}
 
+    // Set the default repository domain for FAIR to WordPress.org.
+    if ( ! defined( 'FAIR_DEFAULT_REPO_DOMAIN' ) ) {
+        Config::define( 'FAIR_DEFAULT_REPO_DOMAIN', 'api.wordpress.org' );
+    }
+
 	// Cookie settings.
 	defined( 'COOKIE_DOMAIN' ) or Config::define( 'COOKIE_DOMAIN', PANTHEON_HOSTNAME );
 	defined( 'ADMIN_COOKIE_PATH' ) or Config::define( 'ADMIN_COOKIE_PATH', '/' );
