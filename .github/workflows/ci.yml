@@ -1,7 +1,7 @@
 name: Lint and Test
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - reopened
@@ -22,6 +22,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.base.ref }}
+
+    - name: Checkout PR Head
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        path: pr
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -41,6 +49,7 @@ jobs:
     - name: Check Commits
       id: commit_check # Add an ID to access outputs
       run: |
+        cd pr
         # Don't warn about detached head.
         git config advice.detachedHead false
         git fetch --all --prune # Fetch all refs and remove stale remote-tracking branches
@@ -132,18 +141,18 @@ jobs:
         fi
 
     - name: Check Composer lock file is up to date
-      run: composer validate --no-check-all
+      run: composer validate --no-check-all -d pr/
 
     - name: Install Composer dependencies
-      run: composer update --no-progress --prefer-dist --optimize-autoloader
+      run: composer update --no-progress --prefer-dist --optimize-autoloader -d pr/
 
     - name: Run lints
       run: |
-        composer lint:devops
-        composer lint
+        composer lint:devops -d pr/
+        composer lint -d pr/
 
     - name: Run tests
-      run: composer test
+      run: composer test -d pr/
 
     - name: Install bats
       uses: bats-core/bats-action@2.0.0
