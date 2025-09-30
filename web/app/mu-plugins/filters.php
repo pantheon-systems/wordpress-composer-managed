@@ -52,7 +52,7 @@ function fix_core_resource_urls( string $url ) : string {
 	$main_site_url = trailingslashit( is_multisite() ? network_site_url( '/' ) : home_url() );
 
 	// Get the current site path. Covers a variety of scenarios since we're using this function on a bunch of different filters.
-	$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) ); // Define a default path.
+	$current_site_path = trailingslashit( parse_url( get_home_url(), PHP_URL_PATH ) ?? '' ); // Define a default path.
 	if ( is_multisite() ) {
 		if ( isset( $current_blog ) && ! empty( $current_blog->path ) ) {
 			$current_site_path = trailingslashit( $current_blog->path );

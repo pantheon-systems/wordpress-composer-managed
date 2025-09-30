@@ -1,3 +1,6 @@
+### v1.34.0 ()
+* Resolves rtrim warning in PHP 8.1+ environments. ([#189](https://github.com/pantheon-systems/wordpress-composer-managed/pull/189)) props @mattmacneil
+
 ### v1.33.0 (2025-05-08)
 * Fixes an issue where we were running `maybe-add-symlinks` but the script didn't exist. ([#183](https://github.com/pantheon-systems/wordpress-composer-managed/pull/183))
 * Fixes an issue where WP REST API urls would break on new sites before "pretty permalink" structure was set. ([#186](https://github.com/pantheon-systems/wordpress-composer-managed/pull/186))
