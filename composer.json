@@ -68,7 +68,7 @@
     "wpackagist-plugin/pantheon-advanced-page-cache": "*",
     "wpackagist-plugin/wp-native-php-sessions": "*",
     "cweagans/composer-patches": "^1.7",
-    "fair/fair-plugin": "*"
+    "fairpm/fair-plugin": "*"
   },
   "require-dev": {
     "pantheon-systems/pantheon-wp-coding-standards": "*",
@@ -92,7 +92,7 @@
     "installer-paths": {
       "web/app/mu-plugins/{$name}/": [
         "type:wordpress-muplugin",
-        "fair/fair-plugin"
+        "fairpm/fair-plugin"
       ],
       "web/app/plugins/{$name}/": ["type:wordpress-plugin"],
       "web/app/themes/{$name}/": ["type:wordpress-theme"]
