@@ -1,12 +1,13 @@
-name: WordPress Composer Playwright Tests
+name: WordPress Composer Tests
 on:
-  pull_request:
+  pull_request_target:
     paths-ignore:
       - '.github/workflows/ci.yml'
       - '.github/workflows/composer-diff.yml'
       - '.github/workflows/phpcbf.yml'
       - '.github/workflows/sage-test.yml'
       - '.github/workflows/sync-default.yml'
+      - '.github/workflows/manual-delete-test-sites.yml'
       - '.github/tests/*.bats'
       - 'private/scripts/**'
       - 'devops/**'
@@ -29,12 +30,24 @@ permissions:
 
 jobs:
 
-  playwright-single:
+  test-single:
     name: Single site
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Checkout PR Head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Install Bats
+        uses: bats-core/bats-action@3.0.1
+        id: setup-bats
 
       - name: Wait for status artifacts
         env:
@@ -131,7 +144,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Install Composer dependencies"
-          composer update --no-progress --prefer-dist --optimize-autoloader
+          composer update --no-progress --prefer-dist --optimize-autoloader -d pr/
           echo "Install NPM dependencies"
           npm install
           echo "Install Playwright Browsers"
@@ -145,8 +158,8 @@ jobs:
           TYPE: single
           TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
-          WORKSPACE: ${{ github.workspace }}
-        run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
+          WORKSPACE: ${{ github.workspace }}/pr
+        run: bash ${{ github.workspace }}/pr/devops/scripts/setup-playwright-tests.sh
 
       - name: Run Playwright tests
         env:
@@ -154,17 +167,42 @@ jobs:
           SITE_URL: ${{ env.SITE_URL }}
         run: npm run test .github/tests/wpcm.spec.ts
 
+      - name: Run Bats tests for URL fixes (Single Site)
+        env:
+          SITE_ID: wpcm-playwright-tests
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
+          bats -p -t .github/tests/2-rest-url-fix.bats
+
       - name: Delete Site
         if: success()
         shell: bash
-        run: terminus site:delete wpcm-playwright-tests -y
+        run: |
+          # Downgrade the site to a free plan, if applicable.
+          terminus plan:set wpcm-playwright-tests plan-free-preferred-monthly-1 || true
+          terminus site:delete wpcm-playwright-tests -y
 
-  playwright-subdir:
+  test-subdir:
     name: Subdirectory multisite
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Checkout PR Head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Install Bats
+        uses: bats-core/bats-action@3.0.1
+        id: setup-bats
 
       - name: Wait for status artifacts
         env:
@@ -259,7 +297,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Install Composer dependencies"
-          composer update --no-progress --prefer-dist --optimize-autoloader
+          composer update --no-progress --prefer-dist --optimize-autoloader -d pr/
           echo "Install NPM dependencies"
           npm install
           echo "Install Playwright Browsers"
@@ -273,8 +311,8 @@ jobs:
           TYPE: subdir
           TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
-          WORKSPACE: ${{ github.workspace }}
-        run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
+          WORKSPACE: ${{ github.workspace }}/pr
+        run: bash ${{ github.workspace }}/pr/devops/scripts/setup-playwright-tests.sh
 
       - name: Run Playwright tests
         env:
@@ -287,17 +325,47 @@ jobs:
           echo "Running Playwright tests on WordPress subdirectory subsite"
             npm run test .github/tests/wpcm.spec.ts
 
+      - name: Run Bats tests for URL fixes
+        # This step runs *after* the site setup, including the initial permalink flush.
+        # The Bats test itself handles permalink changes for specific test cases.
+        # We need to pass the SITE_ID to the Bats test environment so WP-CLI commands work via Terminus.
+        env:
+          SITE_ID: wpcm-subdir-playwright-tests
+          SUBSITE: foo
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          # Ensure Terminus is logged in if needed by Bats WP-CLI calls
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
+          bats -p -t .github/tests/2-rest-url-fix.bats
+
       - name: Delete Site
         if: success()
         shell: bash
-        run: terminus site:delete wpcm-subdir-playwright-tests -y
+        run: |
+          # Downgrade the site to a free plan, if applicable.
+          terminus plan:set wpcm-subdir-playwright-tests plan-free-preferred-monthly-1 || true
+          terminus site:delete wpcm-subdir-playwright-tests -y
 
-  playwright-subdom:
+  test-subdom:
     name: Subdomain multisite
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Checkout PR Head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Install Bats
+        uses: bats-core/bats-action@3.0.1
+        id: setup-bats
 
       - name: Wait for status artifacts
         env:
@@ -396,7 +464,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Install Composer dependencies"
-          composer update --no-progress --prefer-dist --optimize-autoloader
+          composer update --no-progress --prefer-dist --optimize-autoloader -d pr/
           echo "Install NPM dependencies"
           npm install
           echo "Install Playwright Browsers"
@@ -417,7 +485,7 @@ jobs:
           cd ~/pantheon-local-copies/"${{ env.SITE_ID }}"
 
           echo "Copying latest changes and committing to the site."
-          rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/" .
+          rsync -a --exclude='.git' --exclude='status-*.txt' --exclude="node_modules" "${{ github.workspace }}/pr/" .
           git add -A
           git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
 
@@ -427,7 +495,7 @@ jobs:
           git commit -m "Add WP-GraphQL plugin" || true
 
           echo "Copying the subdomain multisite config/application.php file..."
-          cp -f "${{ github.workspace }}/.github/fixtures/config/application.subdom.php" config/application.php
+          cp -f "${{ github.workspace }}/pr/.github/fixtures/config/application.subdom.php" config/application.php
           git add config/application.php
           git commit -m "Add subdomain multisite config" || true
 
@@ -452,6 +520,13 @@ jobs:
             echo "${{ env.SUBDOMAIN_URL }} - ${SUBDOMAIN_URL_TEST}"
             exit 1
           fi
+
+          # Ensure permalinks are pretty for playwright tests
+          echo "Setting permalink structure"
+          terminus wp "${{ env.SITE_ID }}".dev -- option update permalink_structure '/%postname%/'
+          terminus wp "${{ env.SITE_ID }}".dev -- rewrite flush
+          terminus wp "${{ env.SITE_ID }}".dev -- cache flush
+          terminus env:clear-cache "${{ env.SITE_ID }}".dev
       - name: Run Playwright tests on main site
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
@@ -464,3 +539,14 @@ jobs:
           SITE_URL: ${{ env.SUBDOMAIN_URL }}
           GRAPHQL_ENDPOINT: ${{ env.SUBDOMAIN_URL }}/wp/graphql
         run: npm run test .github/tests/wpcm.spec.ts
+
+      - name: Run Bats tests for URL fixes (Subdomain)
+        env:
+          SITE_ID: wpcm-subdom-playwright-tests
+          SUBSITE: foo
+          TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+        run: |
+          echo "Running REST URL Bats tests..."
+          terminus auth:login --machine-token="${TERMINUS_TOKEN}" || echo "Terminus already logged in."
+          export BATS_LIB_PATH=${{ steps.setup-bats.outputs.lib-path }}
+          bats -p -t .github/tests/2-rest-url-fix.bats
