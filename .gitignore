@@ -157,3 +157,8 @@ Thumbs.db
 # SASS #
 ##########
 .sass-cache
+
+# local dev #
+#############
+.idea
+.codacy
