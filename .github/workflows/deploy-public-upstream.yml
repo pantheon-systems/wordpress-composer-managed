@@ -8,6 +8,9 @@ on:
     branches:
       - release
 
+permissions:
+  contents: read
+  
 jobs:
   check-commits:
     name: Check Commits
