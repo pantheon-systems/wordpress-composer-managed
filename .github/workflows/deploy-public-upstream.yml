@@ -8,8 +8,6 @@ on:
     branches:
       - release
 
-
-
 jobs:
   check-commits:
     name: Check Commits
