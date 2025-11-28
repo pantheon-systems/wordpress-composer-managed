@@ -21,10 +21,10 @@ jobs:
         php-version: ['8.1', '8.2', '8.3', '8.4']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
       with:
         php-version: ${{ matrix.php-version }}
 
@@ -32,7 +32,7 @@ jobs:
       id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -146,7 +146,7 @@ jobs:
       run: composer test
 
     - name: Install bats
-      uses: bats-core/bats-action@2.0.0
+      uses: bats-core/bats-action@472edde1138d59aca53ff162fb8d996666d21e4a # 2.0.0 2024-04-08T21:15:34Z
 
     - name: Test Helper functions
       env:
@@ -171,7 +171,7 @@ jobs:
         fi
 
     - name: Upload status artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
       with:
         name: status-${{ matrix.php-version }}-${{ github.sha }}
         path: status-${{ matrix.php-version }}-${{ github.sha }}.txt
