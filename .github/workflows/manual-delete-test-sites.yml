@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install SSH keys
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -30,7 +30,7 @@ jobs:
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
       - name: Install Terminus
-        uses: pantheon-systems/terminus-github-actions@v1
+        uses: pantheon-systems/terminus-github-actions@8e024bd89ff46ed2aa4e0663c6b54c87a94344f8 # v1.2.7
         with:
           pantheon-machine-token: ${{ secrets.TERMINUS_TOKEN }}
 
