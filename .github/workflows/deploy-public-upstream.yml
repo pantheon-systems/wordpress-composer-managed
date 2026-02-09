@@ -1,0 +1,44 @@
+# .github/workflows/deploy.yml
+
+name: Deploy Public Upstream
+
+# This workflow runs on any push to the 'release' branch
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  check-commits:
+    name: Check Commits
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Check validity of commits
+        run: devops/scripts/check-commits.sh
+
+  deploy-public-upstream:
+    name: Deploy Public Upstream
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # This job runs only after the 'check-commits' job completes successfully
+    needs: check-commits
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy commits to destination repo
+        run: devops/scripts/deploy-public-upstream.sh
+
+      - name: Run decoupledpatch.sh and copy commits to decoupled destination repo
+        run: devops/scripts/deploy-decoupled-upstream.sh
