@@ -33,7 +33,7 @@ Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](htt
 - Easy WordPress configuration with environment specific files
 - Environment variables with [Dotenv](https://github.com/vlucas/phpdotenv)
 - Autoloader for mu-plugins (use regular plugins as mu-plugins)
-- Enhanced security (separated web root and secure passwords with [wp-password-bcrypt](https://github.com/roots/wp-password-bcrypt))
+- Enhanced security with separated web root
 
 ## How to use this project
 There are two main ways to interact with this project template. **Using the Pantheon-maintained WordPress Composer Managed upstream** or **forking this repository to create a custom upstream.**
@@ -97,9 +97,9 @@ Bedrock installs WordPress as a required package so updates can be managed by Co
 
 [Packagist](https://packagist.org) is a repository of Composer packages that are available by default to projects managed by Composer. Packagist libraries receive updates from their source GitHub repositories automatically.
 
-[WPackagist](https://wpackagist.org) is a Packagist-like mirror of the WordPress.org [plugin](https://wordpress.org/plugins) and [theme](https://wordpress.org/themes) repositories and is included with Bedrock out of the box. 
+[WP Packages](https://wp-packages.org) is a Packagist-like mirror of the WordPress.org [plugin](https://wordpress.org/plugins) and [theme](https://wordpress.org/themes) repositories and is included with Bedrock out of the box.
 
-You may install packages from Packagist or WPackagist without any additional configuration using `composer require`.
+You may install packages from Packagist or WP Packages without any additional configuration using `composer require`.
 
 #### Requiring a package from Packagist
 
@@ -111,16 +111,16 @@ composer require yoast/wordpress-seo
 
 Packages that are flagged as `wordpress-plugin`, `wordpress-theme` or `wordpress-muplugin` in their `composer.json` files will be installed automatically in the appropriate `web/app/` directory by Composer.
 
-#### Requiring a package from WPackagist
+#### Requiring a package from WP Packages
 
-For all other plugins and themes that are not managed on Packagist, you can use `composer require` as well, using `wpackagist-plugin` or `wpackagist-theme` as the vendor and the plugin or theme slug as the package name.
-
-```
-composer require wpackagist-theme/twentytwentytwo
-```
+For all other plugins and themes that are not managed on Packagist, you can use `composer require` as well, using `wp-plugin` or `wp-theme` as the vendor and the plugin or theme slug as the package name.
 
 ```
-composer require wpackagist-plugin/advanced-custom-fields
+composer require wp-theme/twentytwentyfive
+```
+
+```
+composer require wp-plugin/advanced-custom-fields
 ```
 
 ### Using Roots Sage starter theme
