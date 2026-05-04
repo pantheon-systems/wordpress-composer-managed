@@ -40,8 +40,8 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://wpackagist.org",
-      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+      "url": "https://repo.wp-packages.org",
+      "only": ["wp-plugin/*", "wp-theme/*"]
     },
     {
         "type": "path",
@@ -51,29 +51,29 @@
   "require": {
     "php": ">=8.0",
     "composer/installers": "^2.2",
-    "vlucas/phpdotenv": "^5.5",
+    "cweagans/composer-patches": "^1.7",
     "oscarotero/env": "^2.1",
+    "pantheon-systems/pantheon-mu-plugin": "*",
+    "pantheon-upstreams/upstream-configuration": "dev-main",
     "roots/bedrock-autoloader": "*",
     "roots/bedrock-disallow-indexing": "*",
     "roots/wordpress": "*",
     "roots/wp-config": "*",
-    "roots/wp-password-bcrypt": "*",
-    "wpackagist-theme/twentytwentytwo": "^1.2",
-    "pantheon-systems/pantheon-mu-plugin": "*",
-    "pantheon-upstreams/upstream-configuration": "dev-main",
-    "wpackagist-plugin/pantheon-advanced-page-cache": "*",
-    "wpackagist-plugin/wp-native-php-sessions": "*",
-    "cweagans/composer-patches": "^1.7"
+    "vlucas/phpdotenv": "^5.5",
+    "wp-plugin/pantheon-advanced-page-cache": "*",
+    "wp-plugin/wp-native-php-sessions": "*",
+    "wp-theme/twentytwentyfive": "^1.0"
   },
   "require-dev": {
+    "assertwell/shellcheck": "^1.0",
     "pantheon-systems/pantheon-wp-coding-standards": "*",
-    "roave/security-advisories": "dev-latest",
-    "assertwell/shellcheck": "^1.0"
+    "roave/security-advisories": "dev-latest"
   },
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
     "process-timeout": 0,
+    "sort-packages": true,
     "allow-plugins": {
       "composer/installers": true,
       "roots/wordpress-core-installer": true,
