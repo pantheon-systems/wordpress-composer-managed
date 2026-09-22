@@ -106,8 +106,10 @@ jobs:
         echo "ERROR_SUMMARY_EOF" >> $GITHUB_OUTPUT
 
     - name: Comment on PR if commit check failed or types are mixed
-      # Trigger if the script failed OR if there's a mix of commit types
-      if: steps.commit_check.outputs.commit_script_failed == 'true' || steps.commit_check.outputs.mixed_commit_types_in_pr == 'true'
+      # Trigger if the script failed OR if there's a mix of commit types.
+      # Skip for fork PRs: GITHUB_TOKEN is always read-only there, so commenting would just fail.
+      if: github.event.pull_request.head.repo.fork == false && (steps.commit_check.outputs.commit_script_failed == 'true' || steps.commit_check.outputs.mixed_commit_types_in_pr == 'true')
+      continue-on-error: true
       env:
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
