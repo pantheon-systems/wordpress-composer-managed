@@ -104,6 +104,17 @@ setup_permalinks() {
   terminus env:clear-cache "${site_id}".dev
 }
 
+check_site_ready() {
+  echo ""
+  echo -e "${YELLOW}Checking site URL${RESET}"
+  local site_url_test
+  site_url_test=$(curl -s -o /dev/null -w "%{http_code}" "${site_url}")
+  if [[ "${site_url_test}" != "200" ]]; then
+    echo -e "${RED}${site_url} is not returning a 200 status code (got ${site_url_test}).${RESET}"
+    exit 1
+  fi
+}
+
 status_check() {
   echo ""
   echo -e "${YELLOW}Checking WordPress install status${RESET}"
@@ -187,4 +198,5 @@ status_check
 set_up_subsite
 install_wp_graphql
 setup_permalinks
+check_site_ready
 echo -e "${GREEN}Done${RESET} ✨"
