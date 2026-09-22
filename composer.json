@@ -40,8 +40,8 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://wpackagist.org",
-      "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+      "url": "https://repo.wp-packages.org",
+      "only": ["wp-plugin/*", "wp-theme/*"]
     },
     {
         "type": "path",
@@ -57,12 +57,11 @@
     "roots/bedrock-disallow-indexing": "*",
     "roots/wordpress": "*",
     "roots/wp-config": "*",
-    "roots/wp-password-bcrypt": "*",
-    "wpackagist-theme/twentytwentytwo": "^1.2",
+    "wp-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
-    "wpackagist-plugin/pantheon-advanced-page-cache": "*",
-    "wpackagist-plugin/wp-native-php-sessions": "*",
+    "wp-plugin/pantheon-advanced-page-cache": "*",
+    "wp-plugin/wp-native-php-sessions": "*",
     "cweagans/composer-patches": "^1.7"
   },
   "require-dev": {
