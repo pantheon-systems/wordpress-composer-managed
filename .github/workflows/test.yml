@@ -466,8 +466,11 @@ jobs:
           git commit -m "Update to latest commit: ${{ env.COMMIT_MSG }}" || true
 
           echo "Installing wp-graphql..."
-          # wp-graphql has active security advisories on every published version; this is an
-          # ephemeral e2e test fixture, not a shipped dependency, so accept the risk here only.
+          # wp-graphql has active security advisories on every published version, and
+          # roave/security-advisories independently conflicts with all of them regardless
+          # of --no-blocking. This is an ephemeral e2e test fixture, not a shipped
+          # dependency, so accept the risk here only.
+          composer remove roave/security-advisories --dev
           composer require wp-graphql/wp-graphql --no-blocking
           git add composer.json composer.lock
           git commit -m "Add WP-GraphQL plugin" || true
