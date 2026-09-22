@@ -57,7 +57,7 @@
     "roots/bedrock-disallow-indexing": "*",
     "roots/wordpress": "*",
     "roots/wp-config": "*",
-    "wp-theme/twentytwentytwo": "^1.2"
+    "wp-theme/twentytwentytwo": "^1.2",
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
     "wp-plugin/pantheon-advanced-page-cache": "*",
