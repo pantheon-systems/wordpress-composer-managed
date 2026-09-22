@@ -86,14 +86,14 @@ install_wp() {
   if [[ "${type}" == 'single' ]]; then
     echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
     terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
-  fi
+  else
+    local is_subdomains="false"
+    if [[ "${type}" == 'subdom' ]]; then
+      is_subdomains="true"
+    fi
 
-  local is_subdomains="false"
-  if [[ "${type}" == 'subdom' ]]; then
-    is_subdomains="true"
+    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
   fi
-
-  terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
 }
 
 setup_permalinks() {
@@ -102,6 +102,17 @@ setup_permalinks() {
   terminus wp "${site_id}".dev -- rewrite flush
   terminus wp "${site_id}".dev -- cache flush
   terminus env:clear-cache "${site_id}".dev
+}
+
+check_site_ready() {
+  echo ""
+  echo -e "${YELLOW}Checking site URL${RESET}"
+  local site_url_test
+  site_url_test=$(curl -s -o /dev/null -w "%{http_code}" "${site_url}")
+  if [[ "${site_url_test}" != "200" ]]; then
+    echo -e "${RED}${site_url} is not returning a 200 status code (got ${site_url_test}).${RESET}"
+    exit 1
+  fi
 }
 
 status_check() {
@@ -187,4 +198,5 @@ status_check
 set_up_subsite
 install_wp_graphql
 setup_permalinks
+check_site_ready
 echo -e "${GREEN}Done${RESET} ✨"
