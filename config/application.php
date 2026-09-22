@@ -11,7 +11,12 @@ use Roots\WPConfig\Config;
 use function Env\env;
 
 // USE_ENV_ARRAY + CONVERT_* + STRIP_QUOTES.
-Env\Env::$options = 31;
+Env\Env::$options
+	= Env\Env::USE_ENV_ARRAY
+	| Env\Env::CONVERT_BOOL
+	| Env\Env::CONVERT_NULL
+	| Env\Env::CONVERT_INT
+	| Env\Env::STRIP_QUOTES;
 
 /**
  * Directory containing all of the site's files
@@ -60,8 +65,36 @@ require_once __DIR__ . '/application.pantheon.php';
 define( 'WP_ENV', env( 'WP_ENV' ) ?: 'production' );
 
 /**
+ * Set WP_ENVIRONMENT_TYPE if not already defined
+ */
+if ( ! defined( 'WP_ENVIRONMENT_TYPE' ) ) {
+	$wp_environment_type = env( 'WP_ENVIRONMENT_TYPE' );
+
+	if ( $wp_environment_type ) {
+		Config::define( 'WP_ENVIRONMENT_TYPE', $wp_environment_type );
+	} elseif ( in_array( WP_ENV, [ 'production', 'staging', 'development', 'local' ], true ) ) {
+		Config::define( 'WP_ENVIRONMENT_TYPE', WP_ENV );
+	}
+}
+
+/**
+ * Set WP_DEVELOPMENT_MODE if explicitly configured
+ */
+if ( ! defined( 'WP_DEVELOPMENT_MODE' ) ) {
+	$wp_development_mode = env( 'WP_DEVELOPMENT_MODE' );
+
+	if ( $wp_development_mode ) {
+		Config::define( 'WP_DEVELOPMENT_MODE', $wp_development_mode );
+	}
+}
+
+/**
  * DB settings
  */
+if ( env( 'DB_SSL' ) ) {
+	Config::define( 'MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL );
+}
+
 Config::define( 'DB_NAME', env( 'DB_NAME' ) );
 Config::define( 'DB_USER', env( 'DB_USER' ) );
 Config::define( 'DB_PASSWORD', env( 'DB_PASSWORD' ) );
@@ -116,12 +149,15 @@ Config::define( 'NONCE_SALT', env( 'NONCE_SALT' ) );
  * Custom Settings
  */
 Config::define( 'AUTOMATIC_UPDATER_DISABLED', true );
+Config::define( 'DISABLE_WP_CRON', env( 'DISABLE_WP_CRON' ) ?: false );
 // Disable the plugin and theme file editor in the admin.
 Config::define( 'DISALLOW_FILE_EDIT', true );
 // Disable plugin and theme updates and installation from the admin.
 Config::define( 'DISALLOW_FILE_MODS', true );
 // Limit the number of post revisions that Wordpress stores (true (default WP): store every revision).
 Config::define( 'WP_POST_REVISIONS', env( 'WP_POST_REVISIONS' ) ?? true );
+// Disable script concatenation.
+Config::define( 'CONCATENATE_SCRIPTS', false );
 
 /**
  * Debugging Settings
