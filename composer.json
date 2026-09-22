@@ -60,6 +60,7 @@
     "wp-theme/twentytwentytwo": "^1.2"
     "pantheon-systems/pantheon-mu-plugin": "*",
     "pantheon-upstreams/upstream-configuration": "dev-main",
+    "cweagans/composer-patches": "^1.7"
     "wp-plugin/pantheon-advanced-page-cache": "*",
     "wp-plugin/wp-native-php-sessions": "*",
   },
