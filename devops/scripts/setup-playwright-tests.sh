@@ -86,14 +86,14 @@ install_wp() {
   if [[ "${type}" == 'single' ]]; then
     echo -e "${YELLOW}Install (Single Site) WordPress${RESET}"
     terminus wp "${site_id}".dev -- core install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null
-  fi
+  else
+    local is_subdomains="false"
+    if [[ "${type}" == 'subdom' ]]; then
+      is_subdomains="true"
+    fi
 
-  local is_subdomains="false"
-  if [[ "${type}" == 'subdom' ]]; then
-    is_subdomains="true"
+    terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
   fi
-
-  terminus wp "${site_id}".dev -- core multisite-install --title="${site_name}" --admin_user=wpcm --admin_email=test@dev.null --subdomains="$is_subdomains" --url="${site_url}"
 }
 
 setup_permalinks() {
