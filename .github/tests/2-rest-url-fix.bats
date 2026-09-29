@@ -66,7 +66,7 @@ teardown_test() {
   fi
   SITE_URL="https://dev-${SITE_ID}.pantheonsite.io${rest_api_base_path}"
 
-  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
+  run curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN:-}" -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
   assert_success "curl command failed to access ${SITE_URL}"
   # Assert that the final HTTP status code is 200 (OK) and application/json
   assert_output --partial "200:" "Expected HTTP 200 for ${SITE_URL}. Output: $output"
@@ -109,7 +109,7 @@ teardown_test() {
 
   SITE_URL="https://dev-${SITE_ID}.pantheonsite.io${rest_api_base_path}"
 
-  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
+  run curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN:-}" -o /dev/null -w '%{http_code}:%{content_type}' -L "${SITE_URL}"
   assert_success "curl command failed to access ${SITE_URL} (before flush)"
   # Assert that the final HTTP status code is 200 (OK) and application/json
   # This assumes the fix ensures the correct URL works even before flushing.
@@ -135,7 +135,7 @@ teardown_test() {
   TEST_URL="${base_domain}${rest_endpoint_full_path}"
 
   # Make a curl request to the pretty URL
-  run curl -s -o /dev/null -w '%{http_code}:%{content_type}' -L "${TEST_URL}"
+  run curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN:-}" -o /dev/null -w '%{http_code}:%{content_type}' -L "${TEST_URL}"
   assert_success "curl command failed for ${TEST_URL}. Output: $output"
   # Assert that the final HTTP status code is 200 (OK) and application/json
   assert_output --partial "200:" "Expected HTTP 200 for ${TEST_URL}. Output: $output"
@@ -165,7 +165,7 @@ teardown_test() {
   BODY_FILE=$(mktemp)
 
   # curl writes body to BODY_FILE, metadata to stdout (captured by 'run')
-  run curl -s -L -o "$BODY_FILE" \
+  run curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN:-}" -L -o "$BODY_FILE" \
     -w "HTTP_STATUS:%{http_code}\nCONTENT_TYPE:%{content_type}" \
     "${HELLO_WORLD_API_URL}"
 

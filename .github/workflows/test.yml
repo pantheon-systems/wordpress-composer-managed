@@ -153,6 +153,11 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
+      - name: Get bot-bypass token
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-playwright-tests
+
       - name: Run Playwright tests
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
@@ -297,6 +302,11 @@ jobs:
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
+
+      - name: Get bot-bypass token
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-subdir-playwright-tests
 
       - name: Run Playwright tests
         env:
@@ -446,6 +456,11 @@ jobs:
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
 
+      - name: Get bot-bypass token
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-subdom-playwright-tests
+
       - name: Copy changes from PR
         run: |
           echo "Commit Message: ${{ env.COMMIT_MSG }}"
@@ -482,7 +497,7 @@ jobs:
 
           # Push and wait for the git push to finish.
           git push origin master || true
-          terminus workflow:wait "${{ env.SITE_ID }}".dev
+          terminus workflow:wait "${{ env.SITE_ID }}".dev --max=300
 
           echo "Checking WordPress install status"
           terminus wp "${{ env.SITE_ID }}".dev -- cli info
@@ -493,8 +508,8 @@ jobs:
 
           # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
           echo "Checking site URLs"
-          SITE_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
-          SUBDOMAIN_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
+          SITE_URL_TEST=$(curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN}" -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
+          SUBDOMAIN_URL_TEST=$(curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN}" -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
           if [ $SITE_URL_TEST -ne 200 ] || [ $SUBDOMAIN_URL_TEST -ne 200 ]; then
             echo "One or more site URLs are not returning a 200 status code. Exiting."
             echo "${{ env.SITE_URL }} - ${SITE_URL_TEST}"
