@@ -2,6 +2,9 @@ import { test as baseTest, expect as baseExpect } from '@playwright/test';
 
 // Extend base test by providing a custom 'page' fixture.
 export const test = baseTest.extend({
+  extraHTTPHeaders: async ({}, use) => {
+    await use(process.env.BOT_BYPASS_TOKEN ? { 'x-pantheon-bot-bypass': process.env.BOT_BYPASS_TOKEN } : {});
+  },
   page: async ({ page }, use) => {
     // Set custom headers for all page navigations/requests initiated by the page.
     await page.setExtraHTTPHeaders({

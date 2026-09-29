@@ -153,6 +153,19 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
+      - name: Get bot-bypass token
+        env:
+          SITE_ID: wpcm-playwright-tests
+        run: |
+          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
+          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
+          if [ -z "$token" ]; then
+            echo "No bot-bypass token returned for $SITE_ID."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
+
       - name: Run Playwright tests
         env:
           SITE_NAME: ${{ env.SITE_NAME }}
@@ -297,6 +310,19 @@ jobs:
           COMMIT_MSG: ${{ env.COMMIT_MSG }}
           WORKSPACE: ${{ github.workspace }}
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
+
+      - name: Get bot-bypass token
+        env:
+          SITE_ID: wpcm-subdir-playwright-tests
+        run: |
+          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
+          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
+          if [ -z "$token" ]; then
+            echo "No bot-bypass token returned for $SITE_ID."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
 
       - name: Run Playwright tests
         env:
@@ -446,6 +472,19 @@ jobs:
           echo "Install Playwright Browsers"
           npx playwright install --with-deps
 
+      - name: Get bot-bypass token
+        env:
+          SITE_ID: wpcm-subdom-playwright-tests
+        run: |
+          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
+          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
+          if [ -z "$token" ]; then
+            echo "No bot-bypass token returned for $SITE_ID."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
+
       - name: Copy changes from PR
         run: |
           echo "Commit Message: ${{ env.COMMIT_MSG }}"
@@ -488,8 +527,8 @@ jobs:
 
           # Run curl checks against the site URLs to ensure the main site and the subdomain site exist.
           echo "Checking site URLs"
-          SITE_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
-          SUBDOMAIN_URL_TEST=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
+          SITE_URL_TEST=$(curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN}" -o /dev/null -w "%{http_code}" ${{ env.SITE_URL }})
+          SUBDOMAIN_URL_TEST=$(curl -s -H "x-pantheon-bot-bypass: ${BOT_BYPASS_TOKEN}" -o /dev/null -w "%{http_code}" ${{ env.SUBDOMAIN_URL }})
           if [ $SITE_URL_TEST -ne 200 ] || [ $SUBDOMAIN_URL_TEST -ne 200 ]; then
             echo "One or more site URLs are not returning a 200 status code. Exiting."
             echo "${{ env.SITE_URL }} - ${SITE_URL_TEST}"
