@@ -1,0 +1,21 @@
+name: Get GCDN bot-bypass token
+description: Fetch the site's current bot-bypass token, mask it, and export it as BOT_BYPASS_TOKEN.
+inputs:
+  site-id:
+    description: Pantheon site name or UUID.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SITE_ID: ${{ inputs.site-id }}
+      run: |
+        terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
+        token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
+        if [ -z "$token" ]; then
+          echo "No bot-bypass token returned for $SITE_ID."
+          exit 1
+        fi
+        echo "::add-mask::$token"
+        echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"

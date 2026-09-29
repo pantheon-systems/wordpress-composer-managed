@@ -154,17 +154,9 @@ jobs:
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
       - name: Get bot-bypass token
-        env:
-          SITE_ID: wpcm-playwright-tests
-        run: |
-          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
-          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
-          if [ -z "$token" ]; then
-            echo "No bot-bypass token returned for $SITE_ID."
-            exit 1
-          fi
-          echo "::add-mask::$token"
-          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-playwright-tests
 
       - name: Run Playwright tests
         env:
@@ -312,17 +304,9 @@ jobs:
         run: bash ${{ github.workspace }}/devops/scripts/setup-playwright-tests.sh
 
       - name: Get bot-bypass token
-        env:
-          SITE_ID: wpcm-subdir-playwright-tests
-        run: |
-          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
-          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
-          if [ -z "$token" ]; then
-            echo "No bot-bypass token returned for $SITE_ID."
-            exit 1
-          fi
-          echo "::add-mask::$token"
-          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-subdir-playwright-tests
 
       - name: Run Playwright tests
         env:
@@ -473,17 +457,9 @@ jobs:
           npx playwright install --with-deps
 
       - name: Get bot-bypass token
-        env:
-          SITE_ID: wpcm-subdom-playwright-tests
-        run: |
-          terminus self:plugin:install pantheon-systems/terminus-gcdn-plugin
-          token=$(terminus gcdn:bot-bypass "$SITE_ID" --format=json | jq -r '.[] | select(.role=="current") | .token')
-          if [ -z "$token" ]; then
-            echo "No bot-bypass token returned for $SITE_ID."
-            exit 1
-          fi
-          echo "::add-mask::$token"
-          echo "BOT_BYPASS_TOKEN=$token" >> "$GITHUB_ENV"
+        uses: ./.github/actions/bot-bypass-token
+        with:
+          site-id: wpcm-subdom-playwright-tests
 
       - name: Copy changes from PR
         run: |
