@@ -497,7 +497,7 @@ jobs:
 
           # Push and wait for the git push to finish.
           git push origin master || true
-          terminus workflow:wait "${{ env.SITE_ID }}".dev
+          terminus workflow:wait "${{ env.SITE_ID }}".dev --max=300
 
           echo "Checking WordPress install status"
           terminus wp "${{ env.SITE_ID }}".dev -- cli info

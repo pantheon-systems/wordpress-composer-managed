@@ -76,7 +76,7 @@ copy_pr_updates() {
   git add -A
   git commit -m "Update to latest commit: ${commit_msg}" || true
   git push origin master || true
-  terminus workflow:wait "${site_id}".dev
+  terminus workflow:wait "${site_id}".dev --max=300
 }
 
 install_wp() {
