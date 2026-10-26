@@ -39,6 +39,3 @@ jobs:
 
       - name: Copy commits to destination repo
         run: devops/scripts/deploy-public-upstream.sh
-
-      - name: Run decoupledpatch.sh and copy commits to decoupled destination repo
-        run: devops/scripts/deploy-decoupled-upstream.sh
