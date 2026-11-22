@@ -150,7 +150,7 @@ jobs:
       run: composer test
 
     - name: Install bats
-      uses: bats-core/bats-action@472edde1138d59aca53ff162fb8d996666d21e4a # 2.0.0 2024-04-08T21:15:34Z
+      uses: bats-core/bats-action@3566550e0f594451ac0f58fcbfdeca93aa29a45e # 2.0.0 2024-04-08T21:15:34Z
 
     - name: Test Helper functions
       env:
